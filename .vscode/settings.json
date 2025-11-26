@@ -1,0 +1,13 @@
+{
+    "C_Cpp.intelliSenseEngine": "disabled",
+    "cmake.debugConfig": {
+        "cwd": "${workspaceFolder}/examples/executable",
+        "environment": [
+            { "name": "CPKG_BUILD_EXTRA_MODULES_PATH", "value": "${workspaceFolder}/build/toolchains/gcc"}
+        ],
+        "args": [
+            "--build",
+            "."
+        ]
+    }
+}

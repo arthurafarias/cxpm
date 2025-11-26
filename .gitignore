@@ -1,6 +1,7 @@
 build
 .cache
-.vscode
+# .vscode
+*.loader.cpp
 *.o
 *.a
 *.so

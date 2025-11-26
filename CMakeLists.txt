@@ -9,3 +9,6 @@ add_subdirectory(cpkg-build)
 # add_subdirectory(cpkg-clean)
 # add_subdirectory(cpkg-create)
 # add_subdirectory(cpkg-install)
+
+
+add_subdirectory(toolchains/gcc)

@@ -1,0 +1,106 @@
+#pragma once
+
+#include <Models/BasicProject.hpp>
+#include <deque>
+#include <string>
+
+#include <Serialization/AbstractArchiver.hpp>
+#include <type_traits>
+
+/**
+ * this file is the description and implementation of VSCode API for Launching
+ * Targets The build system will generate the VSCode Stuff based on the Project
+ * API It's simple, just generate a Controller that Exposes launch.json
+ * generator View, settings.json view and compile_comands.json other...
+ */
+
+struct EnvironmentVariable {
+  std::string name;
+  std::string value;
+
+  template <typename Archiver> void serialize(Archiver &ar) {
+    using namespace Serialization;
+    ar &AbstractArchiver::make_named_value_property("name", name);
+    ar &AbstractArchiver::make_named_value_property("value", value);
+  }
+};
+
+struct SetupCommands {
+public:
+  std::string description;
+  std::string text;
+  bool ignore_failures;
+
+  template <typename Archiver> void serialize(Archiver &ar) {
+    using namespace Serialization;
+    ar &AbstractArchiver::make_named_value_property("description", description);
+    ar &AbstractArchiver::make_named_value_property("text", text);
+    ar &AbstractArchiver::make_named_value_property("ignoreFailures",
+                                                    ignore_failures);
+  }
+};
+
+struct Configuration {
+public:
+  std::string name = "(gdb) Launch";
+  std::string type = "cppdbg";
+  std::string request = "launch";
+  std::string program =
+      "enter program name, for example ${workspaceFolder}/a.out";
+  std::string args = {};
+  bool stop_at_entry = false;
+  std::string cwd = "${fileDirname}";
+  std::deque<EnvironmentVariable> environment = {};
+  std::string mi_mode = "gdb";
+
+  std::deque<SetupCommands> setup_commands = {
+      {.description = "Enable pretty-printing for gdb",
+       .text = "-enable-pretty-printing",
+       .ignore_failures = true},
+      {.description = "Set Disassembly Flavor to Intel",
+       .text = "-gdb-set disassembly-flavor intel",
+       .ignore_failures = true}};
+
+  template <typename Archiver> void serialize(Archiver &ar) {
+    using namespace Serialization;
+    ar &AbstractArchiver::make_named_value_property("name", name);
+    ar &AbstractArchiver::make_named_value_property("type", type);
+    ar &AbstractArchiver::make_named_value_property("request", request);
+    ar &AbstractArchiver::make_named_value_property("program", program);
+    ar &AbstractArchiver::make_named_value_property("args", args);
+    ar &AbstractArchiver::make_named_value_property("stopAtEntry",
+                                                    stop_at_entry);
+    ar &AbstractArchiver::make_named_value_property("cwd", cwd);
+    ar &AbstractArchiver::make_named_value_property("environment", environment);
+    ar &AbstractArchiver::make_named_value_property("MIMode", mi_mode);
+  }
+};
+
+struct LaunchConfiguration {
+public:
+  std::deque<Configuration> configurations;
+
+  template <typename Archiver> void serialize(Archiver &ar) {
+    using namespace Serialization;
+    ar &AbstractArchiver::make_named_value_property("configurations",
+                                                    configurations);
+  }
+
+  inline static constexpr std::deque<LaunchConfiguration>
+  create_from(const BasicProject &project) {
+    std::deque<LaunchConfiguration> result;
+
+    for (auto target : project.targets) {
+      using target_type = std::decay_t<decltype(target)>();
+
+      if constexpr (std::is_same<target_type, double>::value) {
+      }
+
+      result.push_back(LaunchConfiguration{
+          // std::get<Core::Containers::String>(target);
+      });
+    }
+
+    return result;
+  };
+};

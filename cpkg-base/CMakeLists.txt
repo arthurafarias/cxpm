@@ -1,12 +1,9 @@
 cmake_minimum_required(VERSION 3.16)
 project(cpkg-base VERSION 0.1.0)
 
+file(GLOB_RECURSE ${PROJECT_NAME}_SOURCES src/*.cpp src/*.hpp)
 add_library(cpkg-base SHARED
-    src/AbstractCompiler.hpp
-    src/Package.hpp
-    src/Toolchain.hpp
-    src/Project.hpp
-    src/Variant.cpp src/Variant.hpp
+${${PROJECT_NAME}_SOURCES}
 )
 
 target_include_directories(cpkg-base PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)

@@ -1,26 +1,33 @@
 #pragma once
 
+#include <Core/Containers/String.hpp>
+
+#include <Utils/Print.hpp>
+
 #include <deque>
 #include <iomanip>
 #include <string>
 #include <type_traits>
 #include <variant>
 
-#include <Utils/Print.hpp>
-
+namespace Core::Containers {
 class Variant;
 class Variant
-    : public std::variant<int, double, std::string, std::deque<Variant>> {
+    : public std::variant<int, double, String, std::deque<Variant>> {
 public:
-  using BaseType = std::variant<int, double, std::string, std::deque<Variant>>;
-  using std::variant<int, double, std::string, std::deque<Variant>>::variant;
+  using BaseType = std::variant<int, double, String, std::deque<Variant>>;
+  using std::variant<int, double, String, std::deque<Variant>>::variant;
 
   template <typename Archiver> void constexpr serialize(const Archiver &ar) {
     using type = std::decay_t<decltype(ar)>();
-    ar & static_cast<type>(*this);
+    ar &static_cast<type>(*this);
   }
-  
 };
+} // namespace Core::Containers
+
+namespace Utils {
+
+using namespace Core::Containers;
 
 template <>
 inline std::ostream &print<Variant>(std::ostream &os, Variant values) {
@@ -41,8 +48,8 @@ inline std::ostream &print<const double &>(std::ostream &os,
 }
 
 template <>
-inline std::ostream &print<const std::string &>(std::ostream &os,
-                                                const std::string &value) {
+inline std::ostream &print<const String &>(std::ostream &os,
+                                                const String &value) {
   os << std::quoted(value);
   return os;
 }
@@ -81,3 +88,4 @@ print<const std::deque<Variant> &>(std::ostream &os,
 
   return os;
 }
+} // namespace Utils::Print
