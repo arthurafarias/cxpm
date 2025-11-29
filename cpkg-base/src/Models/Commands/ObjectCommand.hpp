@@ -9,7 +9,7 @@ namespace Models::Commands {
 struct ObjectCommand : public BasicCommand {
 
   static inline BasicCommand from(const BasicTarget &package,
-                                  const BasicToolchain &toolchain) {
+                                  const ToolchainDescriptor &toolchain) {
 
     std::deque<std::string> arguments;
 
@@ -48,7 +48,7 @@ struct ObjectCommand : public BasicCommand {
 
   static inline BasicCommand from(const std::string &path,
                                   const BasicTarget &package,
-                                  const BasicToolchain &toolchain) {
+                                  const ToolchainDescriptor &toolchain) {
 
     std::deque<std::string> arguments;
 

@@ -37,8 +37,18 @@ public:
   }
 
   inline static const std::string which(const char *filename) {
+
     auto folders = std::deque<std::string>();
     folders.append_range(Utils::Unix::EnvironmentManager::get("PATH"));
+
+    if (std::filesystem::path(filename).is_absolute()) {
+
+      if (std::filesystem::exists(filename)) {
+        return filename;
+      }
+
+      return "";
+    }
 
     for (auto folder : folders) {
 

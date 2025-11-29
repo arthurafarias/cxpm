@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Models/BasicTarget.hpp"
 #include <Core/Containers/Variant.hpp>
 #include <Core/Logging/LoggerManager.hpp>
 
@@ -13,6 +14,7 @@
 #include <Utils/Unix/EnvironmentManager.hpp>
 #include <Utils/Unix/ShellManager.hpp>
 
+#include <algorithm>
 #include <deque>
 #include <dlfcn.h>
 #include <exception>
@@ -24,46 +26,52 @@ using namespace Core::Containers;
 
 namespace Controllers {
 
-  using namespace Models;
+using namespace Models;
 
-class Toolchain;
+class ToolchainManager;
 
 namespace {
-static inline std::deque<std::shared_ptr<Toolchain>> toolchains;
-static inline std::shared_ptr<Toolchain> current_toolchain = nullptr;
+static inline std::deque<std::shared_ptr<ToolchainManager>> toolchains;
+static inline std::shared_ptr<ToolchainManager> current_toolchain = nullptr;
 } // namespace
 
-class Toolchain : public BasicToolchain {
+class ToolchainManager : public ToolchainDescriptor {
 public:
-  using BasicToolchain::BasicToolchain;
+  using ToolchainDescriptor::ToolchainDescriptor;
 
   template <typename... Args>
-  Toolchain(Args... args) : BasicToolchain(std::forward<Args>(args)...) {}
+  ToolchainManager(Args... args)
+      : ToolchainDescriptor(std::forward<Args>(args)...) {}
 
-  bool valid() {
+  static inline bool valid(std::shared_ptr<ToolchainDescriptor> toolchain) {
+    return valid(*toolchain);
+  }
+  static inline bool valid(const ToolchainDescriptor &toolchain) {
 
-    if (std::get<Core::Containers::String>(name).empty()) {
+    if (std::get<Core::Containers::String>(toolchain.name).empty()) {
       return false;
     }
 
     if (Utils::Unix::EnvironmentManager::which(
-            std::get<Core::Containers::String>(compiler_executable)) == "") {
+            std::get<Core::Containers::String>(
+                toolchain.compiler_executable)) == "") {
       return false;
     }
 
     if (Utils::Unix::EnvironmentManager::which(
-            std::get<Core::Containers::String>(linker_executable)) == "") {
+            std::get<Core::Containers::String>(toolchain.linker_executable)) ==
+        "") {
       return false;
     }
 
-    for (auto _dir : link_directories) {
+    for (auto _dir : toolchain.link_directories) {
       std::string directory = std::get<Core::Containers::String>(_dir);
       if (!std::filesystem::exists(directory)) {
         return false;
       }
     }
 
-    for (auto _dir : include_directories) {
+    for (auto _dir : toolchain.include_directories) {
       std::string directory = std::get<Core::Containers::String>(_dir);
       if (!std::filesystem::exists(directory)) {
         return false;
@@ -126,6 +134,7 @@ public:
 
       auto command =
           Models::Commands::ExecutableCommand::from(package, *this).to_string();
+      Core::Logging::LoggerManager::info("{}", command);
       auto [retval, out, err] = Utils::Unix::ShellManager::exec(command);
       if (retval != 0) {
         Core::Logging::LoggerManager::error("{}", out);
@@ -139,6 +148,7 @@ public:
 
       auto command = Models::Commands::SharedObjectCommand::from(package, *this)
                          .to_string();
+      Core::Logging::LoggerManager::info("{}", command);
       auto [retval, out, err] = Utils::Unix::ShellManager::exec(command);
       if (retval != 0) {
         Core::Logging::LoggerManager::error("{}", out);
@@ -152,6 +162,7 @@ public:
 
       auto command =
           Models::Commands::ArchiveCommand::from(package, *this).to_string();
+      Core::Logging::LoggerManager::info("{}", command);
       auto [retval, out, err] = Utils::Unix::ShellManager::exec(command);
       if (retval != 0) {
         Core::Logging::LoggerManager::error("{}", out);
@@ -165,6 +176,7 @@ public:
 
       auto command =
           Models::Commands::ObjectCommand::from(package, *this).to_string();
+      Core::Logging::LoggerManager::info("{}", command);
 
       auto [retval, out, err] = Utils::Unix::ShellManager::exec(command);
       if (retval != 0) {
@@ -257,7 +269,44 @@ public:
 
   int uninstall(const BasicProject &project) { return 0; }
 
-  static inline constexpr const std::shared_ptr<Toolchain> current() {
+  static inline constexpr const std::shared_ptr<ToolchainManager>
+  by_name(const std::string &name) {
+    auto result = std::find_if(
+        toolchains.begin(), toolchains.end(), [&name](auto toolchain) {
+          return name == std::get<String>(toolchain->name);
+        });
+
+    if (result != toolchains.end()) {
+      return *result;
+    }
+
+    return nullptr;
+  };
+
+  static inline constexpr const std::shared_ptr<ToolchainManager>
+  autoselect(const BasicTarget &target) {
+    auto result =
+        std::find_if(toolchains.begin(), toolchains.end(),
+                     [&target](std::shared_ptr<ToolchainDescriptor> toolchain) {
+                       auto _1 = target.language.as<String>();
+                       auto _2 = toolchain->language.as<String>();
+                       return target.language.as<String>() ==
+                              toolchain->language.as<String>();
+                     });
+
+    if (result != toolchains.end()) {
+      return *result;
+    }
+
+    return nullptr;
+  };
+
+  static inline constexpr const void
+  add(std::shared_ptr<ToolchainManager> toolchain) {
+    toolchains.push_back(toolchain);
+  }
+
+  static inline constexpr const std::shared_ptr<ToolchainManager> current() {
 
     if (toolchains.empty()) {
       autoscan(Utils::Unix::EnvironmentManager::get(
@@ -294,7 +343,7 @@ public:
 
         if (filename.string().ends_with(".so")) {
 
-          typedef Toolchain *(*getter_type)();
+          typedef ToolchainManager *(*getter_type)();
 
           void *handle = dlopen(std::filesystem::path(plugin).c_str(),
                                 RTLD_LAZY | RTLD_DEEPBIND);
@@ -308,8 +357,9 @@ public:
 
               auto toolchain = *get_toolchain();
 
-              if (toolchain.valid()) {
-                toolchains.push_back(std::make_shared<Toolchain>(toolchain));
+              if (ToolchainManager::valid(toolchain)) {
+                toolchains.push_back(
+                    std::make_shared<ToolchainManager>(toolchain));
               }
             }
 

@@ -4,11 +4,11 @@
 using namespace Models;
 
 auto toolchain = BasicToolchainFactory::instance()
-                     .name("gcc")
+                     .name("g++")
                      .version("generic")
-                     .language("c")
-                     .compiler_executable("/usr/bin/gcc")
-                     .linker_executable("/usr/bin/gcc")
+                     .compiler_executable("/usr/bin/g++")
+                     .linker_executable("/usr/bin/g++")
+                     .language("c++")
                      .compiler_options({"-pthread"})
                      .build();
 

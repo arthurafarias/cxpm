@@ -3,7 +3,7 @@
     "cmake.debugConfig": {
         "cwd": "${workspaceFolder}/examples/executable",
         "environment": [
-            { "name": "CPKG_BUILD_EXTRA_MODULES_PATH", "value": "${workspaceFolder}/build/toolchains/gcc"}
+            { "name": "CPKG_BUILD_EXTRA_MODULES_PATH", "value": "${workspaceFolder}/build/toolchains/gcc:${workspaceFolder}/build/toolchains/g++"}
         ],
         "args": [
             "--build",

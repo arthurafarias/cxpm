@@ -22,6 +22,8 @@ public:
     using type = std::decay_t<decltype(ar)>();
     ar &static_cast<type>(*this);
   }
+
+  template <typename Type> constexpr Type as() const { return std::get<Type>(*this); }
 };
 } // namespace Core::Containers
 

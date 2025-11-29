@@ -6,7 +6,6 @@ using namespace Models;
 auto toolchain = BasicToolchainFactory::instance()
                      .name("gcc")
                      .version("generic")
-                     .language("c")
                      .compiler_executable("/usr/bin/gcc")
                      .linker_executable("/usr/bin/gcc")
                      .compiler_options({"-pthread"})

@@ -12,3 +12,4 @@ add_subdirectory(cpkg-build)
 
 
 add_subdirectory(toolchains/gcc)
+add_subdirectory(toolchains/g++)

@@ -1,11 +1,16 @@
+#include "Core/Exceptions/RuntimeException.hpp"
+#include "Core/Logging/LoggerManager.hpp"
+#include "Models/BasicToolchain.hpp"
 #include <Controllers/Project.hpp>
 #include <Controllers/Toolchain.hpp>
 #include <Models/BasicTarget.hpp>
 #include <Utils/Unix/EnvironmentManager.hpp>
 
 #include <algorithm>
+#include <exception>
 #include <filesystem>
 #include <iostream>
+#include <stdexcept>
 #include <string>
 
 #include <dlfcn.h>
@@ -73,7 +78,70 @@ int main(int argc, char *argv[]) {
     auto project_manifest = Controllers::Project::load_from_manifest(
         std::filesystem::path(build_path).append("project-manifest.so"));
 
-    return Controllers::Toolchain::current()->build(project_manifest);
+    for (auto target : project_manifest->targets) {
+      try {
+
+        if (!std::holds_alternative<Models::ToolchainDescriptor>(target)) {
+          // ignore other than toolchains
+          continue;
+        }
+
+        auto toolchain = std::make_shared<Controllers::ToolchainManager>(
+            std::get<Models::ToolchainDescriptor>(target));
+
+        if (Controllers::ToolchainManager::valid(toolchain)) {
+          Controllers::ToolchainManager::add(toolchain);
+        }
+
+      } catch (std::exception &ex) {
+        Core::Logging::LoggerManager::error(
+            "Couldn't append toolchain specified in project {}", ex.what());
+      }
+    }
+
+    for (auto target_variant : project_manifest->targets) {
+      try {
+
+        if (!std::holds_alternative<Models::BasicTarget>(target_variant)) {
+          // ignore other than toolchains
+          continue;
+        }
+
+        auto target = std::get<Models::BasicTarget>(target_variant);
+
+        auto toolchain = Controllers::ToolchainManager::autoselect(target);
+
+        if (target.toolchain.as<String>() != "") {
+          Controllers::ToolchainManager::by_name(
+              std::get<String>(target.toolchain));
+          throw Core::Exceptions::RuntimeException(
+              "Failed to find toolchain {} for project {}",
+              std::get<String>(target.toolchain),
+              std::get<String>(target.name));
+        }
+
+        if (toolchain == nullptr) {
+          throw Core::Exceptions::RuntimeException(
+              "Couldn't select a valid toolchain for project {} with language "
+              "{}",
+              target.name.as<String>(), target.language.as<String>());
+        }
+
+        if (toolchain->build(target) != 0) {
+          throw Core::Exceptions::RuntimeException(
+              "Couldn't build project {} with language {} and toolchain {}",
+              target.name.as<String>(), target.language.as<String>(),
+              toolchain->name.as<String>());
+        }
+
+      } catch (std::exception &ex) {
+        Core::Logging::LoggerManager::error("Couldn't build the project: {}",
+                                            ex.what());
+      }
+    }
+
+    // return Controllers::Toolchain::autoselect(project_manifest)
+    //     ->build(project_manifest);
   }
 
   if (args[1] == "--install") {
@@ -85,7 +153,7 @@ int main(int argc, char *argv[]) {
     auto project_manifest = Controllers::Project::load_from_manifest(
         std::filesystem::path(build_path).append("project-manifest.so"));
 
-    Controllers::Toolchain::current()->install(project_manifest);
+    Controllers::ToolchainManager::current()->install(project_manifest);
 
     return 0;
   }

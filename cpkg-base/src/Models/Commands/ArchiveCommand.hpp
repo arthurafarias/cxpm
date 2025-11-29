@@ -8,7 +8,7 @@ namespace Models::Commands {
 
 struct ArchiveCommand : public BasicCommand {
   static inline BasicCommand from(const BasicTarget &package,
-                             const BasicToolchain &toolchain) {
+                             const ToolchainDescriptor &toolchain) {
 
     std::deque<std::string> arguments;
 

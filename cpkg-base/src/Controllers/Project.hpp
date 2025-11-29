@@ -118,7 +118,7 @@ public:
       return -1;
     }
 
-    if (Toolchain::current()->build(ManifestPackage) != 0) {
+    if (ToolchainManager::current()->build(ManifestPackage) != 0) {
       return -1;
     }
 

@@ -16,22 +16,20 @@ Here is an example a project organized as:
 would have a package.cpp as following
 
 ```cpp
-#include <Project.hpp>
+#include <Models/BasicProject.hpp>
 #include <Models/BasicTarget.hpp>
-#include <BuildManager.hpp>
 
-Package descriptor = {
-    .name = "example-executable",
-    .version = "1.0.0",
-    .type = "executable",
-    .sources = {"src/main.cpp"}
-};
+auto descriptor = Models::BasicTargetFactory::create()
+                      .name("example-executable")
+                      .version("1.0.0")
+                      .type("executable")
+                      .sources({"src/main.cpp", "src/source0.cpp",
+                                "src/source1.cpp", "src/source2.cpp"})
+                      .sources({"src/source3.cpp"})
+                      .build();
 
-Project project = {
-    .targets = {
-        descriptor
-    }
-};
+// Models::BasicProject project = {.targets = {descriptor}};
+auto project = Models::BasicProjectFactory::create().add(descriptor).build();
 ```
 
 In my perspective, to make this work, the cpkg-build application would be responsible of creating the stubs to generate a shared-library, that would plug in the build system and compile the files.
