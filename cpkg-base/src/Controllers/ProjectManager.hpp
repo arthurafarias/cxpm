@@ -3,8 +3,9 @@
 #include "Core/Containers/Collection.hpp"
 #include "Core/Exceptions/RuntimeException.hpp"
 #include "Models/BasicProjectDescriptor.hpp"
-#include <Controllers/ToolchainManager.hpp>
 #include "Models/ProjectDescriptor.hpp"
+#include "Models/TargetDescriptor.hpp"
+#include <Controllers/ToolchainManager.hpp>
 #include <Core/Containers/String.hpp>
 #include <dlfcn.h>
 
@@ -49,10 +50,10 @@ struct ProjectManager {
 
   static inline Models::BasicProjectDescriptor
   load_from_manifest(const Core::Containers::String &manifest_path) {
-    
+
     typedef Models::ProjectDescriptor *(*getter_type)();
 
-    void *handle = dlopen("./project-manifest.so", RTLD_LAZY | RTLD_DEEPBIND);
+    void *handle = dlopen("./project-manifest.so", RTLD_NOW | RTLD_DEEPBIND);
 
     if (handle == nullptr) {
       throw Core::Exceptions::RuntimeException(
@@ -104,15 +105,17 @@ struct ProjectManager {
   Core::Containers::Collection<Models::BasicProjectDescriptor> projects;
 
 private:
-  static inline Models::BasicTargetDescriptor ManifestPackage = {
-      .name = "project-manifest",
-      .type = "shared-library",
-      .dependencies = {"cpkg-base"},
-      .include_directories = {CPKG_BUILD_INSTALL_HEADERS_PATH,
-                              CPKG_BUILD_HEADERS_PATH, CPKG_BASE_HEADERS_PATH,
-                              CPKG_BASE_INSTALL_HEADERS_PATH},
-      .sources = {"package.cpp", "package.loader.cpp"},
-      .options = {"-std=c++23", "-Wall", "-Werror", "-pedantic"}};
+
+  static inline Models::TargetDescriptor ManifestPackage =
+      Models::TargetDescriptor()
+          .name_set("project-manifest")
+          .type_set("shared-library")
+          .include_directories_append(
+              {CPKG_BUILD_INSTALL_HEADERS_PATH, CPKG_BUILD_HEADERS_PATH,
+               CPKG_BASE_HEADERS_PATH, CPKG_BASE_INSTALL_HEADERS_PATH})
+          .options_append({"-std=c++23", "-Wall", "-Werror", "-pedantic"})
+          .sources_append({"package.cpp", "package.loader.cpp"})
+          .create();
 
   static inline const std::string BasicProjectLoaderSource = R"(
     #include <Models/BasicProjectDescriptor.hpp>

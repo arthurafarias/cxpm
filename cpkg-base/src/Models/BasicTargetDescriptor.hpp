@@ -1,22 +1,17 @@
 #pragma once
 
+#include "Models/PackageDescriptor.hpp"
 #include <Core/Containers/Collection.hpp>
 #include <Core/Containers/String.hpp>
 
 using namespace Core::Containers;
 namespace Models {
-struct BasicTargetDescriptor {
-  String name = "";
-  String version = "";
-  String type = "";
+struct BasicTargetDescriptor : public PackageDescriptor {
+  String type = "executable";
   String url = "";
   String language = "c++";
-  String toolchain = "";
-  Collection<String> dependencies;
-  Collection<String> include_directories;
+  String toolchain = "g++";
   Collection<String> sources;
-  Collection<String> options;
-  Collection<String> link_libraries;
-  Collection<String> link_directories;
+  Collection<String> dependencies;
 };
 } // namespace Models

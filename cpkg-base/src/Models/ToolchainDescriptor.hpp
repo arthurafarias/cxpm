@@ -1,15 +1,16 @@
 #pragma once
 
+#include "Core/Exceptions/NotImplementedException.hpp"
 #include "Core/Logging/LoggerManager.hpp"
 #include "Models/ToolchainDescriptorFactoryInterface.hpp"
 #include "Models/ToolchainInterface.hpp"
 #include "Utils/Unix/ShellManager.hpp"
-#include <Models/BasicProjectDescriptor.hpp>
-#include <Models/BasicToolchainDescriptor.hpp>
-
+#include <Controllers/PkgConfigManager.hpp>
 #include <Core/Containers/Collection.hpp>
 #include <Core/Containers/String.hpp>
 #include <Core/Containers/Variant.hpp>
+#include <Models/BasicProjectDescriptor.hpp>
+#include <Models/BasicToolchainDescriptor.hpp>
 #include <future>
 #include <memory>
 
@@ -50,7 +51,7 @@ public:
     auto link_directories_arguments =
         target.link_directories.transform<Collection<String>>(
             [this](const auto &el) {
-              return Collection<String>{include_directory_prefix, el};
+              return Collection<String>{link_directory_prefix, el};
             });
 
     for (auto link_directory_argument : link_directories_arguments) {
@@ -60,7 +61,7 @@ public:
     auto link_libraries_arguments =
         target.link_libraries.transform<Collection<String>>(
             [this](const auto &el) {
-              return Collection<String>{include_directory_prefix, el};
+              return Collection<String>{link_library_prefix, el};
             });
 
     for (auto link_library_argument : link_libraries_arguments) {
@@ -112,7 +113,7 @@ public:
     auto link_directories_arguments =
         target.link_directories.transform<Collection<String>>(
             [this](const auto &el) {
-              return Collection<String>{include_directory_prefix, el};
+              return Collection<String>{link_directory_prefix, el};
             });
 
     for (auto link_directory_argument : link_directories_arguments) {
@@ -122,7 +123,7 @@ public:
     auto link_libraries_arguments =
         target.link_libraries.transform<Collection<String>>(
             [this](const auto &el) {
-              return Collection<String>{include_directory_prefix, el};
+              return Collection<String>{link_library_prefix, el};
             });
 
     for (auto link_library_argument : link_libraries_arguments) {
@@ -177,7 +178,7 @@ public:
     auto link_directories_arguments =
         target.link_directories.transform<Collection<String>>(
             [this](const auto &el) {
-              return Collection<String>{include_directory_prefix, el};
+              return Collection<String>{link_directory_prefix, el};
             });
 
     for (auto link_directory_argument : link_directories_arguments) {
@@ -187,7 +188,7 @@ public:
     auto link_libraries_arguments =
         target.link_libraries.transform<Collection<String>>(
             [this](const auto &el) {
-              return Collection<String>{include_directory_prefix, el};
+              return Collection<String>{link_library_prefix, el};
             });
 
     for (auto link_library_argument : link_libraries_arguments) {
@@ -234,13 +235,23 @@ public:
     return 0;
   }
 
-  virtual int build(const BasicTargetDescriptor &package) override {
+  virtual int build(const BasicTargetDescriptor &input) override {
+
+    auto package = input;
 
     using promise_type =
         std::shared_ptr<std::promise<std::tuple<int, String, String>>>;
 
-    std::deque<std::tuple<String, promise_type>> results;
+    for (auto dependency : package.dependencies) {
 
+      auto result = Controllers::PackageConfigManager::find_package(dependency);
+      package.include_directories.append_range(result.include_directories);
+      package.link_directories.append_range(result.link_directories);
+      package.link_libraries.append_range(result.link_libraries);
+      package.options.append_range(result.options);
+    }
+
+    std::deque<std::tuple<String, promise_type>> results;
     for (auto source : package.sources) {
       auto result = object_build(source, package);
       Core::Logging::LoggerManager::debug("{}", result);
@@ -267,96 +278,14 @@ public:
   }
 
   virtual int install(const Models::BasicProjectDescriptor &target) override {
+    throw Core::Exceptions::NotImplementedException();
     return 0;
   }
 
   virtual int install(const Models::BasicTargetDescriptor &target) override {
+    throw Core::Exceptions::NotImplementedException();
     return 0;
   }
-
-  // virtual int install(const BasicProjectDescriptor &project) override {
-
-  //   // for (auto target : project.targets) {
-
-  //   //   if (std::get<String>((target).type) ==
-  //   //       "shared-library") {
-
-  //   //     String name =
-  //   std::get<String>((target).name);
-
-  //   //     String prefix =
-  //   //     std::get<String>(install_prefix);
-  //   //     // Install the SO
-  //   //     std::filesystem::copy(std::filesystem::path(name).append(".so"),
-  //   // std::filesystem::path(prefix).append("/lib"));
-
-  //   //     using directory_iterator =
-  //   //         std::filesystem::recursive_directory_iterator;
-
-  //   //     for (auto _include_directory : (target).include_directories) {
-
-  //   //       String include_directory =
-  //   //           std::get<String>(_include_directory);
-
-  //   //       /// RATIONALE: (08:50 26/11/2025)
-  //   //       /// failed to install, cannot install files outside project
-  //   //       /// directory! this restriction is made to avoid confusion with
-  //   //       /// include_directories you can set your includes based on how
-  //   you
-  //   //       do
-  //   //       /// stuff, we consider headers in include directories within
-  //   //       project
-  //   //       /// as installable to avoid unnecessary customizations that
-  //   other
-  //   //       /// build systems do!
-
-  //   //       // if
-  //   (!include_directory.starts_with(target.project_directory()))
-  //   //       {
-  //   //       //   /// TODO: warn ignoring include
-  //   //       //   continue;
-  //   //       // }
-
-  //   //       for (auto _file : directory_iterator(include_directory)) {
-
-  //   //         auto file = _file;
-
-  //   //         /// RATIONALE: (08:55 26/11/2025)
-  //   //         /// uniform prefix is easy to form and search, when
-  //   //         /// dealing with dependencies, dont' look for headers other
-  //   than
-  //   //         /// <prefix>/include/<pn>
-  //   //         if (file.path().filename().string().ends_with("h")) {
-
-  //   //           String name =
-  //   //               std::get<String>((target).name);
-  //   //           String prefix =
-  //   //               std::get<String>(install_prefix);
-
-  //   //           std::filesystem::copy(file, std::filesystem::path(prefix)
-  //   //                                           .append("/include")
-  //   //                                           .append(name));
-  //   //         }
-
-  //   //         if (file.path().filename().string().ends_with("hpp")) {
-
-  //   //           String name =
-  //   //               std::get<String>((target).name);
-  //   //           String prefix =
-  //   //               std::get<String>(install_prefix);
-
-  //   //           std::filesystem::copy(file, std::filesystem::path(prefix)
-  //   //                                           .append("/include")
-  //   //                                           .append(name));
-  //   //         }
-  //   //       }
-  //   //     }
-  //   //   }
-  //   // }
-  //   return 0;
-  // }
-
-  // int uninstall(const BasicProjectDescriptor &project) override { return 0; }
 };
 
 } // namespace Models

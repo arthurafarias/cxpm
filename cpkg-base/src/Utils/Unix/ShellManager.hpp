@@ -1,9 +1,11 @@
 #pragma once
 
 #include "Core/Containers/String.hpp"
+#include "Core/Logging/LoggerManager.hpp"
 #include <Core/Threading/ThreadPool.hpp>
 #include <Core/Containers/Tuple.hpp>
 
+#include <cstring>
 #include <format>
 #include <future>
 #include <memory>
@@ -30,11 +32,13 @@ public:
     Core::Containers::String result = "";
 
     char buffer[1024];
+    ::memset(buffer, '\0', sizeof(buffer));
 
     if (shell) {
-      command = std::format("/usr/bin/bash -c \"{}\"", command);
+      command = std::format("/usr/bin/bash -c \"{}\"", command.c_str());
     }
 
+    Core::Logging::LoggerManager::debug("{}", command.c_str());
     auto fp = ::popen(command.c_str(), "r");
 
     if (fp == nullptr) {
@@ -48,7 +52,10 @@ public:
 
     auto value = pclose(fp);
 
-    return {value, result, ""};
+    // auto trimmed = result.trim();
+    auto trimmed = String::trim(result);
+
+    return {value, trimmed, ""};
   }
 
   static inline const std::shared_ptr<std::promise<

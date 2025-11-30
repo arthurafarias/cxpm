@@ -11,8 +11,9 @@
 #include <dlfcn.h>
 #include <filesystem>
 
-namespace Controllers {
 using namespace Models;
+
+namespace Controllers {
 class ToolchainManager {
 public:
   static inline bool valid(const BasicToolchainDescriptor &toolchain) {

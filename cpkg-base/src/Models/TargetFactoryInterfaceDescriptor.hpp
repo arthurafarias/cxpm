@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Models/BasicTargetDescriptor.hpp"
+#include "Models/PackageDescriptor.hpp"
 #include <Core/Containers/String.hpp>
 using namespace Core::Containers;
 namespace Models {
@@ -30,11 +31,7 @@ public:
     this->type = type;
     return *this;
   }
-  constexpr TargetDescriptorInterface<DerivedType> &
-  dependencies_append(const Collection<String> &dependencies) {
-    this->dependencies.append_range(dependencies);
-    return *this;
-  }
+
   constexpr TargetDescriptorInterface<DerivedType> &
   options_append(const Collection<String> &options) {
     this->options.append_range(options);
@@ -57,6 +54,18 @@ public:
   constexpr TargetDescriptorInterface<DerivedType> &
   include_directories_append(const Collection<String> &paths) {
     this->include_directories.append_range(paths);
+    return *this;
+  }
+
+  constexpr TargetDescriptorInterface<DerivedType> &
+  dependencies_append(const String &dependency) {
+    this->dependencies.push_back(dependency);
+    return *this;
+  }
+
+  constexpr TargetDescriptorInterface<DerivedType> &
+  dependencies_append(const Collection<String> &paths) {
+    this->dependencies.append_range(paths);
     return *this;
   }
 

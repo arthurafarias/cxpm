@@ -24,5 +24,11 @@ public:
 
     return std::move(retval);
   }
+
+
+  // void append_range(const Collection<ContainedType>& element) const {
+  //   auto casted = static_cast<std::deque<ContainedType>>(element);
+  //   append_range(casted);
+  // }
 };
 } // namespace Core::Containers

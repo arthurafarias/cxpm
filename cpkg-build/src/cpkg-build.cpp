@@ -103,10 +103,7 @@ int main(int argc, char *argv[]) {
         auto toolchain = Controllers::ToolchainManager::autoselect(target);
 
         if (target.toolchain != "") {
-          Controllers::ToolchainManager::by_name(target.toolchain);
-          throw Core::Exceptions::RuntimeException(
-              "Failed to find toolchain {} for project {}", target.toolchain,
-              target.name);
+          toolchain = Controllers::ToolchainManager::by_name(target.toolchain);
         }
 
         if (toolchain.build(target) != 0) {

@@ -16,7 +16,7 @@ public:
   }
 
   UniqueLock<Mutex> acquire_lock() const {
-    return std::move(UniqueLock<Mutex>(*_mutex));
+    return UniqueLock<Mutex>(*_mutex);
   }
   private:
   SharedPointer<Mutex> _mutex;
