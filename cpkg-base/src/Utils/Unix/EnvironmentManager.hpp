@@ -26,9 +26,13 @@ public:
   get(const char *__str) {
     Core::Containers::Collection<Core::Containers::String> result;
     const auto &__env = getenv(__str);
+
+    if (__env == nullptr) {
+      return Collection<String>();
+    }
+    
     auto _result = strdup(__env);
     auto _ptr = _result;
-
     auto token = strtok(_ptr, ";:");
 
     while (token != NULL) {
@@ -70,7 +74,8 @@ public:
     return "";
   }
 
-  inline static const Core::Containers::String which(const Core::Containers::String &str) {
+  inline static const Core::Containers::String
+  which(const Core::Containers::String &str) {
     return which(str.c_str());
   }
 };

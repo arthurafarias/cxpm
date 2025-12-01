@@ -11,21 +11,12 @@
 
 #include <fstream>
 
-// configs
-#ifndef CPKG_BUILD_HEADERS_PATH
-#define CPKG_BUILD_HEADERS_PATH "./"
+#ifndef CPKG_BASE_INSTALL_PREFIX
+#define CPKG_BASE_INSTALL_PREFIX "/usr/local"
 #endif
 
-#ifndef CPKG_BUILD_INSTALL_HEADERS_PATH
-#define CPKG_BUILD_INSTALL_HEADERS_PATH "/usr/share/cpkg-build/private-headers/"
-#endif
-
-#ifndef CPKG_BASE_HEADERS_PATH
-#define CPKG_BASE_HEADERS_PATH "./"
-#endif
-
-#ifndef CPKG_BASE_INSTALL_HEADERS_PATH
-#define CPKG_BASE_INSTALL_HEADERS_PATH "/usr/share/cpkg-base/private-headers/"
+#ifndef CPKG_BASE_SOURCE_PREFIX
+#define CPKG_BASE_SOURCE_PREFIX "/usr/src/cpkg/cpkg-base"
 #endif
 
 namespace Controllers {
@@ -45,7 +36,7 @@ class ProjectManager final {
       return -1;
     }
 
-    auto [result, commands] = Controllers::ToolchainManager::current().build(ManifestPackage);
+    auto [result, commands] = Controllers::ToolchainManager::current(extra_toolchain_search_paths).build(ManifestPackage);
 
     if (result != 0) {
       return -1;
@@ -117,8 +108,12 @@ private:
           .name_set("project-manifest")
           .type_set("shared-library")
           .include_directories_append(
-              {CPKG_BUILD_INSTALL_HEADERS_PATH, CPKG_BUILD_HEADERS_PATH,
-               CPKG_BASE_HEADERS_PATH, CPKG_BASE_INSTALL_HEADERS_PATH})
+              {
+                String(CPKG_BASE_INSTALL_PREFIX) + "/lib/cpkg-base/headers",
+                String(CPKG_BASE_INSTALL_PREFIX) + "/share/cpkg-base/headers",
+                String(CPKG_BASE_INSTALL_PREFIX) + "/include/cpkg-base",
+                String(CPKG_BASE_SOURCE_PREFIX) + "/src",
+              })
           .options_append({"-std=c++23", "-Wall", "-Werror", "-pedantic"})
           .sources_append({"package.cpp", "package.loader.cpp"})
           .create();

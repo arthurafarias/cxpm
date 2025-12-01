@@ -18,6 +18,10 @@
 
 #include <dlfcn.h>
 
+#ifndef CPKG_BUILD_INSTALL_PREFIX
+#define CPKG_BUILD_INSTALL_PREFIX "/usr"
+#endif
+
 int print_usage() {
   std::cout << R"(
 Usage: cpkg-build [options]
@@ -35,7 +39,7 @@ int main(int argc, char *argv[]) {
 
   auto build_path = std::filesystem::current_path();
 
-  auto extra_modules_path =
+  auto modules_search_paths =
       Utils::Unix::EnvironmentManager::get("CPKG_BUILD_EXTRA_MODULES_PATH");
 
   Core::Logging::LoggerManager::stream_set(
@@ -47,6 +51,27 @@ int main(int argc, char *argv[]) {
     args[1] = "--help";
   }
 
+  auto extra_module_path_add = [&modules_search_paths](std::string try_path) {
+    if (std::filesystem::exists(try_path) &&
+        std::filesystem::is_directory(try_path)) {
+      using directory_iterator = std::filesystem::directory_iterator;
+      for (auto dir : directory_iterator(try_path)) {
+        if (dir.is_directory()) {
+          modules_search_paths.push_back(dir.path().string());
+        }
+      }
+    }
+  };
+
+  extra_module_path_add("/usr/share/cpkg/toolchains");
+  extra_module_path_add("/usr/local/share/cpkg/toolchains");
+
+  extra_module_path_add("/usr/lib/cpkg/toolchains");
+  extra_module_path_add("/usr/local/lib/cpkg/toolchains");
+
+  extra_module_path_add(String(CPKG_BUILD_INSTALL_PREFIX) + "/lib/cpkg/toolchains");
+  extra_module_path_add(String(CPKG_BUILD_INSTALL_PREFIX) + "/share/cpkg/toolchains");
+
   if (std::find_if(args.begin(), args.end(),
                    [](auto str) { return str == "--path"; }) != args.end()) {
   }
@@ -55,19 +80,19 @@ int main(int argc, char *argv[]) {
         return str == "--generate";
       }) != args.end()) {
     return Controllers::ProjectManager::build_manifest(build_path.string(),
-                                                       extra_modules_path);
+                                                       modules_search_paths);
   }
 
   if (std::find_if(args.begin(), args.end(),
                    [](auto str) { return str == "--clean"; }) != args.end()) {
 
     if (Controllers::ProjectManager::build_manifest(build_path.string(),
-                                                    extra_modules_path) != 0) {
+                                                    modules_search_paths) != 0) {
       return -1;
     }
 
     if (Controllers::ProjectManager::clean(build_path.string(),
-                                           extra_modules_path) != 0) {
+                                           modules_search_paths) != 0) {
       return -1;
     }
 
@@ -77,7 +102,7 @@ int main(int argc, char *argv[]) {
   if (args[1] == "--build") {
 
     if (Controllers::ProjectManager::build_manifest(build_path.string(),
-                                                    extra_modules_path) != 0) {
+                                                    modules_search_paths) != 0) {
       return -1;
     }
 
@@ -129,7 +154,7 @@ int main(int argc, char *argv[]) {
 
   if (args[1] == "--install") {
     if (Controllers::ProjectManager::build_manifest(build_path.string(),
-                                                    extra_modules_path) != 0) {
+                                                    modules_search_paths) != 0) {
       return -1;
     }
 
@@ -138,7 +163,7 @@ int main(int argc, char *argv[]) {
             .append("project-manifest.so")
             .string());
 
-    Controllers::ToolchainManager::current().install(project_manifest);
+    Controllers::ToolchainManager::current(modules_search_paths).install(project_manifest);
 
     return 0;
   }

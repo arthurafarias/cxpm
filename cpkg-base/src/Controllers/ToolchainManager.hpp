@@ -85,11 +85,10 @@ public:
     toolchains.push_back(toolchain);
   }
 
-  static inline constexpr Toolchain current() {
+  static inline constexpr Toolchain current(const Collection<String>& extra_modules_paths) {
 
     if (current_toolchain != toolchains.end()) {
-      autoscan(Utils::Unix::EnvironmentManager::get(
-          "CPKG_BUILD_EXTRA_MODULES_PATH"));
+      autoscan(extra_modules_paths);
       current_toolchain = toolchains.begin();
     }
 
@@ -105,8 +104,8 @@ public:
   autoscan(Collection<String> extra_paths = {}) {
 
     Collection<String> search_paths = {
-        "/usr/share/cpkg-build/toolchains",
-        "/usr/local/share/cpkg-build/toolchains"};
+        "/usr/share/cpkg/toolchains",
+        "/usr/local/share/cpkg/toolchains"};
 
     search_paths.append_range(extra_paths);
 

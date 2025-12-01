@@ -10,7 +10,7 @@ auto example = Models::Target()
                    .sources_append({"src/source3.cpp"})
                    .options_append({"-fPIE", "-fstack-protector-all"})
                    .link_libraries_append({"m"})
-                   .include_directories_append({})
+                   .include_directories_append({"src"})
                    .dependencies_append("gstreamer-1.0")
                    .create();
 
