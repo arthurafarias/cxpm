@@ -1,7 +1,10 @@
 #pragma once
 
-#include <Modules/Serialization/ValueDescriptor.hpp>
 #include <Core/Containers/String.hpp>
+#include <Modules/Serialization/ValueDescriptor.hpp>
+#include <ios>
+#include <streambuf>
+#include <syncstream>
 
 using namespace Core::Containers;
 
@@ -12,6 +15,16 @@ protected:
   explicit AbstractArchiver() {}
 
 public:
+  virtual void object_start(MultipartElementTag tag) = 0;
+  virtual void object_end(MultipartElementTag tag) = 0;
+  virtual void array_start(MultipartElementTag tag) = 0;
+  virtual void array_end(MultipartElementTag tag) = 0;
+
+  template <typename TypeName> void key_value(const KeyValueTag<TypeName> &tag);
+
+  template <typename TypeName> void value(const ValueTag<TypeName> &tag);
+
+  virtual void multipart(const MultipartElementTag &tag) = 0;
 
   static inline MultipartElementTag make_object_start(std::string name) {
     return {name, MultipartElementType::Object, true};
@@ -37,4 +50,4 @@ public:
 
   virtual String to_string() = 0;
 };
-} // namespace Serialization
+} // namespace Modules::Serialization

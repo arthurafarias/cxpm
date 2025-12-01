@@ -66,28 +66,28 @@ public:
     return source.substr(0,
                          end + 1); // end + 1 because substr length is exclusive
   }
+
+  static inline Collection<String> split(String haystack, String needle) {
+    Collection<String> splitted;
+    size_t position_last = 0;
+    size_t position = 0;
+
+    while ((position = haystack.find(needle, position)) != (size_t)(-1)) {
+      auto element = String::trim(
+          haystack.substr(position_last, position - position_last));
+      splitted.push_back(element);
+      position_last = position + needle.length(); // Skip past the needle
+      position++; // Move past the needle for the next search
+    }
+
+    // Add the remainder of the string after the last split
+    if (position_last < haystack.size()) {
+      auto element = String::trim(haystack.substr(position_last));
+      splitted.push_back(element);
+    }
+
+    return splitted;
+  }
 };
-
-inline Collection<String> split(String haystack, String needle) {
-  Collection<String> splitted;
-  size_t position_last = 0;
-  size_t position = 0;
-
-  while ((position = haystack.find(needle, position)) != (size_t)(-1)) {
-    auto element = String::trim(haystack.substr(position_last, position - position_last));
-    splitted.push_back(element
-        );
-    position_last = position + needle.length(); // Skip past the needle
-    position++; // Move past the needle for the next search
-  }
-
-  // Add the remainder of the string after the last split
-  if (position_last < haystack.size()) {
-    auto element = String::trim(haystack.substr(position_last));
-    splitted.push_back(element);
-  }
-
-  return splitted;
-}
 
 } // namespace Core::Containers

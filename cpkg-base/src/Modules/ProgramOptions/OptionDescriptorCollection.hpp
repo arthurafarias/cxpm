@@ -2,10 +2,10 @@
 
 #include "Core/Containers/Collection.hpp"
 #include "Modules/Serialization/AbstractArchiver.hpp"
-#include <Modules/ProgramOptions/Option.hpp>
+#include <Modules/ProgramOptions/OptionDescriptor.hpp>
 
 namespace Modules::ProgramOptions {
-class OptionsCollection
+class OptionsDescriptorCollection
     : public Core::Containers::Collection<OptionDescriptor> {
 public:
   String name;
@@ -13,7 +13,7 @@ public:
 };
 
 template <typename Archiver>
-inline Archiver &operator%(Archiver &ar, const OptionsCollection &collection) {
+inline Archiver &operator%(Archiver &ar, const OptionsDescriptorCollection &collection) {
   ar % Serialization::AbstractArchiver::make_object_start("OptionsCollection");
   ar % Serialization::AbstractArchiver::make_named_value_property(
            "name", collection.name);

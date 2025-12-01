@@ -12,29 +12,30 @@ namespace Modules::Serialization {
 
 class JsonOutputArchiver : public AbstractArchiver {
 public:
-  explicit JsonOutputArchiver(std::ostream &ostream) : stream_property(ostream) {}
+  explicit JsonOutputArchiver(std::ostream &ostream)
+      : stream_property(ostream) {}
 
   std::osyncstream stream() { return std::osyncstream(stream_property); }
 
   virtual String to_string() override { return ""; }
 
-  void object_start(MultipartElementTag tag) {
+  void object_start(MultipartElementTag tag) override {
     stream() << "{";
     multipart_element_stack.push_front(tag);
   }
 
-  void object_end(MultipartElementTag tag) {
+  void object_end(MultipartElementTag tag) override {
     validate_tag(tag);
     stream() << "}";
     multipart_element_stack.pop_front();
   }
 
-  void array_start(MultipartElementTag tag) {
+  void array_start(MultipartElementTag tag) override {
     stream() << "[";
     multipart_element_stack.push_front(tag);
   }
 
-  void array_end(MultipartElementTag tag) {
+  void array_end(MultipartElementTag tag) override {
     validate_tag(tag);
     stream() << "]";
     multipart_element_stack.pop_front();
@@ -52,7 +53,7 @@ public:
     (*this) % ValueTag{tag.value};
   }
 
-  void multipart(const MultipartElementTag &tag) {
+  void multipart(const MultipartElementTag &tag) override {
     if (tag.start) {
       multipart_element_stack.push_front(tag);
     } else {
@@ -112,7 +113,7 @@ private:
 
 private:
   Collection<MultipartElementTag> multipart_element_stack;
-  std::ostream& stream_property;
+  std::ostream &stream_property;
 };
 
 template <>
@@ -179,4 +180,4 @@ operator%(JsonOutputArchiver &ar, const Collection<ElementType> &collection) {
   return ar;
 }
 
-} // namespace Serialization
+} // namespace Modules::Serialization
