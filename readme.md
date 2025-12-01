@@ -1,5 +1,7 @@
 # cppkg
 
+Because I don't like to search on stack overflow how to use every new function on other package manager for C++.
+
 This is a simple project on a new package manager that don't rely on any declarative language or other than C++. It is heavely inspired in Julia, and Swift Languages. That uses the own language to declare packages.
 
 So the structure by now is simple and I didn't investigate how to unroll dependency trees and whatever. It's just a concept and a simple implementation on what I think it should be.
@@ -51,6 +53,7 @@ To compile it using this concept, you should build this project using CMake.
 ```bash
 mkdir build
 cd build && cmake ..
+sudo make install
 ```
 
 In the build folder it will generate cpkg-build utility.
@@ -58,7 +61,7 @@ In the build folder it will generate cpkg-build utility.
 ```
 cd ..
 cd examples/executable
-../../build/cpkg-build/cpkg-build --build .
+cpkg-build --build .
 ```
 
 The output should be like the following
@@ -115,3 +118,4 @@ auto example = Models::TargetDescriptor()
 
 auto project = Models::ProjectDescriptor().add(example).create();
 ```
+
