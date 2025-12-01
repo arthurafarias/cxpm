@@ -1,5 +1,6 @@
 #include "Models/Toolchain.hpp"
-#include "Serialization/JsonOutputArchiver.hpp"
+#include "Modules/Serialization/JsonOutputArchiver.hpp"
+#include "Views/ApplicationView.hpp"
 #include <Controllers/ProjectManager.hpp>
 #include <Controllers/ToolchainManager.hpp>
 #include <Core/Containers/Collection.hpp>
@@ -9,6 +10,7 @@
 #include <Utils/Unix/EnvironmentManager.hpp>
 
 #include <algorithm>
+#include <cstdlib>
 #include <exception>
 #include <filesystem>
 #include <fstream>
@@ -34,8 +36,17 @@ Usage: cpkg-build [options]
 
 int main(int argc, char *argv[]) {
 
+
+  Views::ApplicationView application(argc, argv);
+  return application.run();
+
   Core::Containers::Collection<Core::Containers::String> args(argv,
                                                               argv + argc);
+
+  if (args.size() < 2) {
+    print_usage();
+    return EXIT_FAILURE;
+  }
 
   auto build_path = std::filesystem::current_path();
 
@@ -69,8 +80,10 @@ int main(int argc, char *argv[]) {
   extra_module_path_add("/usr/lib/cpkg/toolchains");
   extra_module_path_add("/usr/local/lib/cpkg/toolchains");
 
-  extra_module_path_add(String(CPKG_BUILD_INSTALL_PREFIX) + "/lib/cpkg/toolchains");
-  extra_module_path_add(String(CPKG_BUILD_INSTALL_PREFIX) + "/share/cpkg/toolchains");
+  extra_module_path_add(String(CPKG_BUILD_INSTALL_PREFIX) +
+                        "/lib/cpkg/toolchains");
+  extra_module_path_add(String(CPKG_BUILD_INSTALL_PREFIX) +
+                        "/share/cpkg/toolchains");
 
   if (std::find_if(args.begin(), args.end(),
                    [](auto str) { return str == "--path"; }) != args.end()) {
@@ -86,8 +99,8 @@ int main(int argc, char *argv[]) {
   if (std::find_if(args.begin(), args.end(),
                    [](auto str) { return str == "--clean"; }) != args.end()) {
 
-    if (Controllers::ProjectManager::build_manifest(build_path.string(),
-                                                    modules_search_paths) != 0) {
+    if (Controllers::ProjectManager::build_manifest(
+            build_path.string(), modules_search_paths) != 0) {
       return -1;
     }
 
@@ -101,8 +114,8 @@ int main(int argc, char *argv[]) {
 
   if (args[1] == "--build") {
 
-    if (Controllers::ProjectManager::build_manifest(build_path.string(),
-                                                    modules_search_paths) != 0) {
+    if (Controllers::ProjectManager::build_manifest(
+            build_path.string(), modules_search_paths) != 0) {
       return -1;
     }
 
@@ -136,7 +149,7 @@ int main(int argc, char *argv[]) {
         auto [result, commands] = toolchain.build(target);
 
         auto stream = std::ofstream("compile_commands.json");
-        Serialization::JsonOutputArchiver output(stream);
+        Modules::Serialization::JsonOutputArchiver output(stream);
         output % commands;
 
         if (result != 0) {
@@ -153,8 +166,8 @@ int main(int argc, char *argv[]) {
   }
 
   if (args[1] == "--install") {
-    if (Controllers::ProjectManager::build_manifest(build_path.string(),
-                                                    modules_search_paths) != 0) {
+    if (Controllers::ProjectManager::build_manifest(
+            build_path.string(), modules_search_paths) != 0) {
       return -1;
     }
 
@@ -163,7 +176,8 @@ int main(int argc, char *argv[]) {
             .append("project-manifest.so")
             .string());
 
-    Controllers::ToolchainManager::current(modules_search_paths).install(project_manifest);
+    Controllers::ToolchainManager::current(modules_search_paths)
+        .install(project_manifest);
 
     return 0;
   }

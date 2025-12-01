@@ -1,4 +1,4 @@
-#include "Serialization/JsonOutputArchiver.hpp"
+#include "Modules/Serialization/JsonOutputArchiver.hpp"
 #include <Controllers/ClangdManager.hpp>
 #include <fstream>
 
@@ -14,7 +14,7 @@ int main(int argc, char *argv[]) {
   descriptors.push_back(descriptor);
 
   auto stream = std::ofstream("compile_commands.json");
-  Serialization::JsonOutputArchiver ar(stream);
+  Modules::Serialization::JsonOutputArchiver ar(stream);
 
   ar % descriptors;
 

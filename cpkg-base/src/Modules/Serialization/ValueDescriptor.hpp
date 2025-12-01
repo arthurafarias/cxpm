@@ -2,7 +2,7 @@
 
 #include <string>
 
-namespace Serialization {
+namespace Modules::Serialization {
 
 struct AbstractTag {};
 

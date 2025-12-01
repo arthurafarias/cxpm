@@ -6,7 +6,7 @@
 
 using namespace Core::Containers;
 
-namespace Serialization {
+namespace Modules::Serialization {
 template <typename... ValueTypes>
 struct KeyValueMapDescriptor : Collection<Variant<ValueTypes...>> {};
 } // namespace Serialization

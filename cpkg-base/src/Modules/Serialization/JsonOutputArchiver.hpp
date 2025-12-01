@@ -1,14 +1,14 @@
 #pragma once
 
 #include "Core/Exceptions/RuntimeException.hpp"
-#include "Serialization/AbstractArchiver.hpp"
-#include "Serialization/ValueDescriptor.hpp"
+#include "Modules/Serialization/AbstractArchiver.hpp"
+#include "Modules/Serialization/ValueDescriptor.hpp"
 #include <fstream>
 #include <iomanip>
 #include <ostream>
 #include <syncstream>
 
-namespace Serialization {
+namespace Modules::Serialization {
 
 class JsonOutputArchiver : public AbstractArchiver {
 public:

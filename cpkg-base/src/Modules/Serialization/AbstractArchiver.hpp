@@ -1,11 +1,11 @@
 #pragma once
 
-#include <Serialization/ValueDescriptor.hpp>
+#include <Modules/Serialization/ValueDescriptor.hpp>
 #include <Core/Containers/String.hpp>
 
 using namespace Core::Containers;
 
-namespace Serialization {
+namespace Modules::Serialization {
 
 class AbstractArchiver {
 protected:

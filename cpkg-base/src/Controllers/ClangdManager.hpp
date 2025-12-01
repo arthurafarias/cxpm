@@ -3,7 +3,7 @@
 #include <Core/Containers/Collection.hpp>
 #include <Core/Containers/String.hpp>
 #include <Models/TargetDescriptor.hpp>
-#include <Serialization/JsonOutputArchiver.hpp>
+#include <Modules/Serialization/JsonOutputArchiver.hpp>
 
 #include <Models/CompilerCommandDescriptor.hpp>
 #include <Models/PackageDescriptor.hpp>
@@ -25,7 +25,7 @@ StaticClass(ClangdManager)
       emit_compiler_commands(const TargetDescriptor &target) {
 
     auto stream = std::ostringstream();
-    Serialization::JsonOutputArchiver output(stream);
+    Modules::Serialization::JsonOutputArchiver output(stream);
     Collection<CompileCommandDescriptor> compile_commands;
     output % compile_commands;
     return stream.str();
