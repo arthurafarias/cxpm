@@ -93,6 +93,24 @@ public:
   };
 
   ToolchainDescriptorFactoryInterface<DerivedType> &
+  archiver_executable_set(const Core::Containers::String &value) {
+    archiver_executable = value;
+    return *this;
+  }
+  Core::Containers::String archiver_executable_get() {
+    return archiver_executable;
+  };
+
+  ToolchainDescriptorFactoryInterface<DerivedType> &
+  archiver_options_set(const Collection<Core::Containers::String> &value) {
+    archiver_options = value;
+    return *this;
+  }
+  Collection<Core::Containers::String> archiver_options_get() {
+    return archiver_options;
+  };
+
+  ToolchainDescriptorFactoryInterface<DerivedType> &
   linker_options_set(const Collection<Core::Containers::String> &value) {
     linker_options = value;
     return *this;

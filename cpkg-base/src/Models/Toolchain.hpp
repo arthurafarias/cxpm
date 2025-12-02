@@ -251,7 +251,38 @@ public:
 
   virtual BuildOutputResult archive_link(const TargetDescriptor &target,
                                          bool dry = false) override {
-    return {};
+
+    Collection<String> command;
+
+    command.push_back(archiver_executable);
+
+    command.append_range(this->archiver_options);
+
+    command.append_range(Collection<String>{"-o", target.name + ".a"});
+
+    for (auto source : target.sources) {
+      command.push_back(source + ".o");
+    }
+
+    auto command_line = String::join(command, " ");
+
+    Core::Logging::LoggerManager::debug("Calling: {}", command_line.c_str());
+    std::tuple<int, String, String> exec_result;
+    const auto &[result_code, out, err] = exec_result;
+    if (!dry) {
+      exec_result = Utils::Unix::ShellManager::exec(command_line);
+    }
+    Core::Logging::LoggerManager::info("building: ended");
+
+    return {0,
+            {CompileCommandDescriptor{
+                .directory = std::filesystem::current_path(),
+                .command = command_line,
+                .file = "",
+                .output = target.name + ".a",
+                .stdout = out,
+                .stderr = err,
+            }}};
   }
 
   virtual BuildOutputResult build(const ProjectDescriptor &project,

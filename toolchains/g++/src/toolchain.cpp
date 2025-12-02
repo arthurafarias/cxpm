@@ -10,6 +10,8 @@ auto toolchain = Toolchain()
                      .link_library_prefix_set("-l")
                      .compiler_executable_set("/usr/bin/g++")
                      .linker_executable_set("/usr/bin/g++")
+                     .archiver_executable_set("/usr/bin/ar")
+                     .archiver_options_set({"rcs"})
                      .language_set("c++")
                      .compiler_options_set({"-pthread"})
                      .create();
