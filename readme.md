@@ -1,5 +1,7 @@
 # cppkg
 
+Note: For Indra Mobility Friends, I invite you to see how to design something in C++ in this repository here. Maybe you should stop telling lies everywhere.
+
 Because I don't like to search on stack overflow how to use every new function on other package manager for C++.
 
 This is a simple project on a new package manager that don't rely on any declarative language or other than C++. It is heavely inspired in Julia, and Swift Languages. That uses the own language to declare packages.
@@ -118,4 +120,3 @@ auto example = Models::TargetDescriptor()
 
 auto project = Models::ProjectDescriptor().add(example).create();
 ```
-

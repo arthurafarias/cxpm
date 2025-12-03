@@ -1,10 +1,14 @@
 #pragma once
 
 #include "Core/Exceptions/RuntimeException.hpp"
+#include "Core/SharedPointer.hpp"
 #include "Modules/Serialization/AbstractArchiver.hpp"
 #include "Modules/Serialization/ValueDescriptor.hpp"
+#include <Core/UniquePointer.hpp>
+#include <cstddef>
 #include <fstream>
 #include <iomanip>
+#include <memory>
 #include <ostream>
 #include <syncstream>
 
@@ -17,32 +21,31 @@ public:
 
   std::osyncstream stream() { return std::osyncstream(stream_property); }
 
-  virtual String to_string() override { return ""; }
+  virtual String to_string() { return ""; }
 
-  void object_start(MultipartElementTag tag) override {
+  void object_start(TagBase tag) {
     stream() << "{";
     multipart_element_stack.push_front(tag);
   }
 
-  void object_end(MultipartElementTag tag) override {
+  void object_end(TagBase tag) {
     validate_tag(tag);
     stream() << "}";
     multipart_element_stack.pop_front();
   }
 
-  void array_start(MultipartElementTag tag) override {
+  void array_start(TagBase tag) {
     stream() << "[";
     multipart_element_stack.push_front(tag);
   }
 
-  void array_end(MultipartElementTag tag) override {
+  void array_end(TagBase tag) {
     validate_tag(tag);
     stream() << "]";
     multipart_element_stack.pop_front();
   }
 
-  template <typename TypeName>
-  void key_value(const KeyValueTag<TypeName> &tag) {
+  template <typename ValueType> void key_value(KeyValueTag<ValueType> tag) {
     if (multipart_element_stack.empty()) {
       throw Core::Exceptions::RuntimeException(
           "Can't place a key-value node outside an object!");
@@ -53,8 +56,8 @@ public:
     (*this) % ValueTag{tag.value};
   }
 
-  void multipart(const MultipartElementTag &tag) override {
-    if (tag.start) {
+  void multipart(const TagBase &tag) {
+    if (tag.part == TagPart::Start) {
       multipart_element_stack.push_front(tag);
     } else {
       if (tag.name != multipart_element_stack.front().name) {
@@ -65,46 +68,32 @@ public:
     }
   }
 
-  template <typename TypeName> void value(const ValueTag<TypeName> &tag) {
+  template <typename ValueType> void value(const ValueTag<ValueType> &tag) {
     static int unique_id = 0;
     unique_id++;
 
-    object_start({"object-" + std::to_string(unique_id),
-                  MultipartElementType::Object, true});
-    // tag.value.serialize(*this);
+    object_start(TagBase{"object-" + std::to_string(unique_id), TagPart::Start,
+                         TagType::Object});
     (*this) % tag.value;
-    object_end({"object-" + std::to_string(unique_id),
-                MultipartElementType::Object, false});
+    object_end(TagBase{"object-" + std::to_string(unique_id), TagPart::End,
+                       TagType::Object});
   }
 
   void try_print_comma() {
-    if (collection_within() && collection_within_first_get()) {
-      collection_within_first_set(false);
+    if (!multipart_element_stack.empty() &&
+        (multipart_element_stack.front().part == TagPart::Start)) {
+      multipart_element_stack.front().part = TagPart::End;
     } else {
       stream() << ",";
     }
   }
 
-  bool collection_within() const { return !multipart_element_stack.empty(); }
-
-  bool collection_within_first_get() const {
-    return !multipart_element_stack.empty() &&
-           multipart_element_stack.front().start;
-  }
-
-  void collection_within_first_set(bool value) {
-    if (!multipart_element_stack.empty()) {
-      multipart_element_stack.front().start = value;
-    }
-  }
-
 private:
-  // Consolidate validation logic into a helper function
-  void validate_tag(const MultipartElementTag &tag) const {
+  void validate_tag(TagBase &tag) {
     if (multipart_element_stack.empty())
       return;
 
-    auto &current_tag = multipart_element_stack.front();
+    auto current_tag = multipart_element_stack.front();
     if (current_tag.type != tag.type || current_tag.name != tag.name) {
       throw Core::Exceptions::RuntimeException(
           "Failed to serialize element at tag {}", tag.name);
@@ -112,7 +101,7 @@ private:
   }
 
 private:
-  Collection<MultipartElementTag> multipart_element_stack;
+  Collection<TagBase> multipart_element_stack;
   std::ostream &stream_property;
 };
 
@@ -155,8 +144,9 @@ inline JsonOutputArchiver &operator%(JsonOutputArchiver &ar,
   return ar;
 }
 
+template <typename ValueType>
 inline JsonOutputArchiver &operator%(JsonOutputArchiver &ar,
-                                     const MultipartElementTag &descriptor) {
+                                     const TagBase &descriptor) {
   ar.multipart(descriptor);
   return ar;
 }
@@ -167,16 +157,16 @@ operator%(JsonOutputArchiver &ar, const Collection<ElementType> &collection) {
   static int unique_id = 0;
   unique_id++;
 
-  ar.array_start(MultipartElementTag("array-" + std::to_string(unique_id),
-                                     MultipartElementType::Array, true));
+  ar.array_start(TagBase("array-" + std::to_string(unique_id), TagPart::Start,
+                         TagType::Array));
 
   for (const auto &el : collection) {
     ar.try_print_comma();
-    ar.value(ValueTag<ElementType>{el});
+    ar.value(ValueTag<ElementType>(el));
   }
 
-  ar.array_end(MultipartElementTag("array-" + std::to_string(unique_id),
-                                   MultipartElementType::Array, false));
+  ar.array_end(TagBase("array-" + std::to_string(unique_id), TagPart::End,
+                       TagType::Array));
   return ar;
 }
 

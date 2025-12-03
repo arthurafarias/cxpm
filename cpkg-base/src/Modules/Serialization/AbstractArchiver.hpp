@@ -15,39 +15,34 @@ protected:
   explicit AbstractArchiver() {}
 
 public:
-  virtual void object_start(MultipartElementTag tag) = 0;
-  virtual void object_end(MultipartElementTag tag) = 0;
-  virtual void array_start(MultipartElementTag tag) = 0;
-  virtual void array_end(MultipartElementTag tag) = 0;
 
-  template <typename TypeName> void key_value(const KeyValueTag<TypeName> &tag);
-
-  template <typename TypeName> void value(const ValueTag<TypeName> &tag);
-
-  virtual void multipart(const MultipartElementTag &tag) = 0;
-
-  static inline MultipartElementTag make_object_start(std::string name) {
-    return {name, MultipartElementType::Object, true};
+  static inline TagBase
+  make_object_start(std::string name) {
+    return TagBase{name, TagPart::Start, TagType::Object };
   }
 
-  static inline MultipartElementTag make_object_end(std::string name) {
-    return {name, MultipartElementType::Object, false};
+  static inline TagBase
+  make_object_end(std::string name) {
+    return TagBase{name, TagPart::End, TagType::Object };
   }
 
-  static inline MultipartElementTag make_array_start(std::string name) {
-    return {name, MultipartElementType::Array, true};
+  static inline TagBase
+  make_array_start(std::string name) {
+    return TagBase{name, TagPart::Start, TagType::Array };
   }
 
-  static inline MultipartElementTag make_array_end(std::string name) {
-    return {name, MultipartElementType::Array, false};
+  static inline TagBase
+  make_array_end(std::string name) {
+    return TagBase{name, TagPart::End, TagType::Array };
   }
 
   template <typename ArgumentType>
   static inline KeyValueTag<ArgumentType>
   make_named_value_property(std::string name, const ArgumentType &arg) {
-    return KeyValueTag<ArgumentType>(name, arg);
+    auto retval = KeyValueTag<ArgumentType>();
+    retval.name = name;
+    retval.value = arg;
+    return retval;
   }
-
-  virtual String to_string() = 0;
 };
 } // namespace Modules::Serialization

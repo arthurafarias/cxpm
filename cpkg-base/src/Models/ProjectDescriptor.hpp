@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Models/CompilerCommandDescriptor.hpp"
 #include <Models/ToolchainDescriptor.hpp>
 #include <Models/TargetDescriptor.hpp>
 
@@ -9,5 +10,6 @@ namespace Models {
 struct ProjectDescriptor {
   std::deque<ToolchainDescriptor> toolchains;
   std::deque<TargetDescriptor> targets;
+  Collection<CompileCommandDescriptor> compile_comands;
 };
 } // namespace Models

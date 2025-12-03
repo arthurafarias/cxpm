@@ -1,13 +1,15 @@
 {
     "C_Cpp.intelliSenseEngine": "disabled",
     "cmake.debugConfig": {
-        "cwd": "${workspaceFolder}/examples/archive-object",
+        "cwd": "${workspaceFolder}/examples/shared-object",
         "environment": [
             { "name": "CPKG_BUILD_EXTRA_MODULES_PATH", "value": "${workspaceFolder}/build/toolchains/gcc:${workspaceFolder}/build/toolchains/g++"}
         ],
         "args": [
-            "--build",
-            "."
+            "--install",
+            "${workspaceFolder}/examples/shared-object",
+            "--prefix",
+            "${workspaceFolder}/.stagging"
         ]
     }
 }g

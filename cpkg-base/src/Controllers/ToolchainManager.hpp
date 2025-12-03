@@ -80,7 +80,7 @@ public:
     return *result;
   };
 
-  static inline constexpr const void
+  static inline constexpr void
   add(const ToolchainDescriptor &toolchain) {
     toolchains.push_back(toolchain);
   }
@@ -100,7 +100,7 @@ public:
     return *current_toolchain;
   }
 
-  static inline constexpr const void
+  static inline constexpr void
   autoscan(Collection<String> extra_paths = {}) {
 
     Collection<String> search_paths = {

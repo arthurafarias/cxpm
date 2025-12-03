@@ -222,7 +222,7 @@ public:
       command.append_range(link_library_argument);
     }
 
-    command.append_range(Collection<String>{"-o", target.name + ".so"});
+    command.append_range(Collection<String>{"-o", "lib" + target.name + ".so"});
 
     for (auto source : target.sources) {
       command.push_back(source + ".o");
@@ -258,7 +258,7 @@ public:
 
     command.append_range(this->archiver_options);
 
-    command.append_range(Collection<String>{"-o", target.name + ".a"});
+    command.append_range(Collection<String>{"-o", "lib" + target.name + ".a"});
 
     for (auto source : target.sources) {
       command.push_back(source + ".o");

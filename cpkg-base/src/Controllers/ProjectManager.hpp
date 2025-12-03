@@ -46,7 +46,7 @@ StaticClass(ProjectManager)
 
     typedef Models::Project *(*getter_type)();
 
-    void *handle = dlopen("./project-manifest.so", RTLD_NOW | RTLD_DEEPBIND);
+    void *handle = dlopen(manifest_path.c_str(), RTLD_NOW | RTLD_DEEPBIND);
 
     if (handle == nullptr) {
       throw Core::Exceptions::RuntimeException(

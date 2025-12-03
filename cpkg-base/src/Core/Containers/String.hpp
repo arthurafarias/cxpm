@@ -54,7 +54,7 @@ public:
   static inline String trim_right(const String &source) {
     if (source.empty())
       return source; // Handle empty string edge case
-    size_t end = source.size() - 1;
+    int end = source.size() - 1;
     for (; end >= 0; end--) {
       if (std::isprint((source)[end])) {
         break;

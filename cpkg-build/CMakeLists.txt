@@ -9,6 +9,9 @@ add_executable(${PROJECT_NAME}
 ${${PROJECT_NAME}_SOURCES}
 )
 
+target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Werror -Wextra -pedantic)
+target_compile_options(${PROJECT_NAME} PRIVATE -Wno-error=unused-parameter)
+
 target_link_libraries(${PROJECT_NAME} PUBLIC cpkg-base)
 
 target_include_directories(${PROJECT_NAME} PUBLIC

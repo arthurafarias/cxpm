@@ -9,6 +9,7 @@ namespace Models {
 struct PackageDescriptor {
   String name;
   String version;
+  String install_prefix;
   Collection<String> include_directories;
   Collection<String> link_directories;
   Collection<String> link_libraries;
