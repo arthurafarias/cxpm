@@ -12,6 +12,6 @@ using namespace Core::Containers;
 namespace Models {
 struct ToolchainBasicCommandInterface {
   using promise_type = std::shared_ptr<std::promise<
-      std::tuple<int, BuildOutputResult>>>;
+      std::tuple<int, BuildResult>>>;
 };
 } // namespace Models

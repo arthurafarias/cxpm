@@ -2,8 +2,8 @@
 
 #include "Core/Containers/String.hpp"
 #include "Core/Logging/LoggerManager.hpp"
-#include <Core/Threading/ThreadPool.hpp>
 #include <Core/Containers/Tuple.hpp>
+#include <Core/Threading/ThreadPool.hpp>
 
 #include <cstring>
 #include <format>
@@ -27,7 +27,7 @@ class ShellManager {
 public:
   static inline const std::tuple<int, Core::Containers::String,
                                  Core::Containers::String>
-  exec(Core::Containers::String command, bool shell = false) {
+  exec(Core::Containers::String command, bool dry = false, bool shell = false) {
 
     Core::Containers::String result = "";
 
@@ -39,23 +39,28 @@ public:
     }
 
     Core::Logging::LoggerManager::debug("{}", command.c_str());
-    auto fp = ::popen(command.c_str(), "r");
 
-    if (fp == nullptr) {
-      throw std::runtime_error(
-          std::format("failed to run {}", command).c_str());
+    if (!dry) {
+      auto fp = ::popen(command.c_str(), "r");
+
+      if (fp == nullptr) {
+        throw std::runtime_error(
+            std::format("failed to run {}", command).c_str());
+      }
+
+      while (fgets(buffer, sizeof(buffer), fp)) {
+        result.append_range(buffer);
+      }
+
+      auto value = pclose(fp);
+
+      // auto trimmed = result.trim();
+      auto trimmed = String::trim(result);
+
+      return {value, trimmed, ""};
     }
 
-    while (fgets(buffer, sizeof(buffer), fp)) {
-      result.append_range(buffer);
-    }
-
-    auto value = pclose(fp);
-
-    // auto trimmed = result.trim();
-    auto trimmed = String::trim(result);
-
-    return {value, trimmed, ""};
+    return {0, "", ""};
   }
 
   static inline const std::shared_ptr<std::promise<

@@ -20,9 +20,9 @@ using namespace Modules::Serialization;
 
 namespace Modules::Templating {
 
-class TemplateEngine : public AbstractArchiver {
+class MustacheLite : public AbstractArchiver {
 public:
-  TemplateEngine(const String &view) : view(view) {}
+  MustacheLite(const String &view) : view(view) {}
 
   template <typename ValueType> void value(const KeyValueTag<ValueType> &) {}
 
@@ -64,35 +64,35 @@ private:
 
 template <typename TagType,
           typename = std::enable_if_t<std::is_base_of<TagBase, TagType>::value>>
-inline TemplateEngine &operator%(TemplateEngine &ar, const TagType &) {
+inline MustacheLite &operator%(MustacheLite &ar, const TagType &) {
   static_assert(false, "Wrong template specialization");
   return ar;
 }
 
 template <>
-inline TemplateEngine &
-operator%(TemplateEngine &ar,
+inline MustacheLite &
+operator%(MustacheLite &ar,
           const KeyValueTag<Collection<Models::CompileCommandDescriptor>> &) {
   // ignore collections of strings
   return ar;
 }
 
 template <>
-inline TemplateEngine &operator%(TemplateEngine &ar,
+inline MustacheLite &operator%(MustacheLite &ar,
                                  const KeyValueTag<Collection<String>> &) {
   // ignore collections of strings
   return ar;
 }
 
 template <>
-inline TemplateEngine &operator%(TemplateEngine &ar,
+inline MustacheLite &operator%(MustacheLite &ar,
                                  const KeyValueTag<String> &tag) {
   ar.key_value(tag);
   return ar;
 }
 
 template <>
-inline TemplateEngine &operator%(TemplateEngine &ar, const TagBase &tag) {
+inline MustacheLite &operator%(MustacheLite &ar, const TagBase &tag) {
   switch (tag.type) {
   case Modules::Serialization::TagType::Array:
     break;

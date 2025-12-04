@@ -1,8 +1,11 @@
 #pragma once
 
 #include "Models/CompilerCommandDescriptor.hpp"
+#include "Models/ProjectDescriptor.hpp"
 
-namespace Models
-{
-    using BuildOutputResult = std::tuple<int, Collection<CompileCommandDescriptor>>;
-}
+namespace Models {
+enum BuildOutputResultStatus { Success, Failure };
+
+using BuildResult = std::tuple<BuildOutputResultStatus,
+                                     Collection<CompileCommandDescriptor>>;
+} // namespace Models

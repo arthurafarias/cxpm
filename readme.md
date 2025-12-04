@@ -120,3 +120,17 @@ auto example = Models::TargetDescriptor()
 
 auto project = Models::ProjectDescriptor().add(example).create();
 ```
+
+## Install Support
+
+Every target now can be installed as following
+
+```
+pkg-build --install . --prefix /usr/local
+```
+
+It will try to build current project and install it in the prefix. reminding that cpkg has a uniform architecture based on POSIX standard locations.
+
+that is:
+
+A shared library will be installed in <prefix>/lib. A static library will be installed in <prefix>/lib a executable will be installed in <prefix>/bin headers will be installed in <prefix>/include/<project-name> and a pc file will be installed in <prefix>/lib/pkgconfig/<project-name>.pc. No exception. This avoids custom install locations and previsibility of build artifacts. I am keeping it simple because it doesn't need to be complicated, no exception.

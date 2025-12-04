@@ -18,7 +18,8 @@ struct ToolchainBuildInterface : ToolchainObjectBuildInterface,
                                  ToolchainExecutableLinkInterface,
                                  ToolchainSharedObjectLinkInterface,
                                  ToolchainArchiveLinkInterface {
-  virtual BuildOutputResult build(const ProjectDescriptor &project, bool dry) = 0;
-  virtual BuildOutputResult build(const TargetDescriptor &target, bool dry) = 0;
+
+  virtual BuildResult build(const ProjectDescriptor &project, bool dry) = 0;
+  virtual BuildResult build(const TargetDescriptor &target, bool dry) = 0;
 };
 } // namespace Models

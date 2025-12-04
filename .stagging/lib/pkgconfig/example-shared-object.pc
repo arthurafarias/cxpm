@@ -1,8 +1,0 @@
-
-Name: example-shared-object
-Description: 
-Version: 1.0.0
-URL: 
-Cflags: -I/home/arthur/Work/Software/cpkg/.stagging/include/example-shared-object
-Libs: -lexample-shared-object
-          

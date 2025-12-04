@@ -4,6 +4,7 @@
 #include "Core/Logging/LoggerManager.hpp"
 #include "Models/BuildOutputResult.hpp"
 #include "Models/CompilerCommandDescriptor.hpp"
+#include "Models/Project.hpp"
 #include "Models/ToolchainDescriptorFactoryInterface.hpp"
 #include "Models/ToolchainInterface.hpp"
 #include "Utils/Unix/ShellManager.hpp"
@@ -29,7 +30,7 @@ public:
   using ToolchainDescriptorFactoryInterface<
       Toolchain>::ToolchainDescriptorFactoryInterface;
 
-  virtual BuildOutputResult object_build(const String &source,
+  virtual ObjectBuildResult object_build(const String &source,
                                          const TargetDescriptor &target,
                                          bool dry = false) override {
     Core::Logging::LoggerManager::info("building {}: started", source.c_str());
@@ -84,29 +85,29 @@ public:
     std::tuple<int, String, String> exec_result;
     const auto &[result_code, out, err] = exec_result;
     if (!dry) {
-      exec_result = Utils::Unix::ShellManager::exec(command_line);
+      exec_result = Utils::Unix::ShellManager::exec(command_line, dry);
     }
     Core::Logging::LoggerManager::info("building {}: ended", source.c_str());
 
-    return {0,
-            {CompileCommandDescriptor{
+    return {ObjectBuildResultStatus::Success,
+            CompileCommandDescriptor{
                 .directory = std::filesystem::current_path(),
                 .command = command_line,
                 .file = source,
                 .output = source + ".o",
                 .stdout = out,
                 .stderr = err,
-            }}};
+            }};
   }
 
-  virtual ToolchainBasicCommandInterface::promise_type
+  virtual ObjectBuildResultPromiseType
   object_build_async(const String &source,
                      const TargetDescriptor &target) override {
     return {};
   }
 
-  virtual BuildOutputResult executable_link(const TargetDescriptor &target,
-                                            bool dry = false) override {
+  virtual ExecutableLinkResult executable_link(const TargetDescriptor &target,
+                                               bool dry = false) override {
 
     Collection<String> command;
 
@@ -157,29 +158,30 @@ public:
     Core::Logging::LoggerManager::debug("Calling: {}", command_line.c_str());
     std::tuple<int, String, String> exec_result;
     const auto &[result_code, out, err] = exec_result;
-    if (!dry) {
-      exec_result = Utils::Unix::ShellManager::exec(command_line);
-    }
+
+    exec_result = Utils::Unix::ShellManager::exec(command_line, dry);
+
     Core::Logging::LoggerManager::info("building: ended");
 
-    return {0,
-            {CompileCommandDescriptor{
+    return {ExecutableLinkResultStatus::Success,
+            CompileCommandDescriptor{
                 .directory = std::filesystem::current_path(),
                 .command = command_line,
                 .file = "",
                 .output = target.name,
                 .stdout = out,
                 .stderr = err,
-            }}};
+            }};
   }
 
-  virtual ToolchainBasicCommandInterface::promise_type
-  executable_link_async(const TargetDescriptor &target) override {
-    return ToolchainBasicCommandInterface::promise_type();
+  virtual ExecutableLinkResultPromise
+  executable_link_async(const TargetDescriptor & /*target*/) override {
+    return ExecutableLinkResultPromise();
   }
 
-  virtual BuildOutputResult shared_object_link(const TargetDescriptor &target,
-                                               bool dry = false) override {
+  virtual SharedObjectLinkResult
+  shared_object_link(const TargetDescriptor &target, bool dry = false,
+                     const String &library_prefix = "lib") override {
 
     Collection<String> command;
 
@@ -222,7 +224,8 @@ public:
       command.append_range(link_library_argument);
     }
 
-    command.append_range(Collection<String>{"-o", "lib" + target.name + ".so"});
+    command.append_range(
+        Collection<String>{"-o", library_prefix + target.name + ".so"});
 
     for (auto source : target.sources) {
       command.push_back(source + ".o");
@@ -234,23 +237,24 @@ public:
     std::tuple<int, String, String> exec_result;
     const auto &[result_code, out, err] = exec_result;
     if (!dry) {
-      exec_result = Utils::Unix::ShellManager::exec(command_line);
+      exec_result = Utils::Unix::ShellManager::exec(command_line, dry);
     }
     Core::Logging::LoggerManager::info("building: ended");
 
-    return {0,
-            {CompileCommandDescriptor{
+    return {SharedObjectLinkResultStatus::Success,
+            CompileCommandDescriptor{
                 .directory = std::filesystem::current_path(),
                 .command = command_line,
                 .file = "",
-                .output = target.name + ".so",
+                .output = library_prefix + target.name + ".so",
                 .stdout = out,
                 .stderr = err,
-            }}};
+            }};
   }
 
-  virtual BuildOutputResult archive_link(const TargetDescriptor &target,
-                                         bool dry = false) override {
+  virtual ArchiveLinkResult
+  archive_link(const TargetDescriptor &target, bool dry = false,
+               const String &library_prefix = "lib") override {
 
     Collection<String> command;
 
@@ -258,7 +262,8 @@ public:
 
     command.append_range(this->archiver_options);
 
-    command.append_range(Collection<String>{"-o", "lib" + target.name + ".a"});
+    command.append_range(
+        Collection<String>{"-o", library_prefix + target.name + ".a"});
 
     for (auto source : target.sources) {
       command.push_back(source + ".o");
@@ -270,28 +275,29 @@ public:
     std::tuple<int, String, String> exec_result;
     const auto &[result_code, out, err] = exec_result;
     if (!dry) {
-      exec_result = Utils::Unix::ShellManager::exec(command_line);
+      exec_result = Utils::Unix::ShellManager::exec(command_line, dry);
     }
     Core::Logging::LoggerManager::info("building: ended");
 
-    return {0,
-            {CompileCommandDescriptor{
+    return {ArchiverLinkResultStatus::Success,
+            CompileCommandDescriptor{
                 .directory = std::filesystem::current_path(),
                 .command = command_line,
                 .file = "",
                 .output = target.name + ".a",
                 .stdout = out,
                 .stderr = err,
-            }}};
+            }};
   }
 
-  virtual BuildOutputResult build(const ProjectDescriptor &project,
-                                  bool dry = false) override {
+  virtual BuildResult build(const ProjectDescriptor &project,
+                            bool dry = false) override {
 
-    BuildOutputResult retval;
+    BuildResult retval;
     auto &[code, result] = retval;
+
     for (auto package : project.targets) {
-      const auto &[current_code, current_result] = build(package);
+      const auto &[current_code, current_result] = build(package, dry);
 
       code = current_code;
 
@@ -305,12 +311,12 @@ public:
     return retval;
   }
 
-  virtual BuildOutputResult build(const TargetDescriptor &input,
-                                  bool dry = false) override {
+  virtual BuildResult build(const TargetDescriptor &input,
+                            bool dry = false) override {
 
     auto package = input;
 
-    BuildOutputResult result;
+    BuildResult result;
     auto &[result_code, result_commands] = result;
 
     using promise_type =
@@ -328,36 +334,36 @@ public:
     std::deque<std::tuple<String, promise_type>> results;
     for (auto source : package.sources) {
       auto [code, commands] = object_build(source, package, dry);
-      Core::Logging::LoggerManager::debug("{}", code);
-      result_commands.append_range(commands);
-      if (code != 0) {
+      Core::Logging::LoggerManager::debug("{}", std::to_string(code));
+      result_commands.push_back(commands);
+      if (code != ObjectBuildResultStatus::Success) {
         return result;
       }
     }
 
     if (package.type == "executable") {
       auto [code, commands] = executable_link(package, dry);
-      Core::Logging::LoggerManager::debug("{}", code);
-      result_commands.append_range(commands);
-      if (code != 0) {
+      Core::Logging::LoggerManager::debug("{}", std::to_string(code));
+      result_commands.push_back(commands);
+      if (code != ExecutableLinkResultStatus::Success) {
         return result;
       }
     }
 
     if (package.type == "shared-library") {
       auto [code, commands] = shared_object_link(package);
-      Core::Logging::LoggerManager::debug("{}", code);
-      result_commands.append_range(commands);
-      if (code != 0) {
+      Core::Logging::LoggerManager::debug("{}", std::to_string(code));
+      result_commands.push_back(commands);
+      if (code != SharedObjectLinkResultStatus::Success) {
         return result;
       }
     }
 
     if (package.type == "static-library") {
       auto [code, commands] = archive_link(package, dry);
-      Core::Logging::LoggerManager::debug("{}", code);
-      result_commands.append_range(commands);
-      if (code != 0) {
+      Core::Logging::LoggerManager::debug("{}", std::to_string(code));
+      result_commands.push_back(commands);
+      if (code != ArchiverLinkResultStatus::Success) {
         return result;
       }
     }
