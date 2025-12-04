@@ -1,15 +1,14 @@
-# cppkg
+![cxpm](misc/images/logo-banner-path.svg)
 
-Note: For Indra Mobility Friends, I invite you to see how to design something in C++ in this repository here. Maybe you should stop telling lies everywhere.
+cxpm is an experimental package manager for C++ that aims to simplify project configuration by using C++ itself as the declarative language. Instead of relying on separate configuration formats, cxpm allows projects and packages to describe themselves directly in standard C++ code.
 
-Because I don't like to search on stack overflow how to use every new function on other package manager for C++.
+The design is inspired by modern ecosystems such as **Julia**, **Swift**, and their language-native package declarations.
 
-This is a simple project on a new package manager that don't rely on any declarative language or other than C++. It is heavely inspired in Julia, and Swift Languages. That uses the own language to declare packages.
+This project is at an early conceptual stage: the architecture is intentionally minimal, and many advanced features (such as full dependency graph resolution) are still under exploration. The current implementation demonstrates how such a system could function in practice.
 
-So the structure by now is simple and I didn't investigate how to unroll dependency trees and whatever. It's just a concept and a simple implementation on what I think it should be.
+If you're interested in discussing or contributing to this idea, feel free to fork the repository and open a proposal.
 
-Here is an example a project organized as:
-
+# Project Structure Example
 
 ```
 - src
@@ -27,9 +26,7 @@ would have a package.cpp as following
                        .name_set("example-executable")
                        .version_set("1.0.0")
                        .type_set("executable")
-                       .sources_append({"src/main.cpp", "src/source0.cpp",
-                                 "src/source1.cpp", "src/source2.cpp"})
-                       .sources_append({"src/source3.cpp"})
+                       .sources_append({"src/main.cpp"})
                        .options_append({"-fPIE", "-fstack-protector-all"})
                        .link_libraries_append({"m"})
                        .create();
@@ -39,46 +36,38 @@ auto project = Models::ProjectDescriptor()
                         .create();
 ```
 
-In my perspective, to make this work, the cpkg-build application would be responsible of creating the stubs to generate a shared-library, that would plug in the build system and compile the files.
+The **cpkg-build** utility is responsible for generating the supporting stubs required to build a shared library representing your project’s manifest, integrating it seamlessly into the build process.
 
-I am trying to push the boundaries and modernize C++ in a way that can borrow new interesting perspective from modern Languages. I am designing it
-like a minimal stuff that don't rely on complex macros and whatever. It's just one thing: Project and Packages should describe your project and package.cpp would be publicised declaring it. Nothing else. It's simple like package.json, Package.swift and Pkg.jl...
+The overarching philosophy is to maintain a small, modern, and expressive system: no complex macro layers, no special DSLs. Your C++ project is described in C++, much like package.json, Package.swift, or Pkg.jl but for C++.
 
-If you want to contribute or discuss this idea, just fork it and propose something!!
+# Building and Running
 
-# How to use it?
+The examples directory contains an example executable project.
 
-The example directory contains the folder executable and it is organized as an executable.
-
-To compile it using this concept, you should build this project using CMake.
+To build the core tools:
 
 ```bash
+git clone https://github.com/arthurafarias/cxpm
+cd cxpm
 mkdir build
 cd build && cmake ..
 sudo make install
 ```
 
-In the build folder it will generate cpkg-build utility.
+This installs the cpkg-build utility.
+
+You can now build an example project:
 
 ```
-cd ..
-cd examples/executable
+cd ../examples/executable
 cpkg-build --build .
 ```
 
-The output should be like the following
+# Recent Enhancements
 
-```
-g++ -fPIC -shared  -I/usr/share/cpkg-build/private-headers/ -Icpkg-build/src -Icpkg-base/src  -o package.cpp.o -c package.cpp
-g++ -fPIC -shared  -I/usr/share/cpkg-build/private-headers/ -Icpkg-build/src -Icpkg-base/src  -o package.loader.cpp.o -c package.loader.cpp
-g++ -fPIC -shared  -I/usr/share/cpkg-build/private-headers/ -Icpkg-build/src -Icpkg-base/src  -o project-manifest.so package.cpp.o package.loader.cpp.o
-g++   -o src/main.cpp.o -c src/main.cpp
-g++   -o example-executable src/main.cpp.o
-```
+## Custom Toolchain Support
 
-# News
-
-## Toolchain Support: You can define your own toolchain so you can cross compile to any target
+cxpm now supports custom toolchain definitions, enabling cross-compilation or integration with non-system compilers:
 
 ```c++
 #include <Models/ToolchainDescriptor.hpp>
@@ -100,9 +89,9 @@ auto toolchain = Toolchain()
 extern "C" Toolchain *get_toolchain() { return &toolchain; }
 ```
 
-## PkgConfig Support
+## Pkg-Config Integration
 
-Now, pkg-config dependencies are automatically solved in dependencies field from package
+Pkg-config dependencies are now resolved automatically when specified in the package descriptor:
 
 ```c++
 auto example = Models::TargetDescriptor()
@@ -115,22 +104,45 @@ auto example = Models::TargetDescriptor()
                    .options_append({"-fPIE", "-fstack-protector-all"})
                    .link_libraries_append({"m"})
                    .include_directories_append({})
-                   .dependencies_append("gstreamer-1.0") // here you define PkgConfig dependencies
+                   .dependencies_append("gstreamer-1.0") // pkg-config dependency
                    .create();
 
 auto project = Models::ProjectDescriptor().add(example).create();
 ```
 
-## Install Support
+## Installation Support
 
-Every target now can be installed as following
+Projects can now be installed directly:
 
+```c++
+cpkg-build --install . --prefix /usr/local
 ```
-pkg-build --install . --prefix /usr/local
-```
 
-It will try to build current project and install it in the prefix. reminding that cpkg has a uniform architecture based on POSIX standard locations.
+cxpm follows a predictable, POSIX-aligned installation layout:
 
-that is:
+- Shared libraries → `<prefix>/lib`
+- Static libraries → `<prefix>/lib`
+- Executables → `<prefix>/bin`
+- Headers → `<prefix>/include/<project-name>`
+- pkg-config files → `<prefix>/lib/pkgconfig/<project-name>.pc`
 
-A shared library will be installed in <prefix>/lib. A static library will be installed in <prefix>/lib a executable will be installed in <prefix>/bin headers will be installed in <prefix>/include/<project-name> and a pc file will be installed in <prefix>/lib/pkgconfig/<project-name>.pc. No exception. This avoids custom install locations and previsibility of build artifacts. I am keeping it simple because it doesn't need to be complicated, no exception.
+The uniform structure avoids special-case install paths and ensures consistent behavior across environments.
+
+# Contributing
+
+**cxpm is an early-stage experimental project, and community participation is highly encouraged.**
+
+If you are interested in modernizing the C++ tooling ecosystem, exploring language-native package definitions, or helping shape the direction of this concept, we would be happy to have your input.
+
+You can contribute in several ways:
+
+- Propose ideas or improvements
+- Report issues or inconsistencies
+- Submit pull requests
+- Discuss design decisions or future directions
+
+Whether you want to help refine the architecture, expand features, or simply share feedback, your participation is welcome.
+
+**Feel free to open a discussion, file an issue, or fork the repository and start experimenting.** Together we can explore what a simpler, more expressive C++ package manager might look like.
+
+Arthur Farias <afarias.arthur@gmail.com>
