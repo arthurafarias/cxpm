@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(cpkg-build VERSION 0.1.0)
+project(cxpm VERSION 0.1.0)
 
 include(CMakePackageConfigHelpers)
 

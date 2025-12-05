@@ -2,7 +2,6 @@
 
 #include "Core/Containers/Collection.hpp"
 #include "Core/Exceptions/RuntimeException.hpp"
-#include "Models/BuildOutputResult.hpp"
 #include "Models/CompilerCommandDescriptor.hpp"
 #include "Models/Project.hpp"
 #include "Models/ProjectDescriptor.hpp"

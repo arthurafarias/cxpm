@@ -4,7 +4,6 @@
 #include "Core/Logging/LoggerManager.hpp"
 #include "Models/BuildOutputResult.hpp"
 #include "Models/CompilerCommandDescriptor.hpp"
-#include "Models/Project.hpp"
 #include "Models/ToolchainDescriptorFactoryInterface.hpp"
 #include "Models/ToolchainInterface.hpp"
 #include "Utils/Unix/ShellManager.hpp"
