@@ -17,7 +17,7 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: Update & Install G++15
-      run: sudo apt update && sudo apt install gcc g++
+      run: sudo /usr/bin/bash build-gcc-15.sh
 
     - name: Build
       working-directory: ${{github.workspace}}
