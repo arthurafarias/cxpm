@@ -1,4 +1,8 @@
-project-manifest.so
+*project-manifest.so
 package.loader.cpp
 package.loader.cpp.o
-example-executable
+package.cpp.o
+*example-executable
+*.o
+*.cpp.o
+*.so

@@ -1,5 +1,5 @@
-#include <Models/Project.hpp>
-#include <Models/Target.hpp>
+#include <CXPM/Project.hpp>
+#include <CXPM/Target.hpp>
 
 auto target0 = Models::Target()
                    .name_set("example-shared-object")

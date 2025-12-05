@@ -1,5 +1,5 @@
-#include <Models/Target.hpp>
-#include <Models/Project.hpp>
+#include <CXPM/Target.hpp>
+#include <CXPM/Project.hpp>
 
 auto example = Models::Target()
                    .name_set("example-executable")
@@ -10,7 +10,6 @@ auto example = Models::Target()
                    .sources_append({"src/source3.cpp"})
                    .options_append({"-fPIE", "-fstack-protector-all"})
                    .link_libraries_append({"m"})
-                   .include_directories_append({"src"})
-                   .create();
+                   .include_directories_append({"src"});
 
 auto project = Models::Project().add(example).create();

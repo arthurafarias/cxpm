@@ -1,6 +1,5 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-mkdir build-standalone
-g++ -std=c++23 -fPIE -O0 -g -Wall -Werror -Wno-error=unused-parameter -Wextra -pedantic -pthread -I $(pwd)/cxpm-base/src -I $(pwd)/cxpm/src -o build-standalone/cxpm cxpm/src/cxpm.cpp
-g++ -std=c++23 -fPIC -shared -O0 -g -Wall -Werror -Wno-error=unused-parameter -Wextra -pedantic -pthread -I $(pwd)/cxpm-base/src -I $(pwd)/cxpm/src -o build-standalone/cxpm-toolchain-g++.so toolchains/g++/src/toolchain.cpp
-g++ -std=c++23 -fPIC -shared -O0 -g -Wall -Werror -Wno-error=unused-parameter -Wextra -pedantic -pthread -I $(pwd)/cxpm-base/src -I $(pwd)/cxpm/src -o build-standalone/cxpm-toolchain-gcc.so toolchains/gcc/src/toolchain.cpp
+g++ -Dcxpm_BASE_SOURCE_PREFIX=\"/home/arthur/Projects/Software/cxpm/libraries/cxpm-interface\" -I/home/arthur/Projects/Software/cxpm/applications/cxpm/src -I/home/arthur/Projects/Software/cxpm/libraries/cxpm-interface/src -g -std=gnu++23 -o cxpm /home/arthur/Projects/Software/cxpm/applications/cxpm/src/cxpm.cpp
+g++ -Dcxpm_BASE_SOURCE_PREFIX=\"/home/arthur/Projects/Software/cxpm/libraries/cxpm-interface\" -Dcxpm_modules_toolchains_g___EXPORTS -I/home/arthur/Projects/Software/cxpm/modules/toolchains/g++/src -I/home/arthur/Projects/Software/cxpm/libraries/cxpm-interface/src -shared -g -std=gnu++23 -fPIC -o cxpm-toolchain-g++-default.so /home/arthur/Projects/Software/cxpm/modules/toolchains/g++/src/toolchain.cpp
+g++ -Dcxpm_BASE_SOURCE_PREFIX=\"/home/arthur/Projects/Software/cxpm/libraries/cxpm-interface\" -Dcxpm_modules_toolchains_g___EXPORTS -I/home/arthur/Projects/Software/cxpm/modules/toolchains/g++/src -I/home/arthur/Projects/Software/cxpm/libraries/cxpm-interface/src -shared -g -std=gnu++23 -fPIC -o cxpm-toolchain-gcc-default.so /home/arthur/Projects/Software/cxpm/modules/toolchains/gcc/src/toolchain.cpp

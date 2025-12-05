@@ -44,13 +44,14 @@ The overarching philosophy is to maintain a small, modern, and expressive system
 
 The examples directory contains an example executable project.
 
-To build and install the core tools:
+To build the core tools:
 
 ```bash
 git clone https://github.com/arthurafarias/cxpm
 cd cxpm
-./build.sh
-sudo ./install.sh
+mkdir build
+cd build && cmake ..
+sudo make install
 ```
 
 This installs the cxpm utility.

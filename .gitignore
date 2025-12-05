@@ -1,7 +1,5 @@
 build
-.cache
-# .vscode
-*.loader.cpp
+*.so
 *.o
 *.a
-*.so
+cxpm

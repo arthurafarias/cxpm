@@ -1,15 +1,14 @@
 {
-    "C_Cpp.intelliSenseEngine": "disabled",
     "cmake.debugConfig": {
-        "cwd": "${workspaceFolder}/examples/shared-object",
-        "environment": [
-            { "name": "cxpm_BUILD_EXTRA_MODULES_PATH", "value": "${workspaceFolder}/build/toolchains/gcc:${workspaceFolder}/build/toolchains/g++"}
-        ],
         "args": [
-            "--install",
-            "${workspaceFolder}/examples/shared-object",
-            "--prefix",
-            "${workspaceFolder}/.stagging"
+            "-b",
+            "${workspaceFolder}/examples/executable"
+        ],
+        "environment": [
+            {
+                "name": "cxpm_BUILD_EXTRA_MODULES_PATH",
+                "value": "${workspaceFolder}/build/modules/toolchains/g++:${workspaceFolder}/build/modules/toolchains/gcc"
+            }
         ]
     }
 }
