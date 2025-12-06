@@ -102,6 +102,8 @@ public:
   virtual ObjectBuildResultPromiseType
   object_build_async(const String &source,
                      const TargetDescriptor &target) override {
+    UNUSED(source);
+    UNUSED(target);
     return {};
   }
 
@@ -371,11 +373,13 @@ public:
   }
 
   virtual int install(const Models::ProjectDescriptor &target) override {
+    UNUSED(target);
     throw Core::Exceptions::NotImplementedException();
     return 0;
   }
 
   virtual int install(const Models::TargetDescriptor &target) override {
+    UNUSED(target);
     throw Core::Exceptions::NotImplementedException();
     return 0;
   }

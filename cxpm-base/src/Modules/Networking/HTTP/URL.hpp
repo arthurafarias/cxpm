@@ -1,0 +1,64 @@
+#pragma once
+
+#include "Core/Containers/Collection.hpp"
+#include "Core/Containers/String.hpp"
+
+using namespace Core::Containers;
+
+namespace Modules::Networking::HTTP {
+struct URL {
+  String scheme;
+  String authority;
+  String path;
+  String query;
+  String fragment;
+
+  static inline URL parse(String url) {
+
+    URL result;
+    Collection<String> tokens;
+
+    {
+      auto pos = url.find(":");
+      if (pos != std::string::npos) {
+        result.scheme = url.substr(0, pos);
+        url.erase(0, result.scheme.size() + 1);
+      } else {
+        return {};
+      }
+    }
+
+    {
+      auto start = url.find("//");
+
+      if (start != std::string::npos) {
+        start += 2;
+        auto end = url.find("/", start);
+        auto size = end - start;
+        result.authority = url.substr(start, size);
+        url.erase(0, size + 2);
+      }
+    }
+
+    {
+      auto pos = url.rfind("#");
+      if (pos != std::string::npos) {
+        result.fragment = url.substr(pos + 1, url.size() - pos);
+        url.erase(pos, result.fragment.size() + 2);
+      }
+    }
+
+    {
+      auto pos = url.rfind("?");
+      if (pos != std::string::npos) {
+        result.query = url.substr(pos + 1, url.size() - pos);
+        url.erase(pos, result.query.size() + 2);
+      }
+    }
+
+    result.path = url;
+
+    return result;
+  }
+};
+} // namespace Modules::Networking::HTTP

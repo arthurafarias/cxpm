@@ -4,6 +4,7 @@
 #include "Core/Containers/String.hpp"
 #include "Core/Object.hpp"
 
+using namespace Core;
 using namespace Core::Containers;
 
 namespace Modules::Console {

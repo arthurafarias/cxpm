@@ -11,6 +11,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED YES)
 
 add_subdirectory(cxpm-base)
 add_subdirectory(cxpm)
+add_subdirectory(cxpm-server)
 
 
 add_subdirectory(toolchains/gcc)

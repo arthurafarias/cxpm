@@ -1,12 +1,13 @@
 #pragma once
 
+#include "Core/Object.hpp"
 #include <deque>
 #include <functional>
 #include <utility>
 
 namespace Core::Containers {
 template <typename ContainedType>
-class Collection : public std::deque<ContainedType> {
+class Collection : public std::deque<ContainedType>, public Object {
 public:
   template <typename... ArgsTypes>
   Collection(const ArgsTypes&&... args)

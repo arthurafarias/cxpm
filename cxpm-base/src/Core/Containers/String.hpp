@@ -1,11 +1,8 @@
 #pragma once
 
 #include "Core/Containers/Collection.hpp"
-#include <algorithm>
+#include "Utils/Unused.hpp"
 #include <cctype>
-#include <deque>
-#include <filesystem>
-#include <iterator>
 #include <string>
 #include <utility>
 
@@ -76,6 +73,52 @@ public:
       auto element = String::trim(
           haystack.substr(position_last, position - position_last));
       splitted.push_back(element);
+      position_last = position + needle.length(); // Skip past the needle
+      position++; // Move past the needle for the next search
+    }
+
+    // Add the remainder of the string after the last split
+    if (position_last < haystack.size()) {
+      auto element = String::trim(haystack.substr(position_last));
+      splitted.push_back(element);
+    }
+
+    return splitted;
+  }
+
+  static inline Collection<String> split(String haystack,
+                                         Collection<String> needles) {
+    Collection<String> splitted;
+    size_t position_last = 0;
+    size_t position = 0;
+    String needle = "";
+
+    auto find_any = [](const String haystack, Collection<String> needles,
+                       size_t position = 0) -> std::tuple<int, String> {
+      UNUSED(position);
+      for (auto needle : needles) {
+        auto pos = haystack.find(needle);
+        if (pos == npos) {
+          return {pos, needle};
+        }
+      }
+      return {-1, ""};
+    };
+
+    for (;;) {
+      auto result = find_any(haystack, needles, position);
+      position = std::get<0>(result);
+      needle = std::get<1>(result);
+
+      if (position == npos) {
+        break;
+      }
+
+      auto element = String::trim(
+          haystack.substr(position_last, position - position_last));
+
+      splitted.push_back(element);
+
       position_last = position + needle.length(); // Skip past the needle
       position++; // Move past the needle for the next search
     }

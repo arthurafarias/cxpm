@@ -1,29 +1,17 @@
 #pragma once
 
-#include "Controllers/ToolchainManager.hpp"
 #include "Core/Containers/Collection.hpp"
-#include "Core/Containers/Tuple.hpp"
 #include "Core/Exceptions/RuntimeException.hpp"
 #include "Core/Logging/LoggerManager.hpp"
-#include "Models/BuildOutputResult.hpp"
-#include "Models/CompilerCommandDescriptor.hpp"
-#include "Models/PackageDescriptor.hpp"
 #include "Models/ProjectDescriptor.hpp"
 #include "Models/TargetDescriptor.hpp"
-#include "Models/ToolchainDescriptor.hpp"
 #include "Modules/Console/AbstractConsoleApplication.hpp"
 #include "Modules/ProgramOptions/OptionDescriptorCollection.hpp"
 #include "Modules/ProgramOptions/Parse.hpp"
-#include "Modules/Serialization/AbstractArchiver.hpp"
-#include "Modules/Serialization/JsonOutputArchiver.hpp"
-#include "Utils/Unix/EnvironmentManager.hpp"
 #include <Modules/Templating/MustacheLite.hpp>
 #include <filesystem>
 
 #include <Controllers/ProjectManager.hpp>
-#include <fstream>
-#include <ios>
-#include <semaphore>
 
 using namespace Modules::Console;
 
@@ -182,7 +170,9 @@ private:
     return {InstallProjectResultStatus::Success, project};
   }
 
-  void uninstall(const String &directory) {}
+  void uninstall(const String &directory) {
+    UNUSED(directory);
+  }
 
   void assert_project_directory(const String &directory) {
     if (!std::filesystem::exists(directory.c_str())) {
