@@ -17,20 +17,20 @@ struct URL {
 
   String string() const {
     std::stringstream ss;
-    ss << std::format("{}:", scheme);
+    ss << std::format("{}:", scheme.c_str());
 
     if (!authority.empty()) {
-      ss << std::format("//{}", authority);
+      ss << std::format("//{}", authority.c_str());
     }
 
-    ss << std::format("{}", path);
+    ss << std::format("{}", path.c_str());
 
     if (!query.empty()) {
-      ss << std::format("?{}", query);
+      ss << std::format("?{}", query.c_str());
     }
 
     if (!fragment.empty()) {
-      ss << std::format("#{}", fragment);
+      ss << std::format("#{}", fragment.c_str());
     }
 
     return ss.str();

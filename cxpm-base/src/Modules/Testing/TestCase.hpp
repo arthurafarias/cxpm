@@ -17,7 +17,9 @@ public:
   String description;
   virtual void run() = 0;
   virtual void assert(const bool& value, const String& cause = "") {
-    throw AssertionFailure(cause);
+    if (value == false) {
+      throw AssertionFailure(cause);
+    }
   }
 };
 } // namespace Modules::Testing
