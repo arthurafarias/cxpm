@@ -2,6 +2,7 @@
 
 #include "Core/Containers/String.hpp"
 #include "Core/Functional/Function.hpp"
+#include "Modules/Testing/AssertionFailure.hpp"
 
 using namespace Core;
 using namespace Core::Functional;
@@ -15,5 +16,8 @@ public:
   String name;
   String description;
   virtual void run() = 0;
+  virtual void assert(const bool& value, const String& cause = "") {
+    throw AssertionFailure(cause);
+  }
 };
 } // namespace Modules::Testing

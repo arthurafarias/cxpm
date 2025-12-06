@@ -2,6 +2,8 @@
 
 #include "Core/Containers/Collection.hpp"
 #include "Core/Containers/String.hpp"
+#include <format>
+#include <sstream>
 
 using namespace Core::Containers;
 
@@ -12,6 +14,28 @@ struct URL {
   String path;
   String query;
   String fragment;
+
+  String string() const {
+    std::stringstream ss;
+    ss << std::format("{}:", scheme);
+
+    if (!authority.empty()) {
+      ss << std::format("//{}", authority);
+    }
+
+    ss << std::format("{}", path);
+
+    if (!query.empty()) {
+      ss << std::format("?{}", query);
+    }
+
+    if (!fragment.empty()) {
+      ss << std::format("#{}", fragment);
+    }
+
+    return ss.str();
+
+  }
 
   static inline URL parse(String url) {
 
@@ -62,3 +86,9 @@ struct URL {
   }
 };
 } // namespace Modules::Networking::HTTP
+
+namespace std {
+inline std::string to_string(const Modules::Networking::HTTP::URL &url) {
+  return url.string();
+}
+} // namespace std
