@@ -1,6 +1,6 @@
-#include "Modules/Networking/HTTP/Request.hpp"
+#include "Modules/Networking/HTTP/Response.hpp"
 #include "Core/Logging/LoggerManager.hpp"
-#include "Core/SharedPointer.hpp"
+#include "Modules/Networking/TCP/Socket.hpp"
 #include "Modules/Testing/TestCase.hpp"
 #include "Modules/Testing/TestGroup.hpp"
 
@@ -10,25 +10,20 @@ struct SimpleParseTest : public TestCase {
   SimpleParseTest() : TestCase("SimpleParseTest", "") {}
   virtual void run() override {
 
-    auto text = R"(
-POST / HTTP/1.1
-Host: api.com
-Content-Type: text/json
+    Modules::Networking::HTTP::Response res{
+        .descriptor = {.status = {200, "OK"},
+                       .version = {1, 1},
+                       .headers = {{"Content-Type", "text/json"}},
+                       .body = R"({"message": "text"})"},
+        .socket = SocketStream(-1) };
 
-{
-            "data": "Hello World"
-}
-
-
-            )";
-
-    auto request = Modules::Networking::HTTP::Request::parse(text);
+        res.send();
   }
 };
 
-class RequestTest : public TestGroup {
+class ResponseTest : public TestGroup {
 public:
-  RequestTest() : TestGroup("RequestTest", "") {
+  ResponseTest() : TestGroup("ResponseTest", "") {
     tests = {SharedPointer<TestCase>(new SimpleParseTest())};
   }
 };
@@ -36,5 +31,5 @@ public:
 int main(int argc, char *argv[]) {
   Logging::LoggerManager::level_set(Logging::LoggerManager::Level::Max);
   Logging::LoggerManager::stream_set(Logging::LoggerManager::stream_cout());
-  RequestTest().run();
+  ResponseTest().run();
 }

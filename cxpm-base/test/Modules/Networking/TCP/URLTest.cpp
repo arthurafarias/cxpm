@@ -1,8 +1,6 @@
 #include "Modules/Networking/HTTP/URL.hpp"
-#include "Modules/Networking/HTTP/Request.hpp"
 #include "Modules/Testing/TestCase.hpp"
 #include "Modules/Testing/TestGroup.hpp"
-#include <memory>
 
 using namespace Modules::Testing;
 

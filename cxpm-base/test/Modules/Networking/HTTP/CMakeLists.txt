@@ -1,2 +1,5 @@
 add_executable(${PROJECT_NAME}_Modules_Networking_HTTP_RequestTest RequestTest.cpp)
 target_link_libraries(${PROJECT_NAME}_Modules_Networking_HTTP_RequestTest PUBLIC cxpm-base)
+
+add_executable(${PROJECT_NAME}_Modules_Networking_HTTP_ResponseTest ResponseTest.cpp)
+target_link_libraries(${PROJECT_NAME}_Modules_Networking_HTTP_ResponseTest PUBLIC cxpm-base)

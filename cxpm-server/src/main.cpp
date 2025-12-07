@@ -15,7 +15,9 @@ public:
                 UNUSED(req);
                 UNUSED(res);
 
-                res.send(200);
+                res.descriptor.status.code = 200;
+
+                res.send();
               });
   }
 
