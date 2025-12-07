@@ -15,7 +15,7 @@ struct SimpleParseTest : public TestCase {
                        .version = {1, 1},
                        .headers = {{"Content-Type", "text/json"}},
                        .body = R"({"message": "text"})"},
-        .socket = SocketStream(-1) };
+        .socket = nullptr };
 
         res.send();
   }

@@ -9,7 +9,7 @@ struct Status {
   int code;
 };
 
-inline std::map<Status, std::string> StatusMap = {
+inline std::map<Status, String> StatusMap = {
     {{100}, "Continue"},
     {{101}, "Switching Protocols"},
     {{101}, "Processing"},
@@ -18,7 +18,7 @@ inline std::map<Status, std::string> StatusMap = {
 } // namespace Modules::Networking::HTTP
 
 namespace std {
-inline std::string to_string(const Modules::Networking::HTTP::Status &code) {
+inline String to_string(const Modules::Networking::HTTP::Status &code) {
   return Modules::Networking::HTTP::StatusMap[code];
 }
 } // namespace std

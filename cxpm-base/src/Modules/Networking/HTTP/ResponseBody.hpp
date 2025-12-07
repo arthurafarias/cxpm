@@ -3,8 +3,8 @@
 #include <string>
 
 namespace Modules::Networking::HTTP {
-class ResponseBody : public std::string {
+class ResponseBody : public String {
 public:
-  using std::string::basic_string;
+  using String::basic_string;
 };
 } // namespace Modules::Networking::HTTP

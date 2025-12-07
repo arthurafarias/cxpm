@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/Containers/Map.hpp"
 #include "Core/Containers/String.hpp"
 #include "Core/Exceptions/RuntimeException.hpp"
 #include "Modules/Networking/HTTP/Header.hpp"
@@ -7,6 +8,7 @@
 #include "Modules/Networking/HTTP/Method.hpp"
 #include "Modules/Networking/HTTP/RequestDescriptor.hpp"
 #include "Modules/Networking/HTTP/Version.hpp"
+#include "Modules/Testing/TestCase.hpp"
 #include "Utils/Unused.hpp"
 #include <sstream>
 #include <string>
@@ -19,7 +21,7 @@ public:
   enum class ParseResultStatus { Success, Failure };
   using ParseResult = std::tuple<ParseResultStatus, Request>;
 
-  static inline ParseResult parse(std::string text) {
+  static inline ParseResult parse(String text) {
     UNUSED(text);
 
     auto result = Request();
@@ -27,15 +29,20 @@ public:
     using namespace Core::Containers;
     auto lines = String::split(text, Collection<String>{"\r", "\n"});
 
-    std::string method;
-    std::string version;
-
     auto elements = String::split(lines.front(), " ");
     lines.pop_front();
 
     if (elements.size() != 3) {
       return {ParseResultStatus::Failure, result};
     }
+
+    if (!MethodReverseMap.contains(elements[0])) {
+      return {ParseResultStatus::Failure, result};
+    }
+
+    result.method = MethodReverseMap.at(elements[0]);
+    result.resource = elements[1];
+    result.version = Version(elements[1]);
 
     Collection<String> header_lines;
 
@@ -55,6 +62,49 @@ public:
     result.body = String::join(lines, "\n");
 
     return {ParseResultStatus::Success, result};
+  }
+
+private:
+};
+
+class RouteTest : public Modules::Testing::TestCase {
+  inline static int main(int argc, char *argv[]) {
+
+    auto model = "/:user/:session_id";
+    auto url = "/arthur"; // it's not tree like
+
+    auto compile = [](const String &model) -> Map<String, int> {
+      auto context = Map<String, int>();
+
+      auto path_collection = String::split(model, "/");
+
+      for (size_t i = 0; i < path_collection.size(); i++) {
+        if (path_collection[i].starts_with(":")) {
+          context[path_collection[i].substr(1, path_collection[i].size())] = i;
+        }
+      }
+
+      return context;
+    };
+
+    auto parse = [](const Map<String, int> context,
+                    String url) -> Map<String, String> {
+      auto result = Map<String, String>();
+      auto haystack = String::split(url, "/");
+
+      for (auto [key, value] : context) {
+        if (value < haystack.size()) {
+          result[key] = haystack[value];
+        }
+      }
+
+      return result;
+    };
+
+    auto context = compile(model);
+    auto result = parse(context, url);
+
+    return 0;
   }
 };
 

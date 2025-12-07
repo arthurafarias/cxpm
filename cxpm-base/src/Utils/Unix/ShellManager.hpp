@@ -70,7 +70,7 @@ public:
         std::tuple<int, Core::Containers::String, Core::Containers::String>>;
     auto promise = std::make_shared<promise_type>();
 
-    Threading::ThreadPool::get_instance().submit([command, shell, promise]() {
+    Core::Threading::ThreadPool::get_instance().submit([command, shell, promise]() {
       auto retval = exec(command, shell);
       promise->set_value(retval);
     });

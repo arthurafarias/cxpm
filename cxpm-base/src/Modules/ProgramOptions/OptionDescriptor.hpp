@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Modules/Serialization/AbstractArchiver.hpp"
+#include "Utils/Macros/MaybeUnused.hpp"
 #include <Core/Containers/String.hpp>
 
 using namespace Core::Containers;
@@ -15,7 +16,7 @@ struct OptionDescriptor {
 };
 
 template <typename Archiver>
-inline Archiver &operator%(Archiver &ar, const OptionDescriptor &option) {
+inline Archiver &operator%(Archiver &ar MaybeUnused, const OptionDescriptor &option) {
   Serialization::AbstractArchiver::make_object_start("OptionDescriptor");
   Serialization::AbstractArchiver::make_named_value_property("name",
                                                              option.name);

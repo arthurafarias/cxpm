@@ -3,8 +3,9 @@
 #include <ostream>
 #include <sstream>
 
-class OutputStringStream : public std::ostringstream
-{
-    public:
-    using std::ostringstream::basic_ostream;
+namespace Modules::Streams {
+class OutputStringStream : public std::ostringstream {
+public:
+  using std::ostringstream::basic_ostream;
 };
+} // namespace Modules::Streams

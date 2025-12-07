@@ -2,6 +2,8 @@
 
 #include <Core/Containers/String.hpp>
 
+#include <format>
+
 using namespace Core::Containers;
 
 namespace Modules::Serialization {

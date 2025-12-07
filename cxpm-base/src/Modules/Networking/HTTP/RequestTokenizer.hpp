@@ -8,8 +8,8 @@ namespace Modules::Networking::HTTP {
 
 class RequestTokenizer {
 public:
-  std::deque<std::string> tokenize(std::string raw) {
-    return std::deque<std::string>();
+  std::deque<String> tokenize(String raw) {
+    return std::deque<String>();
   }
 
 private:

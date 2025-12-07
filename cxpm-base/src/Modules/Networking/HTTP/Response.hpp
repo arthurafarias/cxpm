@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/SharedPointer.hpp"
 #include "Modules/Networking/HTTP/ResponseStatus.hpp"
 #include "Modules/Networking/HTTP/Version.hpp"
 #include "Modules/Networking/TCP/Socket.hpp"
@@ -42,7 +43,7 @@ inline std::ostream &operator<<(OutputStream &os,
 class Response : public ResponseDescriptor {
 public:
   ResponseDescriptor descriptor;
-  SocketStream socket;
+  SharedPointer<Socket> socket;
 
   void send() { std::cout << descriptor; }
 };

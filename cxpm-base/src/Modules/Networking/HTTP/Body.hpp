@@ -2,5 +2,5 @@
 
 #include <string>
 namespace Modules::Networking::HTTP {
-class Body : public std::string {};
+class Body : public String {};
 } // namespace Modules::Networking::HTTP

@@ -1,5 +1,7 @@
 #pragma once
 
 namespace Modules::Networking::TCP {
-class Service {};
+class BasicContext {
+public:
+};
 } // namespace Modules::Networking::TCP

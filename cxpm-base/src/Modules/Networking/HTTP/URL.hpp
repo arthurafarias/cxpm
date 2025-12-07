@@ -2,6 +2,7 @@
 
 #include "Core/Containers/Collection.hpp"
 #include "Core/Containers/String.hpp"
+#include "Modules/Streams/OutputStringStream.hpp"
 #include <format>
 #include <sstream>
 
@@ -16,7 +17,7 @@ struct URL {
   String fragment;
 
   String string() const {
-    std::stringstream ss;
+    Streams::OutputStringStream ss;
     ss << std::format("{}:", scheme.c_str());
 
     if (!authority.empty()) {
@@ -34,7 +35,6 @@ struct URL {
     }
 
     return ss.str();
-
   }
 
   static inline URL parse(String url) {
@@ -44,7 +44,7 @@ struct URL {
 
     {
       auto pos = url.find(":");
-      if (pos != std::string::npos) {
+      if (pos != String::npos) {
         result.scheme = url.substr(0, pos);
         url.erase(0, result.scheme.size() + 1);
       } else {
@@ -55,7 +55,7 @@ struct URL {
     {
       auto start = url.find("//");
 
-      if (start != std::string::npos) {
+      if (start != String::npos) {
         start += 2;
         auto end = url.find("/", start);
         auto size = end - start;
@@ -66,7 +66,7 @@ struct URL {
 
     {
       auto pos = url.rfind("#");
-      if (pos != std::string::npos) {
+      if (pos != String::npos) {
         result.fragment = url.substr(pos + 1, url.size() - pos);
         url.erase(pos, result.fragment.size() + 2);
       }
@@ -74,7 +74,7 @@ struct URL {
 
     {
       auto pos = url.rfind("?");
-      if (pos != std::string::npos) {
+      if (pos != String::npos) {
         result.query = url.substr(pos + 1, url.size() - pos);
         url.erase(pos, result.query.size() + 2);
       }
@@ -88,7 +88,7 @@ struct URL {
 } // namespace Modules::Networking::HTTP
 
 namespace std {
-inline std::string to_string(const Modules::Networking::HTTP::URL &url) {
+inline String to_string(const Modules::Networking::HTTP::URL &url) {
   return url.string();
 }
 } // namespace std

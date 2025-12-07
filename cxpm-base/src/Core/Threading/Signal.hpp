@@ -6,20 +6,16 @@
  *                                                                                                                      *
  * Redistribution and use in source and binary forms, with or without
  *modification, are permitted provided that the     * following conditions are
- *met:                                         *
+ *met: *
  *                                                                                                                      *
  *    * Redistributions of source code must retain the above copyright notice,
- *this list of conditions, and the         * following disclaimer.
- *                      *
- *                                                                                                                      *
+ *this list of conditions, and the         * following disclaimer. *
  *    * Redistributions in binary form must reproduce the above copyright
  *notice, this list of conditions and the       * following disclaimer in the
  *documentation and/or other materials provided with the distribution. *
- *                                                                                                                      *
  *    * Neither the name of the author nor the names of any contributors may be
  *used to endorse or promote products     * derived from this software without
  *specific prior written permission.                                           *
- *                                                                                                                      *
  * THIS SOFTWARE IS PROVIDED BY THE AUTHORS "AS IS" AND ANY EXPRESS OR IMPLIED
  *WARRANTIES, INCLUDING, BUT NOT LIMITED   * TO, THE IMPLIED WARRANTIES OF
  *MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
@@ -34,100 +30,101 @@
  ***********************************************************************************************************************/
 
 /**
-  @file signal.hpp
-  @author Arthur de A. Farias <arthur@afarias.org>
-  @brief Thread Pool Declaration/Definition
+        @file signal.hpp
+        @author Arthur de A. Farias <arthur@afarias.org>
+        @brief Signal Class Declaration/Definition
  */
 
-#ifndef _Threading_ThreadPool_hpp_
-#define _Threading_ThreadPool_hpp_
+#ifndef _threaded_signals_hpp_
+#define _threaded_signals_hpp_
 
-#include "Core/Functional/Function.hpp"
-#include <condition_variable>
+#include "Core/Threading/Mutex.hpp"
+#include "Core/Threading/UniqueLock.hpp"
 #include <functional>
-#include <iostream>
+#include <list>
 #include <mutex>
-#include <queue>
-#include <thread>
 
-using namespace Core::Functional;
+#include <Core/Logging/LoggerManager.hpp>
+#include <Core/Threading/ThreadPool.hpp>
 
 namespace Core::Threading {
 
-class ThreadPool {
-
+template <typename sender_type, typename... args_types> class Signal {
 public:
-  using task_type = Function<void()>;
+  Signal() = default;
 
-  ThreadPool(int hardware_concurrency = std::thread::hardware_concurrency()) {
-    /** push task evaluator (task_launcher in the thread pool) */
-    for (int i = 0; i < hardware_concurrency; i++) {
-      _pool.emplace_back(std::bind(&ThreadPool::task_launcher, this));
+  Signal(Signal &) = delete;
+  Signal &operator=(Signal &) = delete;
+
+  Signal(Signal &&) = delete;
+  Signal &operator=(Signal &&) = delete;
+
+  ~Signal() { disconnect_all(); }
+
+  using SlotType = std::function<void(sender_type, args_types...)>;
+  using HandleType = std::list<SlotType>::iterator;
+
+  const std::list<SlotType>::iterator connect(const SlotType &slot) {
+    UniqueLock<Mutex> lock(_mutex);
+
+    Core::Logging::LoggerManager::debug("Core::Threading::signal", __func__);
+
+    return _sinks.insert(_sinks.end(), std::move(slot));
+  }
+
+  void disconnect(const std::list<SlotType>::iterator &it) {
+    std::unique_lock<std::mutex> lock(_mutex);
+
+    Core::Logging::LoggerManager::debug("{}: {}", __func__, "");
+
+    _sinks.erase(it);
+  }
+
+  void disconnect_all() {
+    std::unique_lock<std::mutex> lock(_mutex);
+
+    Core::Logging::LoggerManager::debug("{}: {}", __func__, "");
+
+    _sinks.clear();
+  }
+
+  void operator()(sender_type sender, args_types... args) {
+    std::unique_lock<std::mutex> lock(_mutex);
+
+    Core::Logging::LoggerManager::debug("{}: {}", __func__, "");
+
+    for (const auto &slot : _sinks) {
+
+      Core::Logging::LoggerManager::debug("{}: {}", __func__, "");
+
+      _thread_pool.submit([slot, sender, args...]() {
+        Core::Logging::LoggerManager::debug(__func__, "begin slot call");
+
+        slot(sender, args...);
+
+        Core::Logging::LoggerManager::debug("{}: {}", __func__,
+                                            "end slog call");
+      });
     }
   }
 
-  ThreadPool(const ThreadPool &) = delete;
-  ThreadPool operator=(const ThreadPool &) = delete;
-
-  ThreadPool(const ThreadPool &&) = delete;
-  ThreadPool operator=(const ThreadPool &&) = delete;
-
-  void submit(task_type t) {
-    std::unique_lock<std::mutex> lk{_mutex};
-    _q.push(t);
-    _q_cond.notify_one();
+  Signal &operator+=(const SlotType &slot) {
+    connect(slot);
+    return *this;
   }
 
-  static ThreadPool &get_instance() {
-    static ThreadPool _ThreadPool;
-    return _ThreadPool;
+  Signal &operator-=(const std::list<SlotType>::iterator &it) {
+    disconnect(it);
+    return *this;
   }
 
-  void shutdown() {
-    _stop = true;
-    _q_cond.notify_all();
-    for (auto &t : _pool)
-      t.join();
-  }
-
-  virtual ~ThreadPool() { shutdown(); }
+  const auto &sinks() { return _sinks; }
 
 protected:
-  void task_launcher() {
-    while (!_stop) {
-
-      Function<void()> task;
-
-      {
-        auto lock = std::unique_lock<std::mutex>{_mutex};
-        _q_cond.wait(lock, [this] { return !_q.empty() || _stop; });
-
-        if (_stop && _q.empty())
-          break;
-
-        task = std::move(_q.front());
-        _q.pop();
-      }
-
-      if (task) {
-        try {
-          task();
-        } catch (const std::exception &e) {
-          std::cerr << e.what() << std::endl;
-        } catch (...) {
-          // Catch-all for safety
-        }
-      }
-    }
-  }
-
-private:
-  std::queue<Function<void()>> _q;
-  std::condition_variable _q_cond;
-  std::vector<std::thread> _pool;
   std::mutex _mutex;
-  std::atomic_bool _stop = false;
+  std::list<SlotType> _sinks;
+  ThreadPool &_thread_pool = ThreadPool::get_instance();
 };
-} // namespace Threading
+} // namespace Core::Threading
 
 #endif
