@@ -42,14 +42,13 @@ inline std::ostream &operator<<(OutputStream &os,
   return os;
 }
 
-class Response {
+class Response : public ResponseDescriptor, public Object, public EnableSharedFromThis<Response>, public Utils::Patterns::Creator<Response> {
 public:
-  ResponseDescriptor descriptor;
   SharedPointer<AbstractSocket> client;
 
   void send() {
     auto ss = std::stringstream();
-    std::osyncstream(ss) << descriptor;
+    std::osyncstream(ss) << static_cast<ResponseDescriptor>(*this);
     client->write(ss.str());
   }
 };

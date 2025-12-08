@@ -10,14 +10,8 @@ struct SimpleParseTest : public TestCase {
   SimpleParseTest() : TestCase("SimpleParseTest", "") {}
   virtual void run() override {
 
-    Modules::Networking::HTTP::Response res{
-        .descriptor = {.status = {200, "OK"},
-                       .version = {1, 1},
-                       .headers = {{"Content-Type", "text/json"}},
-                       .body = R"({"message": "text"})"},
-        .client = nullptr };
-
-        res.send();
+    auto response = Modules::Networking::HTTP::Response::create();
+    response->send();
   }
 };
 

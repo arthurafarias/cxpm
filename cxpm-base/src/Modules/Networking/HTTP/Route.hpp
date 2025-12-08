@@ -1,14 +1,14 @@
 #pragma once
 
+#include "Core/Exceptions/NotImplementedException.hpp"
 #include "Core/Exceptions/RuntimeException.hpp"
 #include "Core/SharedPointer.hpp"
 #include "Modules/Networking/HTTP/Method.hpp"
 #include "Modules/Networking/HTTP/Request.hpp"
-#include "Modules/Networking/HTTP/RequestDescriptor.hpp"
 #include "Modules/Networking/HTTP/Response.hpp"
-#include "Modules/Networking/HTTP/ResponseStatus.hpp"
 #include "Utils/Patterns/Creator.hpp"
 #include <functional>
+#include <tuple>
 
 using namespace Utils::Patterns;
 
@@ -17,7 +17,12 @@ class Route : public Object,
               public EnableSharedFromThis<Route>,
               public Creator<Route> {
 public:
-  using CallbackType = std::function<void(Request &, Response &)>;
+  enum class RouteTagType { Valued, Star, Literal };
+
+  using RouteTag = std::tuple<RouteTagType, int, String>;
+
+  using CallbackType =
+      std::function<void(SharedPointer<Request>, SharedPointer<Response>)>;
 
   Route() {}
 
@@ -59,49 +64,73 @@ public:
   CallbackType callback;
   Map<String, String> data;
 
-  const Map<String, int> &context() { return compiled; }
+  const Map<String, RouteTag> &context() { return compiled; }
 
   Map<String, String> parse(const String &resource) {
 
     auto result = Map<String, String>();
     auto haystack = String::split(resource, "/");
+    auto compiled = context();
 
-    if (context().size() == 0 && resource != model) {
-      throw Exceptions::RuntimeException("Invalid Match {} : {}", model,
+    if (compiled.size() != haystack.size()) {
+      throw Exceptions::RuntimeException("Couldn't match route {} to {}", model,
                                          resource);
     }
 
-    if (context().size() > haystack.size() - 1) {
-      throw Exceptions::RuntimeException("Invalid Match {} : {}", model,
-                                         resource);
-    }
+    for (auto [key, tag] : context()) {
+      auto [type, index, value] = tag;
 
-    for (auto [key, value] : context()) {
-      if (value < haystack.size()) {
-        result[key] = haystack[value];
+      switch (type) {
+      case RouteTagType::Valued:
+        result[value] = haystack[index];
+        break;
+      case RouteTagType::Literal:
+        // result[value] = ""; // ignore literals but the size should be the
+        // the validation is already really straight, if the number of tags
+        // aren't the same number of tag in the compiled model it shouldn't be
+        // interpreted as the route. That's enought and easier for now.
+        if (value != haystack[index]) {
+          throw Exceptions::RuntimeException("Couldn't parse {} from {}", resource, model);
+        }
+        break;
+      case RouteTagType::Star:
+        throw Exceptions::NotImplementedException(
+            "Star Tag is not implemented yet.");
+        break;
       }
-    }
-
-    if (result.size() != context().size()) {
-      throw Exceptions::RuntimeException("Invalid Match {} : {}", model,
-                                         resource);
     }
 
     return result;
   }
 
 private:
-  Map<String, int> compiled;
+  Map<String, RouteTag> compiled;
 
-  inline static Map<String, int> compile(const String &model) {
-    auto context = Map<String, int>();
+  inline static Map<String, RouteTag> compile(const String &model) {
+    auto context = Map<String, RouteTag>();
 
     auto path_collection = String::split(model, "/");
 
     for (size_t i = 0; i < path_collection.size(); i++) {
+
       if (path_collection[i].starts_with(":")) {
-        context[path_collection[i].substr(1, path_collection[i].size())] = i;
+        context[path_collection[i].substr(1, path_collection[i].size())] = {
+            RouteTagType::Valued, i, path_collection[i]};
+        continue;
       }
+
+      /// TODO: Star Tag is not really easy to archieve I should join the rest
+      /// and store into it like mqtt or any other index. Really complex. For
+      /// now, something more easy.
+
+      // if (path_collection[i].starts_with("*")) {
+      //   context[path_collection[i].substr(1, path_collection[i].size())] = {
+      //       RouteTagType::Star, i, path_collection[i]};
+      //   continue;
+      // }
+
+      context[path_collection[i]] = {RouteTagType::Literal, i,
+                                     path_collection[i]};
     }
 
     return context;

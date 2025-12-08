@@ -3,28 +3,33 @@
 #include "Core/Containers/Map.hpp"
 #include "Core/Containers/String.hpp"
 #include "Core/Exceptions/RuntimeException.hpp"
+#include "Core/SharedPointer.hpp"
 #include "Modules/Networking/HTTP/Header.hpp"
 #include "Modules/Networking/HTTP/HeaderElement.hpp"
 #include "Modules/Networking/HTTP/Method.hpp"
 #include "Modules/Networking/HTTP/RequestDescriptor.hpp"
 #include "Modules/Networking/HTTP/Version.hpp"
 #include "Modules/Testing/TestCase.hpp"
+#include "Utils/Patterns/Creator.hpp"
 #include "Utils/Unused.hpp"
 #include <sstream>
 #include <string>
 
 namespace Modules::Networking::HTTP {
 
-class Request : public RequestDescriptor {
+class Request : public RequestDescriptor,
+                public Object,
+                public EnableSharedFromThis<Request>,
+                Utils::Patterns::Creator<Request> {
 public:
   Request() {}
   enum class ParseResultStatus { Success, Failure };
-  using ParseResult = std::tuple<ParseResultStatus, Request>;
+  using ParseResult = std::tuple<ParseResultStatus, SharedPointer<Request>>;
 
   static inline ParseResult parse(String text) {
     UNUSED(text);
 
-    auto result = Request();
+    auto result = create();
 
     using namespace Core::Containers;
     auto lines = String::split(text, Collection<String>{"\r", "\n"});
@@ -40,9 +45,9 @@ public:
       return {ParseResultStatus::Failure, result};
     }
 
-    result.method = MethodReverseMap.at(elements[0]);
-    result.resource = elements[1];
-    result.version = Version(elements[2]);
+    result->method = MethodReverseMap.at(elements[0]);
+    result->resource = elements[1];
+    result->version = Version(elements[2]);
 
     Collection<String> header_lines;
 
@@ -59,9 +64,9 @@ public:
       lines.erase(lines.begin(), lines.begin() + header_lines.size());
     }
 
-    result.header = Header::parse(header_lines);
+    result->header = Header::parse(header_lines);
 
-    result.body = String::join(lines, "\n");
+    result->body = String::join(lines, "\n");
 
     return {ParseResultStatus::Success, result};
   }

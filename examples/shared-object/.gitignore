@@ -1,3 +1,4 @@
 project-manifest.so
 package.loader.cpp
 package.loader.cpp.o
+log*.txt

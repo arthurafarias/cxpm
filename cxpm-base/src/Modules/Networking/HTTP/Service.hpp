@@ -18,16 +18,27 @@ class Service : public Object,
                 public EnableSharedFromThis<Service>,
                 public Creator<Service> {
 public:
+  Signal<SharedPointer<Service>, SharedPointer<Request>,
+         SharedPointer<Response>>
+      on_request;
+
   Service() {}
   Service(const std::initializer_list<SharedPointer<Route>> &list)
       : routes(list.begin(), list.end()) {}
+
   SharedPointer<Service> route_add(const Method &method, String path,
                                    const Route::CallbackType &callback,
                                    const Version &version = {1, 1}) {
+    route_add(Route::create(method, path, callback, version));
     return shared_from_this();
   }
 
-  SharedPointer<Service> add_listener(int port, const String &host) {
+  SharedPointer<Service> route_add(SharedPointer<Route> route) {
+    routes.push_back(route);
+    return shared_from_this();
+  }
+
+  SharedPointer<Service> listener_add(int port, const String &host) {
     auto lock = listeners.acquire_lock();
     listeners.emplace_back(port, host);
     return shared_from_this();
@@ -65,7 +76,18 @@ public:
         std::osyncstream(std::cout) << "server: error: " << error << std::endl;
       };
 
-      // Add a client accepted callback so you can define the server application
+      shared_from_this()->on_request +=
+          [](auto server, auto request, auto response) {
+            auto route = server->match_route(request->resource);
+
+            if (route != nullptr && route->callback != nullptr) {
+              request->data = route->data;
+              route->callback(request, response);
+            }
+          };
+
+      // Add a client accepted callback so you can define the server
+      // application
       server->client_accepted += [self = shared_from_this()](auto server,
                                                              auto client) {
         std::osyncstream(std::cout) << "server: client accepted " << std::endl;
@@ -87,23 +109,13 @@ public:
         // Register a data_received callback
         client->data_received += [server, self](auto client, auto data) {
           auto chunk = String(data.begin(), data.end());
+
           auto [result, request] = Request::parse(chunk);
 
-          // Print the data received from the client
-          std::osyncstream(std::cout)
-              << "server: client: data: "
-              << std::string(data.begin(), data.end()) << std::endl;
+          auto response = Response::create();
+          response->client = client;
 
-          /// TODO: Implement match_route in server
-          auto route = self->match_route(request.resource);
-
-          if (route != nullptr && route->callback != nullptr) {
-
-            request.data = route->data;
-            auto response = Response{};
-            response.client = client;
-            route->callback(request, response);
-          }
+          self->on_request(self, request, response);
         };
       };
 
