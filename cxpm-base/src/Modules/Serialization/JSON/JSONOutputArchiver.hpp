@@ -3,7 +3,8 @@
 #include "Core/Containers/Map.hpp"
 #include "Core/Exceptions/RuntimeException.hpp"
 #include "Modules/Serialization/Base/AbstractArchiver.hpp"
-#include "Modules/Serialization/Base/ValueDescriptor.hpp"
+
+#include "Modules/Serialization/Base/ValueTag.hpp"
 #include <Core/UniquePointer.hpp>
 #include <cstddef>
 #include <iomanip>
@@ -15,7 +16,7 @@ using namespace Modules::Serialization::Base;
 
 namespace Modules::Serialization::JSON {
 
-class JsonOutputArchiver : public AbstractArchiver {
+class JsonOutputArchiver : public ArchiveTagFactory {
 public:
   explicit JsonOutputArchiver(std::ostream &ostream)
       : stream_property(ostream) {}

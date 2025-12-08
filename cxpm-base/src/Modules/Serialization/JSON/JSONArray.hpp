@@ -13,11 +13,11 @@ struct JSONArray : public Collection<JSONValue> {
 
 template <typename Archiver>
 inline Archiver &operator%(Archiver &ar, const JSONArray &array) {
-  ar % AbstractArchiver::make_array_start("");
+  ar % ArchiveTagFactory::make_array_start("");
   for (const auto &element : array) {
     ar % element;
   }
-  ar % AbstractArchiver::make_array_end("");
+  ar % ArchiveTagFactory::make_array_end("");
   return ar;
 }
 

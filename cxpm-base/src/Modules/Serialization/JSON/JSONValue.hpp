@@ -3,12 +3,15 @@
 #include "Core/Containers/Map.hpp"
 #include "Core/Containers/String.hpp"
 #include "Core/Containers/Variant.hpp"
-#include "Modules/Serialization/Base/ValueDescriptor.hpp"
+
+#include "Modules/Serialization/Base/ValueTag.hpp"
+
 #include <cstddef>
 #include <type_traits>
 #include <variant>
 
 using namespace Core::Containers;
+using namespace Modules::Serialization::Base;
 
 namespace Modules::Serialization::JSON {
 struct JSONValue;
@@ -24,7 +27,7 @@ inline Archiver &operator%(Archiver &ar, const JSONValue &value) {
   std::visit(
       [&](auto &&_value) {
         using ValueType = std::decay_t<decltype(_value)>;
-        ar % Base::ValueTag<ValueType>(_value);
+        ar % ValueTag<ValueType>(_value);
       },
       value);
   return ar;

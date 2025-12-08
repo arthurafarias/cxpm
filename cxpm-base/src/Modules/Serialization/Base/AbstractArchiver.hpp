@@ -1,15 +1,16 @@
 #pragma once
 
+#include "Modules/Serialization/Base/KeyValueTag.hpp"
+#include "Modules/Serialization/Base/TagBase.hpp"
 #include <Core/Containers/String.hpp>
-#include <Modules/Serialization/Base/ValueDescriptor.hpp>
 
 using namespace Core::Containers;
 
 namespace Modules::Serialization::Base {
 
-class AbstractArchiver {
+class ArchiveTagFactory {
 protected:
-  explicit AbstractArchiver() {}
+  explicit ArchiveTagFactory() {}
 
 public:
   static inline TagBase make_object_start(std::string name) {

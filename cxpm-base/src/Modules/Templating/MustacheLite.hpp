@@ -6,7 +6,7 @@
 #include "Core/SharedPointer.hpp"
 #include "Models/CompilerCommandDescriptor.hpp"
 #include "Modules/Serialization/Base/AbstractArchiver.hpp"
-#include "Modules/Serialization/Base/ValueDescriptor.hpp"
+
 #include <Core/Containers/String.hpp>
 #include <algorithm>
 #include <memory>
@@ -20,7 +20,7 @@ using namespace Modules::Serialization::Base;
 
 namespace Modules::Templating {
 
-class MustacheLite : public AbstractArchiver {
+class MustacheLite : public ArchiveTagFactory {
 public:
   MustacheLite(const String &view) : view(view) {}
 
