@@ -22,6 +22,10 @@ public:
   inline static String join(const Collection<String> &collection,
                             String delimiter) {
 
+    if (collection.size() == 0) {
+      return "";
+    }
+
     String result = collection.front();
 
     for (auto el = collection.begin() + 1; el < collection.end(); el++) {

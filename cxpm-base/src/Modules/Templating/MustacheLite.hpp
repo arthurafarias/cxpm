@@ -5,8 +5,8 @@
 #include "Core/Containers/Variant.hpp"
 #include "Core/SharedPointer.hpp"
 #include "Models/CompilerCommandDescriptor.hpp"
-#include "Modules/Serialization/AbstractArchiver.hpp"
-#include "Modules/Serialization/ValueDescriptor.hpp"
+#include "Modules/Serialization/Base/AbstractArchiver.hpp"
+#include "Modules/Serialization/Base/ValueDescriptor.hpp"
 #include <Core/Containers/String.hpp>
 #include <algorithm>
 #include <memory>
@@ -16,7 +16,7 @@
 #include <typeinfo>
 
 using namespace Core::Containers;
-using namespace Modules::Serialization;
+using namespace Modules::Serialization::Base;
 
 namespace Modules::Templating {
 
@@ -94,11 +94,11 @@ inline MustacheLite &operator%(MustacheLite &ar,
 template <>
 inline MustacheLite &operator%(MustacheLite &ar, const TagBase &tag) {
   switch (tag.type) {
-  case Modules::Serialization::TagType::Array:
+  case TagType::Array:
     break;
-  case Modules::Serialization::TagType::Object:
+  case TagType::Object:
     break;
-  case Modules::Serialization::TagType::Integral:
+  case TagType::Integral:
     break;
   }
   return ar;

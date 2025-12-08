@@ -1,16 +1,16 @@
 #pragma once
 
 #include "Core/Containers/Map.hpp"
-#include "Modules/Serialization/AbstractArchiver.hpp"
+#include "Modules/Serialization/Base/AbstractArchiver.hpp"
 #include <cctype>
 #include <istream>
 
 using namespace Core::Containers;
-using namespace Modules::Serialization;
+using namespace Modules::Serialization::Base;
 
 namespace Modules::ProgramOptions::Serialization {
 class ProgramOptionsInputArchiver
-    : public ::Modules::Serialization::AbstractArchiver {
+    : public ::Modules::AbstractArchiver {
 public:
   ProgramOptionsInputArchiver(std::istream &istream)
       : stream_property(istream) {}

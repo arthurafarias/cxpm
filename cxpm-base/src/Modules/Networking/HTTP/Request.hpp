@@ -42,7 +42,7 @@ public:
 
     result.method = MethodReverseMap.at(elements[0]);
     result.resource = elements[1];
-    result.version = Version(elements[1]);
+    result.version = Version(elements[2]);
 
     Collection<String> header_lines;
 
@@ -55,7 +55,9 @@ public:
       header_lines.push_back(line);
     }
 
-    lines.erase(lines.begin(), lines.begin() + header_lines.size() + 1);
+    if (lines.size() > 0 && header_lines.size() > 0) {
+      lines.erase(lines.begin(), lines.begin() + header_lines.size());
+    }
 
     result.header = Header::parse(header_lines);
 

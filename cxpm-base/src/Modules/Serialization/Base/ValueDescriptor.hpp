@@ -6,7 +6,7 @@
 
 using namespace Core::Containers;
 
-namespace Modules::Serialization {
+namespace Modules::Serialization::Base {
 
 enum class TagPart { Start, End, DoNotApply };
 enum class TagType { Integral, Object, Array };

@@ -9,7 +9,7 @@
 #include "Models/TargetDescriptor.hpp"
 #include "Models/Toolchain.hpp"
 #include "Models/ToolchainDescriptor.hpp"
-#include "Modules/Serialization/JsonOutputArchiver.hpp"
+#include "Modules/Serialization/JSON/JSONOutputArchiver.hpp"
 #include <Controllers/ToolchainManager.hpp>
 #include <Core/Containers/String.hpp>
 #include <Modules/Templating/MustacheLite.hpp>
@@ -31,6 +31,8 @@
 #ifndef cxpm_BUILD_INSTALL_PREFIX
 #define cxpm_BUILD_INSTALL_PREFIX "/usr"
 #endif
+
+using namespace Modules::Serialization::JSON;
 
 namespace Controllers {
 
@@ -150,7 +152,7 @@ StaticClass(ProjectManager)
     }
 
     auto stream = std::ofstream("compile_commands.json");
-    Modules::Serialization::JsonOutputArchiver output(stream);
+    JsonOutputArchiver output(stream);
     output % commands;
 
     return {BuildProjectOutputResultStatus::Success, project_manifest,

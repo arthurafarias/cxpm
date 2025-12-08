@@ -1,10 +1,11 @@
 #pragma once
 
-#include "Modules/Serialization/AbstractArchiver.hpp"
+#include "Modules/Serialization/Base/AbstractArchiver.hpp"
 #include "Utils/Macros/MaybeUnused.hpp"
 #include <Core/Containers/String.hpp>
 
 using namespace Core::Containers;
+using namespace Modules::Serialization::Base;
 
 namespace Modules::ProgramOptions {
 struct OptionDescriptor {
@@ -17,17 +18,17 @@ struct OptionDescriptor {
 
 template <typename Archiver>
 inline Archiver &operator%(Archiver &ar MaybeUnused, const OptionDescriptor &option) {
-  Serialization::AbstractArchiver::make_object_start("OptionDescriptor");
-  Serialization::AbstractArchiver::make_named_value_property("name",
+  AbstractArchiver::make_object_start("OptionDescriptor");
+  AbstractArchiver::make_named_value_property("name",
                                                              option.name);
-  Serialization::AbstractArchiver::make_named_value_property("name_short",
+  AbstractArchiver::make_named_value_property("name_short",
                                                              option.name_short);
-  Serialization::AbstractArchiver::make_named_value_property("value",
+  AbstractArchiver::make_named_value_property("value",
                                                              option.value);
-  Serialization::AbstractArchiver::make_named_value_property(
+  AbstractArchiver::make_named_value_property(
       "value_default", option.value_default);
-  Serialization::AbstractArchiver::make_named_value_property(
+  AbstractArchiver::make_named_value_property(
       "description", option.description);
-  Serialization::AbstractArchiver::make_object_end("OptionDescriptor");
+  AbstractArchiver::make_object_end("OptionDescriptor");
 }
 } // namespace Modules::Console::ProgramOptions

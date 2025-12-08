@@ -1,15 +1,19 @@
 #pragma once
 
+#include "Core/Containers/Map.hpp"
 #include "Core/Exceptions/RuntimeException.hpp"
-#include "Modules/Serialization/AbstractArchiver.hpp"
-#include "Modules/Serialization/ValueDescriptor.hpp"
+#include "Modules/Serialization/Base/AbstractArchiver.hpp"
+#include "Modules/Serialization/Base/ValueDescriptor.hpp"
 #include <Core/UniquePointer.hpp>
 #include <cstddef>
 #include <iomanip>
 #include <ostream>
 #include <syncstream>
 
-namespace Modules::Serialization {
+using namespace Modules::Serialization::Base;
+using namespace Modules::Serialization::Base;
+
+namespace Modules::Serialization::JSON {
 
 class JsonOutputArchiver : public AbstractArchiver {
 public:
@@ -149,6 +153,24 @@ inline JsonOutputArchiver &operator%(JsonOutputArchiver &ar,
   return ar;
 }
 
+template <typename KeyType, typename ValueType>
+inline JsonOutputArchiver &operator%(JsonOutputArchiver &ar,
+                                     const Map<KeyType, ValueType> &map) {
+  static int unique_id = 0;
+  unique_id++;
+
+  ar.object_start(TagBase{"object-" + std::to_string(unique_id), TagPart::Start,
+                          TagType::Object});
+
+  for (auto [key, value] : map) {
+    ar.key_value(KeyValueTag<decltype(value)>{key, value});
+  }
+
+  ar.object_end(TagBase{"object-" + std::to_string(unique_id), TagPart::End,
+                        TagType::Object});
+  return ar;
+}
+
 template <typename ElementType>
 inline JsonOutputArchiver &
 operator%(JsonOutputArchiver &ar, const Collection<ElementType> &collection) {
@@ -168,4 +190,4 @@ operator%(JsonOutputArchiver &ar, const Collection<ElementType> &collection) {
   return ar;
 }
 
-} // namespace Modules::Serialization
+} // namespace Modules::Serialization::JSON

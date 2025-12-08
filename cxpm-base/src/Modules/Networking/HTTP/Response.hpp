@@ -3,11 +3,13 @@
 #include "Core/SharedPointer.hpp"
 #include "Modules/Networking/HTTP/ResponseStatus.hpp"
 #include "Modules/Networking/HTTP/Version.hpp"
+#include "Modules/Networking/TCP/Client.hpp"
 #include "Modules/Networking/TCP/Socket.hpp"
 #include "Modules/Streams/OutputStream.hpp"
 #include "Utils/Unused.hpp"
 #include <chrono>
 #include <ostream>
+#include <syncstream>
 
 using namespace Modules::Networking::TCP;
 
@@ -29,23 +31,27 @@ public:
 
 inline std::ostream &operator<<(OutputStream &os,
                                 const ResponseDescriptor &res) {
-  os << std::format("HTTP/{}.{} {} {}\n", res.version.major, res.version.minor,
-                    res.status.code, res.status.description.c_str());
+  os << std::format("HTTP/{}.{} {} {}\n\n", res.version.major,
+                    res.version.minor, res.status.code,
+                    res.status.description.c_str());
   for (auto header : res.headers) {
-    os << std::format("{}: {}\n\n", header.first.c_str(),
-                      header.second.c_str());
+    os << std::format("{}: {}\n", header.first.c_str(), header.second.c_str());
   }
-  os << std::format("{}\n\n\n", res.body.c_str());
+  os << std::format("\n{}\n\n", res.body.c_str());
 
   return os;
 }
 
-class Response : public ResponseDescriptor {
+class Response {
 public:
   ResponseDescriptor descriptor;
-  SharedPointer<Socket> socket;
+  SharedPointer<AbstractSocket> client;
 
-  void send() { std::cout << descriptor; }
+  void send() {
+    auto ss = std::stringstream();
+    std::osyncstream(ss) << descriptor;
+    client->write(ss.str());
+  }
 };
 
 } // namespace Modules::Networking::HTTP

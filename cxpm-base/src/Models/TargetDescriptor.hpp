@@ -2,12 +2,12 @@
 
 #include "Models/CompilerCommandDescriptor.hpp"
 #include "Models/PackageDescriptor.hpp"
-#include <Modules/Serialization/AbstractArchiver.hpp>
+#include <Modules/Serialization/Base/AbstractArchiver.hpp>
 #include <Core/Containers/Collection.hpp>
 #include <Core/Containers/String.hpp>
 
 using namespace Core::Containers;
-using namespace Modules::Serialization;
+using namespace Modules::Serialization::Base;
 
 namespace Models {
 struct TargetDescriptor : public PackageDescriptor {

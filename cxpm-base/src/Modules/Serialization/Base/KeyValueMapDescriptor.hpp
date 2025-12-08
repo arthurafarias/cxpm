@@ -2,11 +2,10 @@
 
 #include "Core/Containers/Collection.hpp"
 #include "Core/Containers/Variant.hpp"
-#include <string>
 
 using namespace Core::Containers;
 
-namespace Modules::Serialization {
+namespace Modules::Serialization::Base {
 template <typename... ValueTypes>
 struct KeyValueMapDescriptor : Collection<Variant<ValueTypes...>> {};
 } // namespace Serialization

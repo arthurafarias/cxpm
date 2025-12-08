@@ -2,7 +2,7 @@
 
 #include "Modules/ProgramOptions/Option.hpp"
 #include "Modules/ProgramOptions/OptionsCollection.hpp"
-#include "Modules/Serialization/AbstractArchiver.hpp"
+#include "Modules/Serialization/Base/AbstractArchiver.hpp"
 #include "Modules/Serialization/ValueDescriptor.hpp"
 #include <ostream>
 
@@ -10,7 +10,7 @@
 
 namespace Modules::ProgramOptions::Serialization {
 class ProgramOptionsOutputArchiver
-    : public ::Modules::Serialization::AbstractArchiver {
+    : public ::Modules::AbstractArchiver {
 
 public:
   ProgramOptionsOutputArchiver(std::ostream &stream)
