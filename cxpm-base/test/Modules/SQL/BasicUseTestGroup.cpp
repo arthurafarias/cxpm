@@ -60,6 +60,8 @@ public:
     Callback cb{&collection};
     char *err_msg = nullptr;
 
+    Core::Logging::LoggerManager::info("{}", query->compile().c_str());
+
     sqlite3_exec(db, query->compile().c_str(), Callback::callback, &cb,
                  &err_msg);
 
@@ -102,15 +104,42 @@ public:
 private:
 };
 
+class SQLiteOutputArchiver : public SQLiteDriver {
+public:
+  using SQLiteDriver::SQLiteDriver;
+  SharedPointer<QueryBuilder> expression;
+  Collection<std::function<void()>> callbacks;
+  SharedPointer<Map<String, String>> result;
+
+private:
+};
+
 template <typename Archiver>
 Archiver constexpr &operator%(Archiver &ar,
                               const SharedPointer<ArrayTag> &tag) {
   return ar;
 }
 
-template <typename Archiver>
-Archiver constexpr &operator%(Archiver &ar,
-                              const SharedPointer<ObjectTag> &tag) {
+SQLiteOutputArchiver constexpr &operator%(SQLiteOutputArchiver &ar,
+                                          const SharedPointer<ObjectTag> &tag) {
+
+  if (tag->part == TagPart::Start) {
+    ar.expression = QueryBuilder::create()
+                        ->insert()
+                        ->into("{}", tag->name.c_str())
+                        ->values_start();
+  }
+
+  if (tag->part == TagPart::End) {
+    ar.expression->values_end();
+    ar.query(ar.expression);
+  }
+
+  return ar;
+}
+
+SQLiteInputArchiver constexpr &operator%(SQLiteInputArchiver &ar,
+                                         const SharedPointer<ObjectTag> &tag) {
 
   if (tag->part == TagPart::Start) {
     ar.expression = QueryBuilder::create()
@@ -121,7 +150,7 @@ Archiver constexpr &operator%(Archiver &ar,
   }
 
   if (tag->part == TagPart::End) {
-    for (auto &fn : ar.callbacks) {
+    for (auto fn : ar.callbacks) {
       fn();
     }
   }
@@ -129,17 +158,35 @@ Archiver constexpr &operator%(Archiver &ar,
   return ar;
 }
 
-template <typename Archiver>
-Archiver constexpr &operator%(Archiver &ar,
-                              SharedPointer<KeyValueTag<double>> tag) {
-  ar.callbacks.push_back(
-      [&ar, tag]() { tag->value = (*ar.result)[tag->name]; });
+SQLiteOutputArchiver constexpr &
+operator%(SQLiteOutputArchiver &ar, SharedPointer<KeyValueTag<double>> tag) {
+  ar.expression->value(*tag->value);
   return ar;
 }
 
-template <typename Archiver>
-Archiver constexpr &operator%(Archiver &ar,
-                              SharedPointer<KeyValueTag<int>> tag) {
+SQLiteOutputArchiver constexpr &operator%(SQLiteOutputArchiver &ar,
+                                          SharedPointer<KeyValueTag<int>> tag) {
+  ar.expression->value(*tag->value);
+  return ar;
+}
+
+SQLiteOutputArchiver constexpr &
+operator%(SQLiteOutputArchiver &ar, SharedPointer<KeyValueTag<String>> tag) {
+  ar.expression->value(*tag->value);
+  return ar;
+}
+
+SQLiteInputArchiver constexpr &
+operator%(SQLiteInputArchiver &ar, SharedPointer<KeyValueTag<double>> tag) {
+  ar.callbacks.push_back([&ar, tag]() {
+    double value = from_string<double>((*ar.result)[tag->name]);
+    (*tag->value) = value;
+  });
+  return ar;
+}
+
+SQLiteInputArchiver constexpr &operator%(SQLiteInputArchiver &ar,
+                                         SharedPointer<KeyValueTag<int>> tag) {
   ar.callbacks.push_back([&ar, tag]() {
     int value = from_string<int>((*ar.result)[tag->name]);
     *(tag->value) = value;
@@ -147,9 +194,8 @@ Archiver constexpr &operator%(Archiver &ar,
   return ar;
 }
 
-template <typename Archiver>
-Archiver constexpr &operator%(Archiver &ar,
-                              SharedPointer<KeyValueTag<String>> tag) {
+SQLiteInputArchiver constexpr &
+operator%(SQLiteInputArchiver &ar, SharedPointer<KeyValueTag<String>> tag) {
   ar.callbacks.push_back([&ar, tag]() {
     String value = (*ar.result)[tag->name];
     *(tag->value) = value;
@@ -194,12 +240,21 @@ int main(int argc, char *argv[]) {
   Core::Logging::LoggerManager::stream_set(
       Core::Logging::LoggerManager::stream_cout());
 
-  auto archiver = SQLiteInputArchiver("filename.db");
-  auto person = Person();
-  archiver % person;
+  {
+    auto output = SQLiteOutputArchiver("filename.db");
+    auto person = Person();
+    person.name = "Arthur";
+    person.age = 36;
+    output % person;
+  }
 
-  Core::Logging::LoggerManager::info("{} {} {}", person.id, person.name.c_str(),
-                                     person.age);
+  {
+    auto input = SQLiteInputArchiver("filename.db");
+    auto person = Person();
+    input % person;
+    Core::Logging::LoggerManager::info("{} {} {}", person.id,
+                                       person.name.c_str(), person.age);
+  }
 
   return 0;
 }
