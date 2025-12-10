@@ -13,54 +13,9 @@
 #include <sqlite3.h>
 
 using namespace Modules::Serialization::Base;
+using namespace Modules::SQL::Base;
 
-class Row : public Map<String, String>, public EnableSharedFromThis<Row> {
-public:
-  using Map<String, String>::Map;
-};
-
-class QueryResult : public Collection<Row>,
-                    public EnableSharedFromThis<QueryResult> {
-public:
-  using Collection<Row>::Collection;
-};
-
-class PersonModel {
-public:
-  String name;
-
-  PersonModel(int argc, char **names, char **values) {
-    for (int i = 0; i < argc; i++) {
-      if (String(names[i]) == "name") {
-        name = String(values[i]);
-      }
-    }
-  }
-  template <typename Archiver>
-  SharedPointer<Archiver> load(SharedPointer<Archiver> ar) {
-
-    using namespace Modules::Serialization::Base;
-    (*ar) % ArchiveTagFactory::make_object_start("Person");
-    (*ar) % ArchiveTagFactory::make_named_value_property("name", name);
-    (*ar) % ArchiveTagFactory::make_object_end("Person");
-    return ar;
-  }
-};
-
-class SQLTag {
-public:
-  SQLTag(const String &tag) : tag(tag) {}
-  String value() const { return tag; }
-
-private:
-  String tag;
-};
-
-class LimitTag : public SQLTag {
-public:
-  LimitTag(int value = -1)
-      : SQLTag(std::format("LIMIT {}", std::to_string(value))) {}
-};
+using QueryResult = Collection<SharedPointer<Map<String, String>>>;
 
 class SQLiteDriver : public Creator<SQLiteDriver>,
                      public EnableSharedFromThis<SQLiteDriver> {
@@ -80,18 +35,20 @@ public:
   using SQLiteCallbackType = std::function<void(void *handle_type, int argc,
                                                 char **value, char **key)>;
 
-  template <typename ModelType>
-  Collection<SharedPointer<ModelType>> query(
-      const SharedPointer<Modules::SQL::Base::QueryBuilder<ModelType>> &query) {
-
-    Collection<SharedPointer<ModelType>> collection;
+  QueryResult query(SharedPointer<Modules::SQL::Base::QueryBuilder> query) {
+    QueryResult collection;
 
     struct Callback {
-      Collection<SharedPointer<ModelType>> *coll;
-      static int callback(void *handle, int argc, char **values, char **names) {
-        auto *cb = static_cast<Callback *>(handle);
-        cb->coll->push_back(
-            SharedPointer<ModelType>::make(argc, names, values));
+      QueryResult *coll;
+      static int callback(void *priv, int argc, char **values, char **names) {
+        auto el = SharedPointer<Map<String, String>>::make();
+        auto *cb = static_cast<Callback *>(priv);
+
+        for (int i = 0; i < argc; i++) {
+          (*el)[names[i]] = values[i];
+        }
+
+        cb->coll->push_back(el);
         return 0;
       }
     };
@@ -102,12 +59,19 @@ public:
     sqlite3_exec(db, query->compile().c_str(), Callback::callback, &cb,
                  &err_msg);
 
+    if (err_msg != nullptr) {
+      throw Core::Exceptions::RuntimeException("Failed to execute query {}",
+                                               err_msg);
+    }
+
     return collection;
   }
 
   String tags() { return String::join(restrictions, " "); }
 
-  void add_tag(const SQLTag &tag) { restrictions.push_back(tag.value()); }
+  void add_tag(const ::QueryBuilder::Tag &tag) {
+    restrictions.push_back(tag.value());
+  }
 
 private:
   String filename;
@@ -123,35 +87,45 @@ CREATE TABLE "Person" (
 );
 )";
 
-SharedPointer<SQLiteDriver>
-operator>>(SharedPointer<SQLiteDriver> driver,
-           Collection<SharedPointer<PersonModel>> &collection) {
-  auto query_string = Modules::SQL::Base::QueryBuilder<PersonModel>::create()
-                          ->select("*")
-                          ->from("Person")
-                          ->order_by("id")
+SharedPointer<SQLiteDriver> operator>>(SharedPointer<SQLiteDriver> driver,
+                                       QueryResult &collection) {
+  auto query_string = Modules::SQL::Base::QueryBuilder::create()
                           ->append_tag(driver->tags());
-
   collection.append_range(driver->query(query_string));
   return driver;
 }
 
-SharedPointer<SQLiteDriver> operator>>(SharedPointer<SQLiteDriver> driver,
-                                       const SQLTag &tag) {
+SharedPointer<SQLiteDriver>
+operator>>(SharedPointer<SQLiteDriver> driver,
+           const Modules::SQL::Base::QueryBuilder::Tag &tag) {
   driver->add_tag(tag);
   return driver;
 }
 
 int main(int argc, char *argv[]) {
 
-  auto driver = SQLiteDriver::create("filename.db");
+  Core::Logging::LoggerManager::level_set(
+      Core::Logging::LoggerManager::Level::Debug);
+  Core::Logging::LoggerManager::stream_set(
+      Core::Logging::LoggerManager::stream_cout());
 
-  auto results = Collection<SharedPointer<PersonModel>>();
+  try {
+    auto driver = SQLiteDriver::create("filename.db");
 
-  driver >> LimitTag(1) >> results;
+    auto results = QueryResult();
 
-  for (auto result : results) {
-    std::cout << "Name: " << result->name << std::endl;
+    // driver >> QueryBuilder::Limit(1) >> results;
+    driver >> QueryBuilder::Tag("SELECT *")
+           >> QueryBuilder::Tag("FROM Person")
+           >> QueryBuilder::Tag("ORDER BY id")
+           >> QueryBuilder::Tag("LIMIT 1")
+           >> results;
+
+    for (auto result : results) {
+      std::cout << "Name: " << (*result)["name"] << std::endl;
+    }
+  } catch (Core::Exceptions::RuntimeException &ex) {
+    Core::Logging::LoggerManager::error("Failed: {}", ex.what());
   }
 
   return 0;

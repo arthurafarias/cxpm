@@ -16,12 +16,24 @@ using namespace Utils::Patterns;
 
 namespace Modules::SQL::Base {
 
-template <typename TargetType>
-class QueryBuilder : public EnableSharedFromThis<QueryBuilder<TargetType>>,
-                     public Utils::Patterns::Creator<QueryBuilder<TargetType>>,
+class QueryBuilder : public EnableSharedFromThis<QueryBuilder>,
+                     public Utils::Patterns::Creator<QueryBuilder>,
                      public Core::Object {
 public:
-  using ModelType = TargetType;
+  class Tag {
+  public:
+    Tag(const String &tag) : tag(tag) {}
+    String value() const { return tag; }
+
+  private:
+    String tag;
+  };
+
+  class Limit : public Tag {
+  public:
+    Limit(int value = -1)
+        : Tag(std::format("LIMIT {}", std::to_string(value))) {}
+  };
 
   QueryBuilder() {}
   QueryBuilder(QueryBuilder &) {}
@@ -31,65 +43,63 @@ public:
   QueryBuilder &operator=(QueryBuilder &&) { return *this; }
 
   template <typename... FormatTypes>
-  SharedPointer<QueryBuilder<TargetType>>
-  create_table(const std::format_string<FormatTypes...> &fmt, FormatTypes &&...args) {
+  SharedPointer<QueryBuilder>
+  create_table(const std::format_string<FormatTypes...> &fmt,
+               FormatTypes &&...args) {
     auto lock = query.acquire_lock();
     auto compiled = std::format(fmt, std::forward<FormatTypes>(args)...);
     query.push_back(std::format("CREATE TABLE {}", compiled));
-    return EnableSharedFromThis<QueryBuilder<TargetType>>::shared_from_this();
+    return EnableSharedFromThis<QueryBuilder>::shared_from_this();
   }
 
   template <typename... FormatTypes>
-  SharedPointer<QueryBuilder<TargetType>>
+  SharedPointer<QueryBuilder>
   select(const std::format_string<FormatTypes...> &fmt, FormatTypes &&...args) {
     auto lock = query.acquire_lock();
     auto compiled = std::format(fmt, std::forward<FormatTypes>(args)...);
     query.push_back(std::format("SELECT {}", compiled));
-    return EnableSharedFromThis<QueryBuilder<TargetType>>::shared_from_this();
+    return EnableSharedFromThis<QueryBuilder>::shared_from_this();
   }
 
   template <typename... FormatTypes>
-  SharedPointer<QueryBuilder<TargetType>>
+  SharedPointer<QueryBuilder>
   where(const std::format_string<FormatTypes...> &fmt, FormatTypes &&...args) {
     auto lock = query.acquire_lock();
     auto compiled = std::format(fmt, std::forward<FormatTypes>(args)...);
     query.push_back(std::format("SELECT {}", compiled));
-    return EnableSharedFromThis<QueryBuilder<TargetType>>::shared_from_this();
+    return EnableSharedFromThis<QueryBuilder>::shared_from_this();
   }
 
   template <typename... FormatTypes>
-  SharedPointer<QueryBuilder<TargetType>>
+  SharedPointer<QueryBuilder>
   from(const std::format_string<FormatTypes...> &fmt, FormatTypes &&...args) {
     auto lock = query.acquire_lock();
     auto compiled = std::format(fmt, std::forward<FormatTypes>(args)...);
     query.push_back(std::format("FROM {}", compiled));
-    return EnableSharedFromThis<QueryBuilder<TargetType>>::shared_from_this();
+    return EnableSharedFromThis<QueryBuilder>::shared_from_this();
   }
 
   template <typename... FormatTypes>
-  SharedPointer<QueryBuilder<TargetType>>
-  order_by(std::format_string<FormatTypes...> fmt,
-           const FormatTypes &&...args) {
+  SharedPointer<QueryBuilder> order_by(std::format_string<FormatTypes...> fmt,
+                                       const FormatTypes &&...args) {
     auto lock = query.acquire_lock();
     auto compiled = std::format(fmt, std::forward<FormatTypes>(args)...);
     query.push_back(std::format("ORDER BY {}", compiled));
-    return EnableSharedFromThis<QueryBuilder<TargetType>>::shared_from_this();
+    return EnableSharedFromThis<QueryBuilder>::shared_from_this();
   }
 
   template <typename... FormatTypes>
-  SharedPointer<QueryBuilder<TargetType>>
+  SharedPointer<QueryBuilder>
   limit(const std::format_string<FormatTypes...> &fmt, FormatTypes &&...args) {
     auto lock = query.acquire_lock();
     auto compiled = std::format(fmt, std::forward<FormatTypes>(args)...);
     query.push_back(std::format("LIMIT {}", compiled));
-    return EnableSharedFromThis<QueryBuilder<TargetType>>::shared_from_this();
+    return EnableSharedFromThis<QueryBuilder>::shared_from_this();
   }
 
-  SharedPointer<QueryBuilder<TargetType>>
-  append_tag(const String& tag)
-  {
+  SharedPointer<QueryBuilder> append_tag(const String &tag) {
     query.push_back(tag);
-    return EnableSharedFromThis<QueryBuilder<TargetType>>::shared_from_this();
+    return EnableSharedFromThis<QueryBuilder>::shared_from_this();
   }
 
   String compile() {
