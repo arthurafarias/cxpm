@@ -3,6 +3,8 @@
 #include <memory>
 #include <utility>
 
+#include <Core/WeakPointer.hpp>
+
 template <typename PointerType>
 class SharedPointer : public std::shared_ptr<PointerType> {
 public:
@@ -18,12 +20,8 @@ public:
   }
 };
 
-template <typename Tp>
-struct EnableSharedFromThis : std::enable_shared_from_this<Tp> {
+template <typename PointerType>
+class EnableSharedFromThis : public std::enable_shared_from_this<PointerType> {
 public:
-  using std::enable_shared_from_this<Tp>::enable_shared_from_this;
-
-  // SharedPointer<Tp> shared_from_this() {
-  //   return SharedPointer<Tp>(shared_from_this());
-  // }
+  using std::enable_shared_from_this<PointerType>::enable_shared_from_this;
 };

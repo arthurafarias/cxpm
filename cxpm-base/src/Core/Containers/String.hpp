@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Containers/Collection.hpp"
+#include "Core/Object.hpp"
 #include "Utils/Unused.hpp"
 #include <cctype>
 #include <string>
@@ -8,7 +9,7 @@
 
 namespace Core::Containers {
 
-class String : public std::string {
+class String : public std::string, public Object {
 
 public:
   using std::string::string;

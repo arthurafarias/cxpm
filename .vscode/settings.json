@@ -1,7 +1,7 @@
 {
     "C_Cpp.intelliSenseEngine": "disabled",
     "cmake.debugConfig": {
-        "cwd": "${workspaceFolder}/examples/shared-object",
+        "cwd": "${workspaceFolder}",
         "environment": [
             { "name": "cxpm_BUILD_EXTRA_MODULES_PATH", "value": "${workspaceFolder}/build/toolchains/gcc:${workspaceFolder}/build/toolchains/g++"}
         ],

@@ -1,0 +1,2 @@
+add_executable(${PROJECT_NAME}_Modules_SQL_Base_Testing_BasicUseTestCase BasicUseTestGroup.cpp)
+target_link_libraries(${PROJECT_NAME}_Modules_SQL_Base_Testing_BasicUseTestCase PUBLIC cxpm-base sqlite3)
