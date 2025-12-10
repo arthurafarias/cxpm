@@ -1,7 +1,9 @@
 #pragma once
 
+#include "Core/SharedPointer.hpp"
+#include "Modules/Serialization/Base/ArrayTag.hpp"
 #include "Modules/Serialization/Base/KeyValueTag.hpp"
-#include "Modules/Serialization/Base/TagBase.hpp"
+#include "Modules/Serialization/Base/ObjectTag.hpp"
 #include <Core/Containers/String.hpp>
 
 using namespace Core::Containers;
@@ -13,28 +15,28 @@ protected:
   explicit ArchiveTagFactory() {}
 
 public:
-  static inline TagBase make_object_start(std::string name) {
-    return TagBase{name, TagPart::Start, TagType::Object};
+  static inline SharedPointer<ObjectTag> make_object_start(std::string name) {
+    return SharedPointer<ObjectTag>::make(name, TagPart::Start);
   }
 
-  static inline TagBase make_object_end(std::string name) {
-    return TagBase{name, TagPart::End, TagType::Object};
+  static inline SharedPointer<ObjectTag> make_object_end(std::string name) {
+    return SharedPointer<ObjectTag>::make(name, TagPart::End);
   }
 
-  static inline TagBase make_array_start(std::string name) {
-    return TagBase{name, TagPart::Start, TagType::Array};
+  static inline SharedPointer<ArrayTag> make_array_start(std::string name) {
+    return SharedPointer<ArrayTag>::make(name, TagPart::Start);
   }
 
-  static inline TagBase make_array_end(std::string name) {
-    return TagBase{name, TagPart::End, TagType::Array};
+  static inline SharedPointer<ArrayTag> make_array_end(std::string name) {
+    return SharedPointer<ArrayTag>::make(name, TagPart::End);
   }
 
   template <typename ArgumentType>
-  static inline KeyValueTag<ArgumentType>
-  make_named_value_property(std::string name, const ArgumentType &arg) {
-    auto retval = KeyValueTag<ArgumentType>();
-    retval.name = name;
-    retval.value = arg;
+  static inline SharedPointer<KeyValueTag<ArgumentType>>
+  make_named_value_property(std::string name, ArgumentType &arg) {
+    auto retval = SharedPointer<KeyValueTag<ArgumentType>>::make();
+    retval->name = name;
+    retval->value = &arg;
     return retval;
   }
 };
