@@ -1,12 +1,16 @@
 #pragma once
 
 #include "Core/Containers/Collection.hpp"
+#include "Core/Logging/LoggerManager.hpp"
 #include "Core/SharedPointer.hpp"
+#include "Core/Threading/ThreadPool.hpp"
 #include "Modules/Networking/HTTP/Method.hpp"
 #include "Modules/Networking/HTTP/Request.hpp"
+#include "Modules/Networking/HTTP/Response.hpp"
 #include "Modules/Networking/HTTP/Route.hpp"
 #include "Modules/Networking/TCP/Server.hpp"
-#include "Modules/Networking/TCP/Socket.hpp"
+#include "Modules/Serialization/JSON/JSONOutputArchiver.hpp"
+#include <cstring>
 #include <exception>
 #include <future>
 #include <initializer_list>
@@ -63,64 +67,73 @@ public:
 
       server->listening += [](auto server) {
         // debug a acknowlegement
-        std::osyncstream(std::cout) << "server: connected" << std::endl;
+        Logging::LoggerManager::info("Connected");
       };
 
       // Add a closed callback
-      server->closed += [](auto server) {
-        std::osyncstream(std::cout) << "server: disconnected" << std::endl;
-      };
+      server->closed +=
+          [](auto server) { Logging::LoggerManager::info("Disconnected"); };
 
       // Add an error callback
       server->error += [](auto server, int error) {
-        std::osyncstream(std::cout) << "server: error: " << error << std::endl;
+        Logging::LoggerManager::info("Error {}", strerror(error));
       };
 
       shared_from_this()->on_request +=
           [](auto server, auto request, auto response) {
-            auto route = server->match_route(request->resource);
+            auto route = server->match_route(request);
 
             if (route != nullptr && route->callback != nullptr) {
               request->data = route->data;
               route->callback(request, response);
+              return;
             }
+
+            response->status = {404, "Not Found"};
+            response->headers["Connection"] = "Close";
+            response->send();
+            response->client->close();
           };
 
       // Add a client accepted callback so you can define the server
       // application
       server->client_accepted += [self = shared_from_this()](auto server,
                                                              auto client) {
-        std::osyncstream(std::cout) << "server: client accepted " << std::endl;
+        Logging::LoggerManager::info("Client Accepted");
 
         // For each client, define a disconnection message
         client->disconnected += [](auto client) {
-          std::osyncstream(std::cout)
-              // print a disconnection message
-              << "server: client: disconnected" << std::endl;
+          Logging::LoggerManager::info("Client Disconnected");
         };
 
         // For each client, register an error callback
         client->error += [](auto client, auto error) {
-          std::osyncstream(std::cout)
-              // print the error
-              << "server: client: error: " << error << std::endl;
+          Logging::LoggerManager::info("Client Error");
         };
 
         // Register a data_received callback
         client->data_received += [server, self](auto client, auto data) {
+          auto response = Response::create();
+          response->status = {200, "OK"};
+          response->client = SharedPointer<HTTPClientConnection>::make(client);
+
           auto chunk = String(data.begin(), data.end());
 
           auto [result, request] = Request::parse(chunk);
 
-          auto response = Response::create();
-          response->client = client;
+          if (result == Request::ParseResultStatus::Failure) {
+            response->status = ResponseStatus{400, "Invalid Request"};
+            response->headers["Connection"] = "Close";
+            response->send();
+            return;
+          }
 
           self->on_request(self, request, response);
         };
       };
 
-      ThreadType thread =
-          ThreadType::make([server]() { server->listen(8080, "127.0.0.1"); });
+      ThreadType thread = ThreadType::make(
+          [server, &host, &port]() { server->listen(port, host.c_str()); });
 
       handlers.push_back({result, server, thread});
     }
@@ -138,7 +151,9 @@ private:
   enum class MatchRouteResultStatus { Success, Failure };
   using MatchRouteResult = SharedPointer<Route>;
 
-  MatchRouteResult match_route(const String &resource) {
+  MatchRouteResult match_route(const SharedPointer<Request> request) {
+
+    auto resource = request->resource;
 
     auto el =
         std::find_if(routes.begin(), routes.end(), [resource](auto route) {
@@ -153,6 +168,10 @@ private:
         });
 
     if (el == routes.end()) {
+      return nullptr;
+    }
+
+    if ((*el)->method != request->method) {
       return nullptr;
     }
 

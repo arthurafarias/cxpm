@@ -3,13 +3,15 @@ project(cxpm_server VERSION 0.1.0)
 
 include(CMakePackageConfigHelpers)
 
+find_package(SQLite3 REQUIRED)
+
 file(GLOB_RECURSE cxpm_server_SOURCES src/*.cpp src/*.hpp)
 
 add_executable(cxpm_server ${cxpm_server_SOURCES})
 
 # target_compile_options(cxpm_server PRIVATE -Wall -Werror -Wextra -pedantic)
 
-target_link_libraries(cxpm_server PUBLIC cxpm-base)
+target_link_libraries(cxpm_server PUBLIC cxpm-base SQLite::SQLite3)
 
 target_include_directories(cxpm_server PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>

@@ -1,8 +1,5 @@
 #pragma once
 
-#include "Core/Containers/Collection.hpp"
-#include "Core/Containers/Map.hpp"
-#include "Core/Containers/String.hpp"
 #include "Core/SharedPointer.hpp"
 #include "Modules/SQL/Base/QueryBase.hpp"
 #include "Modules/SQL/Base/QueryResult.hpp"

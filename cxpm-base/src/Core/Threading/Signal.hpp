@@ -91,19 +91,19 @@ public:
   void operator()(sender_type sender, args_types... args) {
     std::unique_lock<std::mutex> lock(_mutex);
 
-    Core::Logging::LoggerManager::debug("{}: {}", __func__, "");
+    Core::Logging::LoggerManager::debug("{}: {}", __func__, "call slot");
 
     for (const auto &slot : _sinks) {
 
-      Core::Logging::LoggerManager::debug("{}: {}", __func__, "");
+      Core::Logging::LoggerManager::debug("{}: {}", __func__, "submit slot call");
 
       _thread_pool.submit([slot, sender, args...]() {
-        Core::Logging::LoggerManager::debug(__func__, "begin slot call");
+        Core::Logging::LoggerManager::debug("{}: {}", __func__, "begin slot call");
 
         slot(sender, args...);
 
         Core::Logging::LoggerManager::debug("{}: {}", __func__,
-                                            "end slog call");
+                                            "end slot call");
       });
     }
   }

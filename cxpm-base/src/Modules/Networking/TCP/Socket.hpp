@@ -14,6 +14,7 @@
 #include <asm-generic/socket.h>
 #include <atomic>
 #include <bits/types/struct_timeval.h>
+#include <chrono>
 #include <condition_variable>
 #include <cstdio>
 #include <cstring>
@@ -64,12 +65,12 @@ class Socket : public AbstractSocket, public Utils::Patterns::Creator<Socket> {
 public:
   Socket(SharedPointer<BasicContext> context, int fd = -1)
       : AbstractSocket(context), _fd(fd) {
-    std::osyncstream(std::cout) << std::format("Socket Created: {}\n", _fd);
+    Logging::LoggerManager::info("Socket Created fd: {}", fd);
   }
 
   virtual ~Socket() {
 
-    close();
+    _close = true;
 
     if (handle_read_thread.joinable()) {
       handle_read_thread.join();
@@ -78,6 +79,8 @@ public:
     if (handle_write_thread.joinable()) {
       handle_write_thread.join();
     }
+
+    ::close(_fd);
   }
 
   int connect() {
@@ -145,8 +148,17 @@ public:
 
   void close() {
 
-    ::close(_fd);
     _close = true;
+
+    if (handle_read_thread.joinable()) {
+      handle_read_thread.join();
+    }
+
+    if (handle_write_thread.joinable()) {
+      handle_write_thread.join();
+    }
+
+    ::close(_fd);
 
     disconnected(shared_from_this());
   }
@@ -224,6 +236,7 @@ protected:
   std::thread handle_connection_thread;
   std::thread handle_write_thread;
   std::thread handle_read_thread;
+  std::atomic_bool _write_thread_started = false;
 
   size_t _send_buffer_size = 16384;
   size_t _recv_buffer_size = 16384;
@@ -237,25 +250,30 @@ protected:
     }
 
     _close = false;
+
     handle_write_thread = std::thread(std::bind(&Socket::handle_write, this));
-    handle_read_thread = std::thread(std::bind(&Socket::handle_read, this));
 
     connected(shared_from_this());
+
+    _started = true;
     return 0;
   }
+
   int handle_write() {
-    while (!_close) {
+    handle_read_thread = std::thread(std::bind(&Socket::handle_read, this));
+
+    while (!(_write_thread_started && _close)) {
 
       std::vector<char> local_buf;
 
       {
         // Wait for data or close
         std::unique_lock<std::mutex> lk(_send_buffer_mutex);
-        _send_buffer_cond.wait(
-            lk, [this]() { return _close || !_send_buffer.empty(); });
 
-        if (_close)
-          break;
+        _write_thread_started = true;
+        auto result = _send_buffer_cond.wait_for(
+            lk, std::chrono::milliseconds(50),
+            [this]() { return _close || !_send_buffer.empty(); });
 
         // Take a copy of the buffer chunk to write
         local_buf.assign(_send_buffer.begin(), _send_buffer.end());
@@ -300,7 +318,7 @@ protected:
       }
     }
 
-    close();
+    // ::close(_fd);
     return 0;
   }
 
@@ -318,7 +336,7 @@ protected:
       FD_ZERO(&err_set);
       FD_SET(_fd, &err_set);
 
-      timeval tv{1, 0};
+      timeval tv{0, 500};
 
       int activity = select(_fd + 1, &read_set, NULL, &err_set, &tv);
       if (activity < 0)
@@ -346,7 +364,7 @@ protected:
       data_received(shared_from_this(), chunk);
     }
 
-    close();
+    // ::close(_fd);
     return 0;
   }
 };

@@ -104,7 +104,7 @@ int main(int argc, char *argv[]) {
                            ->from("Person")
                            ->order_by("id")
                            ->desc()
-                           ->exec<Person>(database)) {
+                           ->exec(database)->cast<Person>()) {
 
       Core::Logging::LoggerManager::info("Person ID: {}, Name: {}, Age: {}",
                                          person->id, person->name.c_str(), person->age);

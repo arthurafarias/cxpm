@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/Containers/Collection.hpp"
 #include "Core/Containers/Map.hpp"
 #include "Core/Containers/String.hpp"
 #include "Core/Exceptions/RuntimeException.hpp"
@@ -32,7 +33,9 @@ public:
     auto result = create();
 
     using namespace Core::Containers;
-    auto lines = String::split(text, Collection<String>{"\r", "\n"});
+    auto _ = std::remove_if(text.begin(), text.end(),
+                            [](auto c) { return c == '\r'; });
+    auto lines = String::split(text, "\n");
 
     auto elements = String::split(lines.front(), " ");
     lines.pop_front();

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/Exceptions/RuntimeException.hpp"
 #include "Core/SharedPointer.hpp"
 #include "Modules/Networking/HTTP/ResponseStatus.hpp"
 #include "Modules/Networking/HTTP/Version.hpp"
@@ -7,6 +8,7 @@
 #include "Modules/Networking/TCP/Socket.hpp"
 #include "Modules/Streams/OutputStream.hpp"
 #include "Utils/Unused.hpp"
+#include <atomic>
 #include <chrono>
 #include <ostream>
 #include <syncstream>
@@ -17,8 +19,8 @@ namespace Modules::Networking::HTTP {
 
 class ResponseDescriptor {
 public:
-  ResponseStatus status = ResponseStatuses[200];
-  Version version = {1, 1};
+  ResponseStatus status;
+  Version version = {1, 0};
 
   Map<String, String> headers = {
       {"Date",
@@ -31,7 +33,7 @@ public:
 
 inline std::ostream &operator<<(OutputStream &os,
                                 const ResponseDescriptor &res) {
-  os << std::format("HTTP/{}.{} {} {}\n\n", res.version.major,
+  os << std::format("HTTP/{}.{} {} {}\n", res.version.major,
                     res.version.minor, res.status.code,
                     res.status.description.c_str());
   for (auto header : res.headers) {
@@ -42,14 +44,46 @@ inline std::ostream &operator<<(OutputStream &os,
   return os;
 }
 
-class Response : public ResponseDescriptor, public Object, public EnableSharedFromThis<Response>, public Utils::Patterns::Creator<Response> {
-public:
-  SharedPointer<AbstractSocket> client;
+class Response;
 
-  void send() {
+class HTTPClientConnection
+    : public Object,
+      public EnableSharedFromThis<HTTPClientConnection>,
+      public Utils::Patterns::Creator<HTTPClientConnection> {
+public:
+  HTTPClientConnection(SharedPointer<AbstractSocket> socket) : socket(socket), sent(false) {}
+  SharedPointer<AbstractSocket> socket;
+  std::atomic_bool sent = false;
+
+  void close() { socket->close(); }
+
+  void send(const String &response) {
+    auto lock = acquire_lock();
+    socket->write(response);
+    sent = true;
+  }
+};
+
+class Response : public ResponseDescriptor,
+                 public Object,
+                 public EnableSharedFromThis<Response>,
+                 public Utils::Patterns::Creator<Response> {
+public:
+  SharedPointer<HTTPClientConnection> client;
+  void send(bool close = true) {
+    auto lock = acquire_lock();
     auto ss = std::stringstream();
     std::osyncstream(ss) << static_cast<ResponseDescriptor>(*this);
-    client->write(ss.str());
+
+    if (client->sent == true) {
+      throw Core::Exceptions::RuntimeException("Response already sent");
+    }
+
+    client->send(ss.str());
+
+    if (close == true) {
+      client->close();
+    }
   }
 };
 

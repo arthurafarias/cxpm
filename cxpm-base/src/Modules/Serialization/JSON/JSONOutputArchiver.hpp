@@ -4,6 +4,8 @@
 #include "Core/Exceptions/RuntimeException.hpp"
 #include "Modules/Serialization/Base/AbstractArchiver.hpp"
 
+#include "Modules/Serialization/Base/ArrayTag.hpp"
+#include "Modules/Serialization/Base/ObjectTag.hpp"
 #include "Modules/Serialization/Base/ValueTag.hpp"
 #include <Core/UniquePointer.hpp>
 #include <cstddef>
@@ -119,7 +121,7 @@ inline void JsonOutputArchiver::value<double>(const ValueTag<double> &tag) {
 
 template <>
 inline void JsonOutputArchiver::value<String>(const ValueTag<String> &tag) {
-  stream() << std::quoted(tag.value);
+  // stream() << std::quoted(tag.value);
 }
 
 template <>
@@ -160,15 +162,14 @@ inline JsonOutputArchiver &operator%(JsonOutputArchiver &ar,
   static int unique_id = 0;
   unique_id++;
 
-  ar.object_start(TagBase{"object-" + std::to_string(unique_id), TagPart::Start,
-                          TagType::Object});
+  ar.object_start(
+      ObjectTag{"object-" + std::to_string(unique_id), TagPart::Start});
 
   for (auto [key, value] : map) {
-    ar.key_value(KeyValueTag<decltype(value)>{key, value});
+    // ar.key_value(KeyValueTag<decltype(value)>{key, value});
   }
 
-  ar.object_end(TagBase{"object-" + std::to_string(unique_id), TagPart::End,
-                        TagType::Object});
+  ar.object_end(ObjectTag{"object-" + std::to_string(unique_id), TagPart::End});
   return ar;
 }
 
@@ -178,16 +179,15 @@ operator%(JsonOutputArchiver &ar, const Collection<ElementType> &collection) {
   static int unique_id = 0;
   unique_id++;
 
-  ar.array_start(TagBase("array-" + std::to_string(unique_id), TagPart::Start,
-                         TagType::Array));
+  ar.array_start(
+      ArrayTag("array-" + std::to_string(unique_id), TagPart::Start));
 
   for (const auto &el : collection) {
     ar.try_print_comma();
     ar.value(ValueTag<ElementType>(el));
   }
 
-  ar.array_end(TagBase("array-" + std::to_string(unique_id), TagPart::End,
-                       TagType::Array));
+  ar.array_end(ArrayTag("array-" + std::to_string(unique_id), TagPart::End));
   return ar;
 }
 

@@ -31,6 +31,17 @@ class QueryBuilder : public EnableSharedFromThis<QueryBuilder>,
                      public Core::Object,
                      public QueryBase {
 public:
+  enum class FieldTpe { TEXT, INTEGER, REAL, BLOB, NUMERIC };
+
+  class Field {
+  public:
+    FieldTpe type;
+    String name;
+    bool unique;
+    bool not_null;
+    bool primary_key;
+  };
+
   class Tag {
   public:
     Tag(const String &tag) : tag(tag) {}
@@ -63,21 +74,51 @@ public:
     return EnableSharedFromThis<QueryBuilder>::shared_from_this();
   }
 
+  template <typename... FormatTypes>
+  SharedPointer<QueryBuilder>
+  insert_into(const std::format_string<FormatTypes...> &fmt,
+              FormatTypes &&...args) {
+    auto lock = query.acquire_lock();
+    auto compiled = std::format(fmt, std::forward<FormatTypes>(args)...);
+    query.push_back(std::format("INSERT INTO {}", compiled));
+    return EnableSharedFromThis<QueryBuilder>::shared_from_this();
+  }
+
   template <typename... FormatTypes> SharedPointer<QueryBuilder> insert() {
     auto lock = query.acquire_lock();
     query.push_back(std::format("INSERT"));
     return EnableSharedFromThis<QueryBuilder>::shared_from_this();
   }
 
+  template <typename... FormatTypes>
+  SharedPointer<QueryBuilder>
+  field(const std::format_string<FormatTypes...> &fmt, FormatTypes &&...args) {
+    auto lock = query.acquire_lock();
+    auto compiled = std::format(fmt, std::forward<FormatTypes>(args)...);
+    fields.push_back(std::format("'{}'", compiled));
+    return EnableSharedFromThis<QueryBuilder>::shared_from_this();
+  };
+
+  SharedPointer<QueryBuilder> fields_start() {
+    auto lock = query.acquire_lock();
+    return EnableSharedFromThis<QueryBuilder>::shared_from_this();
+  };
+
+  SharedPointer<QueryBuilder> fields_end() {
+    auto lock = query.acquire_lock();
+    query.push_back(std::format("( {} )", String::join(fields, ",").c_str()));
+    return EnableSharedFromThis<QueryBuilder>::shared_from_this();
+  };
+
   SharedPointer<QueryBuilder> values_start() {
     auto lock = query.acquire_lock();
-    query.push_back(std::format("VALUES ("));
+    query.push_back(std::format("VALUES "));
     return EnableSharedFromThis<QueryBuilder>::shared_from_this();
   };
 
   SharedPointer<QueryBuilder> values_end() {
     auto lock = query.acquire_lock();
-    query.push_back(std::format("{})", String::join(values, ",").c_str()));
+    query.push_back(std::format("( {} )", String::join(values, ",").c_str()));
     return EnableSharedFromThis<QueryBuilder>::shared_from_this();
   };
 
@@ -175,16 +216,22 @@ public:
     return String::join(query, " ") + ";";
   }
 
-  template <typename TargetType>
-  Collection<SharedPointer<TargetType>> exec(SharedPointer<Driver> driver) {
+  SharedPointer<QueryBuilder> exec(SharedPointer<Driver> driver) {
+    result = driver->query(shared_from_this());
+    return EnableSharedFromThis<QueryBuilder>::shared_from_this();
+  }
+
+  template <typename TargetType> Collection<SharedPointer<TargetType>> cast() {
     Collection<SharedPointer<TargetType>> casted;
-    auto result = driver->query(shared_from_this());
     result >> casted;
     return casted;
   }
 
 private:
+  Collection<SharedPointer<Map<String, String>>> result;
   Collection<String> query;
+
+  Collection<String> fields;
   Collection<String> values;
 };
 
