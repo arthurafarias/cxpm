@@ -5,7 +5,7 @@
 
 using namespace Core::Containers;
 
-namespace Modules::SQL::SQLite
+namespace Modules::SQL::Base
 {
 using QueryResult = Collection<SharedPointer<Map<String, String>>>;
 }

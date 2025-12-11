@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Core/Logging/LoggerManager.hpp"
+#include "Modules/SQL/Base/Driver.hpp"
+#include "Modules/SQL/Base/QueryBase.hpp"
 #include "Modules/SQL/Base/QueryBuilder.hpp"
 #include "Modules/SQL/Base/QueryResult.hpp"
 #include <Core/Containers/String.hpp>
@@ -16,7 +18,7 @@ using namespace Modules::SQL::Base;
 
 namespace Modules::SQL::SQLite {
 class SQLiteDriver : public Creator<SQLiteDriver>,
-                     public EnableSharedFromThis<SQLiteDriver> {
+                     public EnableSharedFromThis<SQLiteDriver>, public Driver {
 public:
   SQLiteDriver(const String &filename) : filename(filename) {
 
@@ -33,7 +35,7 @@ public:
   using SQLiteCallbackType = std::function<void(void *handle_type, int argc,
                                                 char **value, char **key)>;
 
-  QueryResult query(SharedPointer<Modules::SQL::Base::QueryBuilder> query) {
+  QueryResult query(SharedPointer<QueryBase> query) override {
     QueryResult collection;
 
     struct Callback {
@@ -79,7 +81,7 @@ private:
   Collection<String> restrictions;
 };
 
-SharedPointer<SQLiteDriver> operator>>(SharedPointer<SQLiteDriver> driver,
+inline SharedPointer<SQLiteDriver> operator>>(SharedPointer<SQLiteDriver> driver,
                                        QueryResult &collection) {
   auto query_string =
       Modules::SQL::Base::QueryBuilder::create()->append_tag(driver->tags());
@@ -88,7 +90,7 @@ SharedPointer<SQLiteDriver> operator>>(SharedPointer<SQLiteDriver> driver,
 }
 
 SharedPointer<SQLiteDriver>
-operator>>(SharedPointer<SQLiteDriver> driver,
+inline operator>>(SharedPointer<SQLiteDriver> driver,
            const Modules::SQL::Base::QueryBuilder::Tag &tag) {
   driver->add_tag(tag);
   return driver;

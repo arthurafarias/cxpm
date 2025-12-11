@@ -1,9 +1,19 @@
+// ---------------------------------------------------------------------------
+// PROPRIETARY CODE – Arthur de Araújo Farias 2025
+// All rights reserved.  No part of this file may be reproduced, stored in a
+// retrieval system, or transmitted in any form or by any means—electronic,
+// mechanical, photocopying, recording, or otherwise—without the prior written
+// permission of the copyright holder.
+// ---------------------------------------------------------------------------
+
 #pragma once
 
 #include "Core/Containers/Collection.hpp"
 #include "Core/Containers/String.hpp"
 #include "Core/Object.hpp"
 #include "Core/SharedPointer.hpp"
+#include "Modules/SQL/Base/Driver.hpp"
+#include "Modules/SQL/Base/QueryBase.hpp"
 #include "Utils/Patterns/Creator.hpp"
 
 #include <format>
@@ -18,7 +28,8 @@ namespace Modules::SQL::Base {
 
 class QueryBuilder : public EnableSharedFromThis<QueryBuilder>,
                      public Utils::Patterns::Creator<QueryBuilder>,
-                     public Core::Object {
+                     public Core::Object,
+                     public QueryBase {
 public:
   class Tag {
   public:
@@ -58,15 +69,13 @@ public:
     return EnableSharedFromThis<QueryBuilder>::shared_from_this();
   }
 
-  SharedPointer<QueryBuilder>
-  values_start() {
+  SharedPointer<QueryBuilder> values_start() {
     auto lock = query.acquire_lock();
     query.push_back(std::format("VALUES ("));
     return EnableSharedFromThis<QueryBuilder>::shared_from_this();
   };
 
-  SharedPointer<QueryBuilder>
-  values_end() {
+  SharedPointer<QueryBuilder> values_end() {
     auto lock = query.acquire_lock();
     query.push_back(std::format("{})", String::join(values, ",").c_str()));
     return EnableSharedFromThis<QueryBuilder>::shared_from_this();
@@ -135,6 +144,18 @@ public:
     return EnableSharedFromThis<QueryBuilder>::shared_from_this();
   }
 
+  SharedPointer<QueryBuilder> desc() {
+    auto lock = query.acquire_lock();
+    query.push_back(std::format("DESC"));
+    return EnableSharedFromThis<QueryBuilder>::shared_from_this();
+  }
+
+  SharedPointer<QueryBuilder> asc() {
+    auto lock = query.acquire_lock();
+    query.push_back(std::format("ASC"));
+    return EnableSharedFromThis<QueryBuilder>::shared_from_this();
+  }
+
   template <typename... FormatTypes>
   SharedPointer<QueryBuilder>
   limit(const std::format_string<FormatTypes...> &fmt, FormatTypes &&...args) {
@@ -152,6 +173,14 @@ public:
   String compile() {
     auto lock = query.acquire_lock();
     return String::join(query, " ") + ";";
+  }
+
+  template <typename TargetType>
+  Collection<SharedPointer<TargetType>> exec(SharedPointer<Driver> driver) {
+    Collection<SharedPointer<TargetType>> casted;
+    auto result = driver->query(shared_from_this());
+    result >> casted;
+    return casted;
   }
 
 private:
