@@ -38,10 +38,13 @@
 #ifndef _threaded_signals_hpp_
 #define _threaded_signals_hpp_
 
+#include "Core/SharedPointer.hpp"
 #include "Core/Threading/Mutex.hpp"
 #include "Core/Threading/UniqueLock.hpp"
 #include <functional>
+#include <future>
 #include <list>
+#include <memory>
 #include <mutex>
 
 #include <Core/Logging/LoggerManager.hpp>
@@ -82,30 +85,39 @@ public:
 
   void disconnect_all() {
     std::unique_lock<std::mutex> lock(_mutex);
-
     Core::Logging::LoggerManager::debug("{}: {}", __func__, "");
-
     _sinks.clear();
   }
 
-  void operator()(sender_type sender, args_types... args) {
+  std::vector<SharedPointer<std::promise<bool>>>
+  operator()(sender_type sender, args_types... args) {
     std::unique_lock<std::mutex> lock(_mutex);
 
     Core::Logging::LoggerManager::debug("{}: {}", __func__, "call slot");
 
+    std::vector<SharedPointer<std::promise<bool>>> promises;
+
     for (const auto &slot : _sinks) {
 
-      Core::Logging::LoggerManager::debug("{}: {}", __func__, "submit slot call");
+      auto promise = std::make_shared<std::promise<bool>>();
+      promises.push_back(promise);
 
-      _thread_pool.submit([slot, sender, args...]() {
-        Core::Logging::LoggerManager::debug("{}: {}", __func__, "begin slot call");
+      Core::Logging::LoggerManager::debug("{}: {}", __func__,
+                                          "submit slot call");
+
+      _thread_pool.submit([slot, sender, promise, args...]() {
+        Core::Logging::LoggerManager::debug("{}: {}", __func__,
+                                            "begin slot call");
 
         slot(sender, args...);
 
         Core::Logging::LoggerManager::debug("{}: {}", __func__,
                                             "end slot call");
+
+        promise->set_value(true);
       });
     }
+    return promises;
   }
 
   Signal &operator+=(const SlotType &slot) {

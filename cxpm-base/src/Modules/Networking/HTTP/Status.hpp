@@ -1,7 +1,9 @@
 #pragma once
 
-#include <map>
-#include <string>
+#include "Core/Containers/Map.hpp"
+#include "Core/Containers/String.hpp"
+
+using namespace Core::Containers;
 
 namespace Modules::Networking::HTTP {
 
@@ -9,7 +11,7 @@ struct Status {
   int code;
 };
 
-inline std::map<Status, String> StatusMap = {
+inline Map<Status, String> StatusMap = {
     {{100}, "Continue"},
     {{101}, "Switching Protocols"},
     {{101}, "Processing"},

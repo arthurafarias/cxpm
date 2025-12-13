@@ -28,8 +28,7 @@ public:
   using ParseResult = std::tuple<ParseResultStatus, SharedPointer<Request>>;
 
   static inline ParseResult parse(String text) {
-    UNUSED(text);
-
+    auto lock = text.acquire_lock();
     auto result = create();
 
     using namespace Core::Containers;

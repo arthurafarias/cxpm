@@ -23,7 +23,7 @@ struct TargetDescriptor : public PackageDescriptor {
 
 /** How C++ STL makers plans to create reflections in the language? */
 template <typename Archiver>
-Archiver &operator%(Archiver &ar, const TargetDescriptor &td) {
+Archiver &operator%(Archiver &ar, TargetDescriptor &td) {
   ar % ArchiveTagFactory::make_object_start("TargetDescriptor");
   ar % ArchiveTagFactory::make_named_value_property("name", td.name);
   ar % ArchiveTagFactory::make_named_value_property("version", td.version);

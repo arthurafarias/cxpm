@@ -1,166 +1,185 @@
 #ifndef _lt_networking_tcp_Socket_hpp_
 #define _lt_networking_tcp_Socket_hpp_
 
+#include "Core/Containers/ContiguousCollection.hpp"
+#include "Core/Exceptions/RuntimeException.hpp"
+#include "Core/Logging/LoggerManager.hpp"
+#include "Core/SharedPointer.hpp"
+#include "Core/Threading/Poll.hpp"
+#include "Core/Threading/Signal.hpp"
+#include "Modules/Networking/TCP/V4.hpp"
+#include "Utils/Patterns/Prototype.hpp"
+#include <Core/Containers/ContiguousCollection.hpp>
+#include <Core/Containers/String.hpp>
 #include <Core/Object.hpp>
+#include <Core/SharedPointer.hpp>
+#include <Core/Threading/Signal.hpp>
 #include <Modules/Networking/IP/V4.hpp>
 #include <Modules/Networking/TCP/BasicContext.hpp>
 #include <Modules/Networking/TCP/V4.hpp>
-
-#include <Core/SharedPointer.hpp>
-#include <Core/Threading/Signal.hpp>
 #include <Utils/Patterns/Creator.hpp>
-
 #include <arpa/inet.h>
 #include <asm-generic/socket.h>
-#include <atomic>
 #include <bits/types/struct_timeval.h>
 #include <chrono>
-#include <condition_variable>
 #include <cstdio>
 #include <cstring>
-#include <mutex>
-#include <syncstream>
-#include <sys/select.h>
-#include <thread>
-#include <unistd.h>
-#include <vector>
-
 #include <fcntl.h>
+#include <format>
+#include <functional>
+#include <future>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
+#include <sys/select.h>
 #include <sys/socket.h>
+#include <thread>
+#include <unistd.h>
 
+using namespace Core::Containers;
+using namespace Core;
 using namespace Core::Threading;
 
 namespace Modules::Networking::TCP {
 
-using namespace Core;
+namespace {
+inline static int opened_sockets_count = 0;
+inline static int closed_sockets_count = 0;
+} // namespace
 
-class BasicSocket {
-public:
-  BasicSocket(SharedPointer<BasicContext> context) : _context(context) {}
+using namespace Core::Containers;
+using namespace Core::Threading;
+using Logger = Core::Logging::LoggerManager;
 
-  virtual int write(const String &data) = 0;
-  virtual int write(const std::vector<char> &data) = 0;
-  virtual int write(const std::vector<uint8_t> &data) = 0;
+struct Socket : public Object, public Utils::Patterns::Prototype<Socket> {
 
-  virtual void close() = 0;
+  Signal<SharedPointer<Socket>> on_disconnected;
+  Signal<SharedPointer<Socket>, String> on_error;
+  Signal<SharedPointer<Socket>> on_connected;
+  Signal<SharedPointer<Socket>> on_closed;
+  Signal<SharedPointer<Socket>> on_listening;
+  Signal<SharedPointer<Socket>, SharedPointer<Socket>> on_accept;
+  Signal<SharedPointer<Socket>, SharedPointer<ContiguousCollection<uint8_t>>>
+      on_data;
 
-protected:
-  SharedPointer<BasicContext> _context;
-};
+  String name;
+  int _fd;
+  char buffer[2048];
+  bool _close;
+  bool closed = false;
+  Collection<SharedPointer<Socket>> clients;
 
-class AbstractSocket : public Object,
-                       public BasicSocket,
-                       public EnableSharedFromThis<AbstractSocket> {
-public:
-  AbstractSocket(SharedPointer<BasicContext> context) : BasicSocket(context) {}
-  Signal<SharedPointer<AbstractSocket>, int> error;
-  Signal<SharedPointer<AbstractSocket>> connected;
-  Signal<SharedPointer<AbstractSocket>> disconnected;
-  Signal<SharedPointer<AbstractSocket>, std::vector<char>> data_received;
-};
+  Socket() : Socket(::socket(AF_INET, SOCK_STREAM, 0)) {}
 
-class Socket : public AbstractSocket, public Utils::Patterns::Creator<Socket> {
-public:
-  Socket(SharedPointer<BasicContext> context, int fd = -1)
-      : AbstractSocket(context), _fd(fd) {
-    Logging::LoggerManager::info("Socket Created fd: {}", fd);
+  Socket(int fd) : _fd(fd), name(std::format("(socket fd: {})", fd)) {
+
+    if (_fd < 0) {
+      throw Core::Exceptions::RuntimeException(
+          "{}: Failed to create socket: {}", name, strerror(errno));
+    }
+
+    on_error += [](auto sock, auto str) { sock->close(); };
+    on_error += [](auto sock, auto str) {
+      Logger::error("{}: Error: {}", sock->name.c_str(), str.c_str());
+    };
+
+    on_disconnected += [](auto sock) { sock->close(); };
   }
 
   virtual ~Socket() {
 
-    _close = true;
-
-    if (handle_read_thread.joinable()) {
-      handle_read_thread.join();
+    if (!closed) {
+      ::close(_fd);
     }
 
-    if (handle_write_thread.joinable()) {
-      handle_write_thread.join();
+    if (read_poll != nullptr && read_poll->joinable()) {
+      read_poll->join();
     }
-
-    ::close(_fd);
-  }
-
-  int connect() {
-    std::thread(&Socket::start, this).detach();
-    return 0;
-  }
-
-  int connect(int port, uint32_t ip) {
-    _fd = ::socket(AF_INET, SOCK_STREAM, 0);
-    _addr = TCP::V4(ip, port);
-
-    int result =
-        ::connect(_fd, (struct sockaddr *)&_addr, sizeof(struct sockaddr_in));
-
-    if (result < 0) {
-      return result;
-    }
-
-    return start();
-  }
-
-  int connect(int port, const String &ip = "127.0.0.1") {
-    auto lock = acquire_lock();
-    _fd = ::socket(AF_INET, SOCK_STREAM, 0);
-    _addr = TCP::V4(ip, port);
-
-    int result =
-        ::connect(_fd, (struct sockaddr *)&_addr, sizeof(struct sockaddr_in));
-
-    if (result < 0) {
-      return result;
-    }
-
-    return start();
-  }
-
-  int write(const String &data) {
-    std::unique_lock<std::mutex> lk(_send_buffer_mutex);
-    _send_buffer.append_range(data);
-    _send_buffer_cond.notify_one();
-    return data.size();
-  }
-
-  int write(const std::vector<char> &data) {
-    std::unique_lock<std::mutex> lk(_send_buffer_mutex);
-    _send_buffer.append_range(data);
-    _send_buffer_cond.notify_one();
-    return data.size();
-  }
-
-  int write(const std::vector<uint8_t> &data) {
-    std::unique_lock<std::mutex> lk(_send_buffer_mutex);
-    _send_buffer.append_range(data);
-    _send_buffer_cond.notify_one();
-    return data.size();
-  }
-
-  template <typename iterator_type>
-  int write(const iterator_type &begin, const iterator_type &end) {
-    std::unique_lock<std::mutex> lk(_send_buffer_mutex);
-    _send_buffer.append_range(begin, end);
-    _send_buffer_cond.notify_one();
-    return end - begin;
   }
 
   void close() {
 
-    _close = true;
-
-    if (handle_read_thread.joinable()) {
-      handle_read_thread.join();
+    if (closed) {
+      return;
     }
 
-    if (handle_write_thread.joinable()) {
-      handle_write_thread.join();
+    closed = true;
+
+    if (accept_poll != nullptr) {
+      accept_poll->quit();
+
+      if (accept_poll->joinable()) {
+        accept_poll->join();
+      }
+    }
+
+    if (read_poll != nullptr) {
+      read_poll->quit();
+      if (read_poll->joinable()) {
+        read_poll->join();
+      }
     }
 
     ::close(_fd);
 
-    disconnected(shared_from_this());
+    on_closed(shared_from_this());
+  }
+
+  void listen(int port = 3000, const String &host = "0.0.0.0") {
+
+    sockaddr_in bind_addr = Modules::Networking::TCP::V4(host, port);
+
+    _fd = ::socket(AF_INET, SOCK_STREAM, 0);
+    if (_fd < 0) {
+      throw Core::Exceptions::RuntimeException("{}: Failed to listen: {}",
+                                               name.c_str(), strerror(errno));
+    }
+
+    if (reuseaddr_set(true) < 0) {
+      throw Core::Exceptions::RuntimeException("{}: Failed to listen: {}",
+                                               name.c_str(), strerror(errno));
+    }
+
+    if (::bind(_fd, (sockaddr *)&bind_addr, sizeof(bind_addr)) < 0) {
+      throw Core::Exceptions::RuntimeException("{}: Failed to listen: {}",
+                                               name.c_str(), strerror(errno));
+    }
+
+    if (::listen(_fd, std::thread::hardware_concurrency())) {
+      throw Core::Exceptions::RuntimeException("{}: Failed to listen: {}",
+                                               name.c_str(), strerror(errno));
+    }
+
+    name = std::format("(server fd: {})", _fd);
+
+    if (accept_poll == nullptr) {
+      accept_poll = Poll::create(std::bind(&Socket::accept_handle, clone()));
+    }
+
+    on_listening(shared_from_this());
+
+    accept_poll->join();
+  }
+
+  void connect(int port, const String &host) {
+
+    if (_fd < 0) {
+      _fd = ::socket(AF_INET, SOCK_STREAM, 0);
+    }
+
+    auto addr = Modules::Networking::TCP::V4(host, port);
+
+    int result =
+        ::connect(_fd, (struct sockaddr *)&addr, sizeof(struct sockaddr_in));
+
+    if (result < 0) {
+      on_error(shared_from_this(),
+               std::format("Failed to connect: {}", strerror(errno)));
+      return;
+    }
+
+    on_connected(shared_from_this());
+
+    read_start();
   }
 
   virtual int reuseaddr_set(bool value) {
@@ -207,167 +226,193 @@ public:
     return setsockopt(_fd, SOL_SOCKET, SO_RCVBUF, &size, sizeof(size));
   }
 
-  virtual int recv_buffer_size_set(int size) {
-    _recv_buffer_size = size;
-    return 0;
-  }
+  virtual int recv_buffer_size_set(int size) { return 0; }
 
   virtual int sndbuf_set(int size) {
     return setsockopt(_fd, SOL_SOCKET, SO_SNDBUF, &size, sizeof(size));
   }
 
-  virtual int send_buffer_size_max_set(int size) {
-    _send_buffer_size = size;
-    return 0;
+  virtual int send_buffer_size_max_set(int size) { return 0; }
+
+  template <typename... ArgsTypes>
+  void write(const std::format_string<ArgsTypes...> &fmt, ArgsTypes &&...args) {
+    return write_string(std::format(fmt, std::forward<ArgsTypes>(args)...));
   }
 
-  virtual const int &fd() { return _fd; }
-
-protected:
-  int _fd = -1;
-  std::atomic_bool _started = false;
-  struct sockaddr_in _addr;
-  std::atomic_bool _close = false;
-
-  std::mutex _send_buffer_mutex;
-  std::condition_variable _send_buffer_cond;
-  std::vector<char> _send_buffer = std::vector<char>();
-
-  std::thread handle_connection_thread;
-  std::thread handle_write_thread;
-  std::thread handle_read_thread;
-  std::atomic_bool _write_thread_started = false;
-
-  size_t _send_buffer_size = 16384;
-  size_t _recv_buffer_size = 16384;
-
-  friend class Server;
-
-  int start() {
-
-    if (_started) {
-      return 0;
-    }
-
-    _close = false;
-
-    handle_write_thread = std::thread(std::bind(&Socket::handle_write, this));
-
-    connected(shared_from_this());
-
-    _started = true;
-    return 0;
+  void write_string(const String &str) {
+    return write_buffer(ContiguousCollection<uint8_t>(str.begin(), str.end()));
   }
 
-  int handle_write() {
-    handle_read_thread = std::thread(std::bind(&Socket::handle_read, this));
+  void write_buffer(const ContiguousCollection<uint8_t> &data) {
+    // Try sending until all sent or an error occurs
 
-    while (!(_write_thread_started && _close)) {
+    size_t offset = 0;
 
-      std::vector<char> local_buf;
+    while (offset < data.size()) {
+      Logger::debug("{}: Write offset {} from {} bytes", name.c_str(), offset,
+                    data.size());
+      ssize_t n = ::send(_fd, data.data() + offset, data.size() - offset,
+                         MSG_NOSIGNAL // no DONTWAIT
+      );
 
-      {
-        // Wait for data or close
-        std::unique_lock<std::mutex> lk(_send_buffer_mutex);
-
-        _write_thread_started = true;
-        auto result = _send_buffer_cond.wait_for(
-            lk, std::chrono::milliseconds(50),
-            [this]() { return _close || !_send_buffer.empty(); });
-
-        // Take a copy of the buffer chunk to write
-        local_buf.assign(_send_buffer.begin(), _send_buffer.end());
-      }
-
-      // Try sending until all sent or an error occurs
-      size_t offset = 0;
-
-      while (offset < local_buf.size()) {
-        ssize_t n =
-            ::send(_fd, local_buf.data() + offset, local_buf.size() - offset,
-                   MSG_NOSIGNAL // no DONTWAIT
-            );
-
-        if (n < 0) {
-          if (errno == EAGAIN || errno == EWOULDBLOCK) {
-            // Wait until socket becomes writable again
-            // (alternatively use poll/select/epoll)
-            std::this_thread::sleep_for(std::chrono::milliseconds(1));
-            continue;
-          }
-
-          // Fatal send error → abort connection
-          _close = true;
-          break;
-        }
-
-        offset += size_t(n);
-      }
-
-      // Remove what we sent from the shared buffer
-      {
-        std::unique_lock<std::mutex> lk(_send_buffer_mutex);
-
-        if (offset > 0 && offset <= _send_buffer.size()) {
-          _send_buffer.erase(_send_buffer.begin(),
-                             _send_buffer.begin() + offset);
-        }
-
-        if (_send_buffer.empty())
-          _send_buffer_cond.notify_all();
-      }
-    }
-
-    // ::close(_fd);
-    return 0;
-  }
-
-  int handle_read() {
-    std::vector<char> buffer(2048);
-
-    while (!_close) {
-
-      fd_set read_set;
-      fd_set err_set;
-
-      FD_ZERO(&read_set);
-      FD_SET(_fd, &read_set);
-
-      FD_ZERO(&err_set);
-      FD_SET(_fd, &err_set);
-
-      timeval tv{0, 500};
-
-      int activity = select(_fd + 1, &read_set, NULL, &err_set, &tv);
-      if (activity < 0)
-        break;
-      if (activity == 0)
-        continue;
-
-      if (FD_ISSET(_fd, &err_set))
-        break;
-
-      if (!FD_ISSET(_fd, &read_set))
-        continue;
-
-      int read_bytes = recv(_fd, buffer.data(), buffer.size(), MSG_NOSIGNAL);
-
-      if (read_bytes <= 0) {
-        if (errno == EAGAIN || errno == EWOULDBLOCK)
+      if (n < 0) {
+        if (errno == EAGAIN || errno == EWOULDBLOCK) {
+          // Wait until socket becomes writable again
+          // (alternatively use poll/select/epoll)
+          std::this_thread::sleep_for(std::chrono::milliseconds(1));
           continue;
+        }
+
+        // Fatal send error → abort connection
+        _close = true;
         break;
       }
 
-      // copy exactly the received part
-      std::vector<char> chunk(buffer.begin(), buffer.begin() + read_bytes);
+      offset += size_t(n);
+    }
+  }
 
-      data_received(shared_from_this(), chunk);
+private:
+  SharedPointer<Poll> accept_poll;
+  SharedPointer<Poll> read_poll;
+
+  void read_start() {
+    if (read_poll == nullptr) {
+      read_poll =
+          Poll::create(std::bind(&Socket::read_handle, shared_from_this()));
+    }
+  }
+
+  void accept_handle() {
+
+    fd_set readfds;
+    FD_ZERO(&readfds);
+    FD_SET(_fd, &readfds);
+
+    timeval tv{0, 100000};
+
+    int activity = ::select(_fd + 1, &readfds, NULL, NULL, &tv);
+
+    if (activity < 0) {
+      on_error(shared_from_this(), strerror(errno));
+      return;
     }
 
-    // ::close(_fd);
-    return 0;
+    if (activity == 0) {
+      return;
+    }
+
+    if (!FD_ISSET(_fd, &readfds)) {
+      return;
+    }
+
+    // Accept client
+    sockaddr_in client_addr{};
+    socklen_t addrlen = sizeof(client_addr);
+
+    int client_fd = ::accept(_fd, (sockaddr *)&client_addr, &addrlen);
+
+    if (client_fd < 0) {
+      if (errno == EAGAIN || errno == EWOULDBLOCK)
+        return;
+      on_error(shared_from_this(), strerror(errno));
+    }
+
+    // max clients should be ensured here
+
+    // Wrap socket
+    auto conn = SharedPointer<Socket>::make(client_fd);
+
+    conn->on_closed += [self = shared_from_this()](auto client) {
+      auto lock = self->clients.acquire_lock();
+      Logger::debug("{}: Removing: {}", self->name.c_str(),
+                    client->name.c_str());
+      auto _ = std::remove_if(
+          self->clients.begin(), self->clients.end(),
+          [client](auto connection) { return connection == client; });
+    };
+
+    {
+      clients.acquire_lock();
+      clients.push_back(conn);
+    }
+
+    auto ready = on_accept(this->clone(), conn);
+
+    for (auto promise : ready) {
+      auto future = promise->get_future();
+
+      auto result = future.wait_for(std::chrono::seconds(5));
+
+      if (result == std::future_status::timeout) {
+        throw Core::Exceptions::RuntimeException(
+            "Failed to configure socket before 5 seconds");
+      }
+    }
+
+    conn->read_start();
+  }
+
+  void read_handle() {
+
+    Logger::info("reading from fd = {}", _fd);
+
+    fd_set read_set;
+    fd_set err_set;
+
+    FD_ZERO(&read_set);
+    FD_SET(_fd, &read_set);
+
+    FD_ZERO(&err_set);
+    FD_SET(_fd, &err_set);
+
+    timeval tv{0, 100000};
+
+    int activity = select(_fd + 1, &read_set, NULL, &err_set, &tv);
+
+    if (activity < 0) {
+      on_error(shared_from_this(), strerror(errno));
+    }
+
+    if (activity == 0) {
+      return;
+    }
+
+    if (FD_ISSET(_fd, &err_set)) {
+      on_error(shared_from_this(), strerror(errno));
+    }
+
+    if (!FD_ISSET(_fd, &read_set)) {
+      on_error(shared_from_this(), strerror(errno));
+    }
+
+    int read_bytes = recv(_fd, buffer, sizeof(buffer), MSG_NOSIGNAL);
+
+    if (read_bytes < -1) {
+      on_error(shared_from_this(), strerror(errno));
+      return;
+    }
+
+    if (read_bytes == 0) {
+      if (errno == EAGAIN || errno == EWOULDBLOCK) {
+        on_error(shared_from_this(), strerror(errno));
+        return;
+      }
+
+      on_disconnected(shared_from_this());
+    }
+    SharedPointer<ContiguousCollection<uint8_t>> chunk = nullptr;
+    try {
+      chunk = SharedPointer<ContiguousCollection<uint8_t>>::make(
+          buffer, buffer + read_bytes);
+    } catch (...) {
+    }
+    if (chunk != nullptr) {
+      on_data(this->clone(), chunk);
+    }
   }
 };
+
 } // namespace Modules::Networking::TCP
 
 #endif

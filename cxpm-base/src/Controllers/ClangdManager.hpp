@@ -23,12 +23,12 @@ StaticClass(ClangdManager)
 
     public
     : static inline String
-      emit_compiler_commands(const TargetDescriptor &target) {
+      emit_compiler_commands(TargetDescriptor &target) {
 
     auto stream = std::ostringstream();
-    JsonOutputArchiver output(stream);
+    JSONOutputArchiver output(stream);
     Collection<CompileCommandDescriptor> compile_commands;
-    output % compile_commands;
+    output << compile_commands;
     return stream.str();
   }
 };

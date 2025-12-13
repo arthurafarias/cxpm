@@ -9,9 +9,8 @@ using namespace Modules::Testing;
 struct SimpleParseTest : public TestCase {
   SimpleParseTest() : TestCase("SimpleParseTest", "") {}
   virtual void run() override {
-
     auto response = Modules::Networking::HTTP::Response::create();
-    response->send();
+    // response->send();
   }
 };
 

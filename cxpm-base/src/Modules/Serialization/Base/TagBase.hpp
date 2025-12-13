@@ -9,10 +9,10 @@ namespace Modules::Serialization::Base {
 struct TagBase {
   TagBase() {}
   TagBase(const String &name, const TagPart &part = TagPart::DoNotApply,
-          const TagType &type = TagType::Integral)
+          const TagType &type = TagType::Value)
       : name(name), part(part), type(type) {}
   String name = "";
   TagPart part = TagPart::DoNotApply;
-  TagType type = TagType::Integral;
+  TagType type = TagType::Value;
 };
 } // namespace Modules::Serialization::Base

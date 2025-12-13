@@ -2,5 +2,5 @@
 
 namespace Modules::Serialization::Base
 {
-    enum class TagType { Integral, Object, Array };
+    enum class TagType { Unknown, Value, KeyValue, Object, Array };
 }

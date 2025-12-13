@@ -43,6 +43,7 @@
 #define _Threading_ThreadPool_hpp_
 
 #include "Core/Functional/Function.hpp"
+#include "Core/Globals.hpp"
 #include <condition_variable>
 #include <functional>
 #include <iostream>
@@ -100,7 +101,13 @@ protected:
 
       {
         auto lock = std::unique_lock<std::mutex>{_mutex};
-        _q_cond.wait(lock, [this] { return !_q.empty() || _stop; });
+        _q_cond.wait(lock, [this] {
+          return !_q.empty() || _stop || Core::Globals::quit;
+        });
+
+        if (Core::Globals::quit) {
+          break;
+        }
 
         if (_stop && _q.empty())
           break;
@@ -128,6 +135,6 @@ private:
   std::mutex _mutex;
   std::atomic_bool _stop = false;
 };
-} // namespace Threading
+} // namespace Core::Threading
 
 #endif

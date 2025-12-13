@@ -6,12 +6,11 @@
 #include "Core/SharedPointer.hpp"
 #include "Models/CompilerCommandDescriptor.hpp"
 #include "Modules/Serialization/Base/AbstractArchiver.hpp"
+#include "Modules/Serialization/Base/TagBase.hpp"
+#include "Modules/Serialization/Base/ValueTag.hpp"
 
 #include <Core/Containers/String.hpp>
-#include <algorithm>
-#include <memory>
-#include <stdexcept>
-#include <tuple>
+#include <cstddef>
 #include <type_traits>
 #include <typeinfo>
 
@@ -24,83 +23,100 @@ class MustacheLite : public ArchiveTagFactory {
 public:
   MustacheLite(const String &view) : view(view) {}
 
-  template <typename ValueType> void value(const KeyValueTag<ValueType> &) {}
-
-  template <typename ValueType>
-  void key_value(const KeyValueTag<ValueType> &tag) {
-    model[tag.name] = ModelStoreVariantType(tag);
-  }
-
-  virtual String render() {
-    auto rendered = view;
-
-    for (auto &[key, value] : model) {
-      // I think this is not going to work
-      try {
-
-        auto pattern = "{{" + key + "}}";
-        int index = -1;
-
-        auto key_value_tag = std::get<KeyValueTag<String>>(value);
-
-        // replace all ocurrences of the template
-        while ((index = rendered.find(pattern)) > 0) {
-          rendered =
-              rendered.replace(index, pattern.size(), key_value_tag.value);
-        }
-
-      } catch (std::bad_cast &) {
-      }
-    }
-
-    return rendered;
-  }
+  virtual String render() { return String(); }
 
 private:
   String view;
-  using ModelStoreVariantType = std::variant<KeyValueTag<String>>;
-  Map<String, ModelStoreVariantType> model;
+  Map<String, SharedPointer<TagBase>> model;
 };
 
-template <typename TagType,
-          typename = std::enable_if_t<std::is_base_of<TagBase, TagType>::value>>
-inline MustacheLite &operator%(MustacheLite &ar, const TagType &) {
-  static_assert(false, "Wrong template specialization");
+MustacheLite constexpr &operator%(MustacheLite &ar,
+                                  SharedPointer<ArrayTag> tag) {
   return ar;
 }
 
-template <>
-inline MustacheLite &
+MustacheLite constexpr &operator%(MustacheLite &ar,
+                                  SharedPointer<ObjectTag> tag) {
+  return ar;
+}
+
+MustacheLite constexpr &operator%(MustacheLite &ar, SharedPointer<bool> tag) {
+  return ar;
+}
+
+MustacheLite constexpr &operator%(MustacheLite &ar,
+                                  SharedPointer<ValueTag<std::nullptr_t>> tag) {
+  return ar;
+}
+
+MustacheLite constexpr &operator%(MustacheLite &ar,
+                                  SharedPointer<ValueTag<double>> tag) {
+  return ar;
+}
+
+MustacheLite constexpr &operator%(MustacheLite &ar,
+                                  SharedPointer<ValueTag<int>> tag) {
+  return ar;
+}
+
+MustacheLite constexpr &operator%(MustacheLite &ar,
+                                  SharedPointer<ValueTag<String>> tag) {
+  return ar;
+}
+
+MustacheLite constexpr &operator%(MustacheLite &ar,
+                                  SharedPointer<KeyValueTag<bool>> tag) {
+  return ar;
+}
+
+MustacheLite constexpr &
+operator%(MustacheLite &ar, SharedPointer<KeyValueTag<std::nullptr_t>> tag) {
+  return ar;
+}
+
+MustacheLite constexpr &operator%(MustacheLite &ar,
+                                  SharedPointer<KeyValueTag<double>> tag) {
+  return ar;
+}
+
+MustacheLite constexpr &operator%(MustacheLite &ar,
+                                  SharedPointer<KeyValueTag<int>> tag) {
+  return ar;
+}
+
+MustacheLite constexpr &operator%(MustacheLite &ar,
+                                  SharedPointer<KeyValueTag<String>> tag) {
+  return ar;
+}
+
+template <typename ContainedType>
+MustacheLite constexpr &
 operator%(MustacheLite &ar,
-          const KeyValueTag<Collection<Models::CompileCommandDescriptor>> &) {
-  // ignore collections of strings
+          SharedPointer<KeyValueTag<Collection<ContainedType>>> tag) {
   return ar;
 }
 
-template <>
-inline MustacheLite &operator%(MustacheLite &ar,
-                                 const KeyValueTag<Collection<String>> &) {
-  // ignore collections of strings
+class ValueType;
+class ValueType
+    : public Variant<std::nullptr_t, bool, int, double, String,
+                     Map<String, ValueType>, Collection<ValueType>> {
+  using BaseType = Variant<std::nullptr_t, bool, int, double, String,
+                           Map<String, ValueType>, Collection<ValueType>>;
+  using Variant<std::nullptr_t, bool, int, double, String,
+                Map<String, ValueType>, Collection<ValueType>>::Variant;
+};
+
+MustacheLite constexpr &operator<<(MustacheLite &ar, const ValueType &tag) {
   return ar;
 }
 
-template <>
-inline MustacheLite &operator%(MustacheLite &ar,
-                                 const KeyValueTag<String> &tag) {
-  ar.key_value(tag);
+MustacheLite constexpr &operator<<(MustacheLite &ar,
+                                   const Collection<ValueType> &tag) {
   return ar;
 }
 
-template <>
-inline MustacheLite &operator%(MustacheLite &ar, const TagBase &tag) {
-  switch (tag.type) {
-  case TagType::Array:
-    break;
-  case TagType::Object:
-    break;
-  case TagType::Integral:
-    break;
-  }
+MustacheLite constexpr &operator<<(MustacheLite &ar,
+                                   const Map<String, ValueType> &tag) {
   return ar;
 }
 

@@ -24,12 +24,12 @@ struct JSONValue
 
 template <typename Archiver>
 inline Archiver &operator%(Archiver &ar, const JSONValue &value) {
-  std::visit(
-      [&](auto &&_value) {
-        using ValueType = std::decay_t<decltype(_value)>;
-        ar % ValueTag<ValueType>(_value);
-      },
-      value);
+  // std::visit(
+  //     [&](auto &&_value) {
+  //       // using ValueType = std::decay_t<decltype(_value)>;
+  //       // ar % ValueTag<ValueType>(_value);
+  //     },
+  //     value);
   return ar;
 }
 } // namespace Modules::Serialization::JSON

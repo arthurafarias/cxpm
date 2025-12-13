@@ -6,11 +6,13 @@
 #include "Modules/Networking/HTTP/Method.hpp"
 #include "Modules/Networking/HTTP/Request.hpp"
 #include "Modules/Networking/HTTP/Response.hpp"
+#include "Modules/Networking/TCP/Socket.hpp"
 #include "Utils/Patterns/Creator.hpp"
 #include <functional>
 #include <tuple>
 
 using namespace Utils::Patterns;
+using namespace Modules::Networking::TCP;
 
 namespace Modules::Networking::HTTP {
 class Route : public Object,
@@ -22,7 +24,7 @@ public:
   using RouteTag = std::tuple<RouteTagType, int, String>;
 
   using CallbackType =
-      std::function<void(SharedPointer<Request>, SharedPointer<Response>)>;
+      std::function<void(SharedPointer<Socket>, SharedPointer<Request>, SharedPointer<Response>)>;
 
   Route() {}
 

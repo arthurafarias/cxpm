@@ -10,6 +10,7 @@
 #include "Models/Toolchain.hpp"
 #include "Models/ToolchainDescriptor.hpp"
 #include "Modules/Serialization/JSON/JSONOutputArchiver.hpp"
+#include "Modules/Serialization/JSON/JSONValue.hpp"
 #include <Controllers/ToolchainManager.hpp>
 #include <Core/Containers/String.hpp>
 #include <Modules/Templating/MustacheLite.hpp>
@@ -152,8 +153,8 @@ StaticClass(ProjectManager)
     }
 
     auto stream = std::ofstream("compile_commands.json");
-    JsonOutputArchiver output(stream);
-    output % commands;
+    JSONOutputArchiver output(stream);
+    // output << JSONValue(commands);
 
     return {BuildProjectOutputResultStatus::Success, project_manifest,
             toolchain};

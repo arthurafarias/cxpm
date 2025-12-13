@@ -1,0 +1,2 @@
+add_executable(${PROJECT_NAME}_Core_Threading_SmartThreadTest SmartThreadTest.cpp)
+target_link_libraries(${PROJECT_NAME}_Core_Threading_SmartThreadTest PUBLIC cxpm-base)

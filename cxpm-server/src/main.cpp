@@ -1,20 +1,23 @@
 
+#include "Core/Globals.hpp"
 #include "Core/Containers/String.hpp"
 #include "Core/Exceptions/RuntimeException.hpp"
 #include "Core/Logging/LoggerManager.hpp"
 #include "Core/SharedPointer.hpp"
 #include "Modules/Networking/HTTP/Method.hpp"
 #include "Modules/Networking/HTTP/Response.hpp"
+#include "Modules/Networking/HTTP/ResponseStatus.hpp"
 #include "Modules/Networking/HTTP/Route.hpp"
 #include "Modules/Networking/HTTP/Service.hpp"
+#include "Modules/Networking/TCP/Socket.hpp"
 #include "Modules/SQL/Base/QueryBuilder.hpp"
 #include "Modules/SQL/SQLite/SQLiteDriver.hpp"
 #include "Modules/Serialization/JSON/JSONObject.hpp"
 #include "Modules/Serialization/JSON/JSONOutputArchiver.hpp"
 #include <Utils/Unused.hpp>
+#include <csignal>
 #include <ios>
 #include <sstream>
-// #include <string>
 
 using namespace Modules::Networking::HTTP;
 using namespace Core::Containers;
@@ -75,11 +78,19 @@ struct Router {
     }
   }
 
-  void user_profile_get(SharedPointer<Request> req,
+  void default_handler(SharedPointer<Socket> client, SharedPointer<Request> req,
+                       SharedPointer<Response> res) {
+    res->status = {200, "OK"};
+    client->write_string(res->to_string());
+  }
+
+  void user_profile_get(SharedPointer<Socket> client, SharedPointer<Request> req,
                         SharedPointer<Response> res) {
+    auto lock0 = req->acquire_lock();
+    auto lock1 = res->acquire_lock();
     std::stringstream ss;
 
-    JsonOutputArchiver output(ss);
+    JSONOutputArchiver output(ss);
     JSONObject profile;
 
     QueryBuilder::create()
@@ -90,10 +101,10 @@ struct Router {
         ->where("sessionid = '{}'", req->data["sessionid"])
         ->exec(db);
 
-    output % profile;
+    output << profile;
 
     res->body = ss.str();
-    res->send();
+    client->write_string(res->to_string());
   }
 
   const inline static Collection<String> EscapeSequences{
@@ -103,6 +114,7 @@ struct Router {
   };
 
   inline static bool can_leak(const String &string) {
+    auto lock = EscapeSequences.acquire_lock();
 
     std::ostringstream os;
     os << std::uppercase << string;
@@ -114,19 +126,25 @@ struct Router {
     return false;
   }
 
-  void user_keep_alive(SharedPointer<Request> req,
+  void user_keep_alive(SharedPointer<Socket> client, SharedPointer<Request> req,
                        SharedPointer<Response> res) {
-    res->send();
+    auto lock0 = req->acquire_lock();
+    auto lock1 = res->acquire_lock();
+    client->write_string(res->to_string());
   }
 
-  void user_log_out(SharedPointer<Request> req, SharedPointer<Response> res) {
-    res->send();
+  void user_log_out(SharedPointer<Socket> client, SharedPointer<Request> req, SharedPointer<Response> res) {
+    auto lock0 = req->acquire_lock();
+    auto lock1 = res->acquire_lock();
+    client->write_string(res->to_string());
   }
 
-  void user_log_in(SharedPointer<Request> req, SharedPointer<Response> res) {
+  void user_log_in(SharedPointer<Socket> client, SharedPointer<Request> req, SharedPointer<Response> res) {
+    auto lock0 = req->acquire_lock();
+    auto lock1 = res->acquire_lock();
     std::stringstream ss;
 
-    JsonOutputArchiver output(ss);
+    JSONOutputArchiver output(ss);
     JSONObject body;
 
     try {
@@ -158,36 +176,37 @@ struct Router {
     }
 
     res->body = ss.str();
-    res->send();
+    client->write_string(res->to_string());
   }
 };
 
 int main(int argc, char *argv[]) {
-
   Utils::Unused{argc, argv};
-  Logging::LoggerManager::stream_set(Logging::LoggerManager::stream_cout());
+  ::signal(SIGTERM, Core::Globals::close);
+
+  Logging::LoggerManager::level_set(Logging::LoggerManager::Level::Debug);
+  // Logging::LoggerManager::stream_set(Logging::LoggerManager::stream_cout());
 
   auto router = SharedPointer<Router>(new Router());
 
   auto [result, err] =
       Service::create()
           ->listener_add(3000, "127.0.0.1")
-          ->route_add(Method::GET, "/", [&](auto req, auto res) {
-            res->status = { 200, "OK" };
-            res->send();
-          })
+          ->route_add(Method::GET, "/",
+                      std::bind(&Router::default_handler, router,
+                                std::placeholders::_1, std::placeholders::_2, std::placeholders::_3))
           ->route_add(Method::POST, "/login",
                       std::bind(&Router::user_log_in, router,
-                                std::placeholders::_1, std::placeholders::_2))
+                                std::placeholders::_1, std::placeholders::_2, std::placeholders::_3))
           ->route_add(Method::GET, "/:user/:sessionid/profile",
                       std::bind(&Router::user_profile_get, router,
-                                std::placeholders::_1, std::placeholders::_2))
+                                std::placeholders::_1, std::placeholders::_2, std::placeholders::_3))
           ->route_add(Method::POST, "/:user/:sessionid/keepalive",
                       std::bind(&Router::user_log_in, router,
-                                std::placeholders::_1, std::placeholders::_2))
+                                std::placeholders::_1, std::placeholders::_2, std::placeholders::_3))
           ->route_add(Method::POST, "/:user/:sessionid/logout",
                       std::bind(&Router::user_log_in, router,
-                                std::placeholders::_1, std::placeholders::_2))
+                                std::placeholders::_1, std::placeholders::_2, std::placeholders::_3))
           ->run();
 
   return 0;

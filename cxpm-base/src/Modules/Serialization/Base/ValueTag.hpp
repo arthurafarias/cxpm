@@ -10,7 +10,7 @@ namespace Modules::Serialization::Base {
 
 template <typename ValueType> struct ValueTag : KeyValueTag<ValueType> {
   ValueTag() {}
-  ValueTag(const ValueType &value)
+  ValueTag(ValueType *value)
       : KeyValueTag<ValueType>(KeyValueTag<ValueType>::anonymous_name(),
                                value) {}
   virtual ~ValueTag() {}

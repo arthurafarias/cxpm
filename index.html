@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C++ Code Sampler</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: #2d3748;
+            color: white;
+            padding: 25px 30px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #a0aec0;
+            font-size: 14px;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            min-height: 600px;
+        }
+
+        .sidebar {
+            background: #f7fafc;
+            border-right: 1px solid #e2e8f0;
+            padding: 20px;
+        }
+
+        .sample-btn {
+            width: 100%;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: left;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .sample-btn:hover {
+            border-color: #667eea;
+            background: #edf2f7;
+        }
+
+        .sample-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .editor-area {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .toolbar {
+            background: #edf2f7;
+            padding: 15px 20px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+
+        .btn:hover {
+            background: #5a67d8;
+        }
+
+        .btn-secondary {
+            background: #48bb78;
+        }
+
+        .btn-secondary:hover {
+            background: #38a169;
+        }
+
+        #editor {
+            flex: 1;
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            border: none;
+            resize: none;
+            outline: none;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            overflow: auto;
+        }
+
+        .output {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px 20px;
+            border-top: 1px solid #4a5568;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            min-height: 60px;
+        }
+
+        .output-title {
+            color: #a0aec0;
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                border-right: none;
+                border-bottom: 1px solid #e2e8f0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>C++ Code Sampler</h1>
+            <p class="subtitle">Explore and edit C++ code examples</p>
+        </header>
+        
+        <div class="main-content">
+            <aside class="sidebar">
+                <button class="sample-btn active" data-sample="hello">Hello World</button>
+                <button class="sample-btn" data-sample="variables">Variables & Types</button>
+                <button class="sample-btn" data-sample="loops">Loops</button>
+                <button class="sample-btn" data-sample="functions">Functions</button>
+                <button class="sample-btn" data-sample="classes">Classes</button>
+                <button class="sample-btn" data-sample="pointers">Pointers</button>
+                <button class="sample-btn" data-sample="vectors">Vectors</button>
+                <button class="sample-btn" data-sample="templates">Templates</button>
+            </aside>
+            
+            <div class="editor-area">
+                <div class="toolbar">
+                    <button class="btn" id="copyBtn">Copy Code</button>
+                    <button class="btn btn-secondary" id="resetBtn">Reset</button>
+                    <span style="margin-left: auto; color: #718096; font-size: 13px;">Edit the code below</span>
+                </div>
+                
+                <textarea id="editor" spellcheck="false"></textarea>
+                
+                <div class="output">
+                    <div class="output-title">OUTPUT:</div>
+                    <div id="outputText">Click "Copy Code" to copy the code to clipboard</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const samples = {
+            hello: `#include <iostream>
+
+int main() {
+    std::cout << "Hello, World!" << std::endl;
+    return 0;
+}`,
+            
+            variables: `#include <iostream>
+#include <string>
+
+int main() {
+    // Integer types
+    int age = 25;
+    long population = 7800000000L;
+    
+    // Floating point
+    double pi = 3.14159;
+    float temperature = 23.5f;
+    
+    // Character and string
+    char grade = 'A';
+    std::string name = "Alice";
+    
+    // Boolean
+    bool isStudent = true;
+    
+    std::cout << "Name: " << name << std::endl;
+    std::cout << "Age: " << age << std::endl;
+    std::cout << "Grade: " << grade << std::endl;
+    
+    return 0;
+}`,
+            
+            loops: `#include <iostream>
+
+int main() {
+    // For loop
+    std::cout << "For loop: ";
+    for (int i = 1; i <= 5; i++) {
+        std::cout << i << " ";
+    }
+    std::cout << std::endl;
+    
+    // While loop
+    std::cout << "While loop: ";
+    int j = 1;
+    while (j <= 5) {
+        std::cout << j << " ";
+        j++;
+    }
+    std::cout << std::endl;
+    
+    // Do-while loop
+    std::cout << "Do-while loop: ";
+    int k = 1;
+    do {
+        std::cout << k << " ";
+        k++;
+    } while (k <= 5);
+    std::cout << std::endl;
+    
+    return 0;
+}`,
+            
+            functions: `#include <iostream>
+
+// Function declaration
+int add(int a, int b);
+double calculateArea(double radius);
+void greet(std::string name);
+
+int main() {
+    int sum = add(5, 3);
+    std::cout << "5 + 3 = " << sum << std::endl;
+    
+    double area = calculateArea(5.0);
+    std::cout << "Area of circle: " << area << std::endl;
+    
+    greet("Charlie");
+    
+    return 0;
+}
+
+// Function definitions
+int add(int a, int b) {
+    return a + b;
+}
+
+double calculateArea(double radius) {
+    return 3.14159 * radius * radius;
+}
+
+void greet(std::string name) {
+    std::cout << "Hello, " << name << "!" << std::endl;
+}`,
+            
+            classes: `#include <iostream>
+#include <string>
+
+class Person {
+private:
+    std::string name;
+    int age;
+    
+public:
+    // Constructor
+    Person(std::string n, int a) : name(n), age(a) {}
+    
+    // Getter methods
+    std::string getName() const { return name; }
+    int getAge() const { return age; }
+    
+    // Method
+    void introduce() {
+        std::cout << "Hi, I'm " << name 
+                  << " and I'm " << age 
+                  << " years old." << std::endl;
+    }
+};
+
+int main() {
+    Person person1("Alice", 25);
+    Person person2("Bob", 30);
+    
+    person1.introduce();
+    person2.introduce();
+    
+    return 0;
+}`,
+            
+            pointers: `#include <iostream>
+
+int main() {
+    int value = 42;
+    int* ptr = &value;  // Pointer to value
+    
+    std::cout << "Value: " << value << std::endl;
+    std::cout << "Address: " << &value << std::endl;
+    std::cout << "Pointer: " << ptr << std::endl;
+    std::cout << "Dereferenced: " << *ptr << std::endl;
+    
+    // Modify through pointer
+    *ptr = 100;
+    std::cout << "New value: " << value << std::endl;
+    
+    // Dynamic memory
+    int* dynamicInt = new int(50);
+    std::cout << "Dynamic value: " << *dynamicInt << std::endl;
+    delete dynamicInt;
+    
+    return 0;
+}`,
+            
+            vectors: `#include <iostream>
+#include <vector>
+
+int main() {
+    // Create and initialize vector
+    std::vector<int> numbers = {1, 2, 3, 4, 5};
+    
+    // Add elements
+    numbers.push_back(6);
+    numbers.push_back(7);
+    
+    // Access elements
+    std::cout << "First element: " << numbers[0] << std::endl;
+    std::cout << "Size: " << numbers.size() << std::endl;
+    
+    // Iterate through vector
+    std::cout << "Elements: ";
+    for (int num : numbers) {
+        std::cout << num << " ";
+    }
+    std::cout << std::endl;
+    
+    // Remove last element
+    numbers.pop_back();
+    
+    return 0;
+}`,
+            
+            templates: `#include <iostream>
+
+// Function template
+template <typename T>
+T getMax(T a, T b) {
+    return (a > b) ? a : b;
+}
+
+// Class template
+template <typename T>
+class Box {
+private:
+    T content;
+    
+public:
+    Box(T c) : content(c) {}
+    
+    T getContent() { return content; }
+    
+    void setContent(T c) { content = c; }
+};
+
+int main() {
+    // Using function template
+    std::cout << "Max of 5 and 10: " 
+              << getMax(5, 10) << std::endl;
+    std::cout << "Max of 3.7 and 2.5: " 
+              << getMax(3.7, 2.5) << std::endl;
+    
+    // Using class template
+    Box<int> intBox(42);
+    Box<std::string> strBox("Hello");
+    
+    std::cout << "Int box: " 
+              << intBox.getContent() << std::endl;
+    std::cout << "String box: " 
+              << strBox.getContent() << std::endl;
+    
+    return 0;
+}`
+        };
+
+        const editor = document.getElementById('editor');
+        const outputText = document.getElementById('outputText');
+        const copyBtn = document.getElementById('copyBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const sampleBtns = document.querySelectorAll('.sample-btn');
+        
+        let currentSample = 'hello';
+        let originalCode = samples.hello;
+        
+        // Initialize with first sample
+        editor.value = samples.hello;
+        
+        // Sample button click handlers
+        sampleBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                sampleBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                currentSample = btn.dataset.sample;
+                originalCode = samples[currentSample];
+                editor.value = originalCode;
+                outputText.textContent = 'Code loaded. Click "Copy Code" to copy to clipboard.';
+            });
+        });
+        
+        // Copy button
+        copyBtn.addEventListener('click', () => {
+            editor.select();
+            document.execCommand('copy');
+            outputText.textContent = 'Code copied to clipboard!';
+            
+            setTimeout(() => {
+                outputText.textContent = 'Click "Copy Code" to copy the code to clipboard';
+            }, 2000);
+        });
+        
+        // Reset button
+        resetBtn.addEventListener('click', () => {
+            editor.value = originalCode;
+            outputText.textContent = 'Code reset to original.';
+        });
+        
+        // Tab key support in editor
+        editor.addEventListener('keydown', (e) => {
+            if (e.key === 'Tab') {
+                e.preventDefault();
+                const start = editor.selectionStart;
+                const end = editor.selectionEnd;
+                editor.value = editor.value.substring(0, start) + '    ' + editor.value.substring(end);
+                editor.selectionStart = editor.selectionEnd = start + 4;
+            }
+        });
+    </script>
+</body>
+</html>

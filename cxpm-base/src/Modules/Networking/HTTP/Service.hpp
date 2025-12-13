@@ -8,9 +8,8 @@
 #include "Modules/Networking/HTTP/Request.hpp"
 #include "Modules/Networking/HTTP/Response.hpp"
 #include "Modules/Networking/HTTP/Route.hpp"
-#include "Modules/Networking/TCP/Server.hpp"
-#include "Modules/Serialization/JSON/JSONOutputArchiver.hpp"
-#include <cstring>
+#include "Modules/Networking/TCP/Socket.hpp"
+#include "Modules/Networking/TCP/Socket.hpp"
 #include <exception>
 #include <future>
 #include <initializer_list>
@@ -22,8 +21,8 @@ class Service : public Object,
                 public EnableSharedFromThis<Service>,
                 public Creator<Service> {
 public:
-  Signal<SharedPointer<Service>, SharedPointer<Request>,
-         SharedPointer<Response>>
+  Signal<SharedPointer<Service>, SharedPointer<Socket>,
+         SharedPointer<Request>, SharedPointer<Response>>
       on_request;
 
   Service() {}
@@ -38,6 +37,7 @@ public:
   }
 
   SharedPointer<Service> route_add(SharedPointer<Route> route) {
+    auto lock = routes.acquire_lock();
     routes.push_back(route);
     return shared_from_this();
   }
@@ -55,7 +55,7 @@ public:
     auto lock = acquire_lock();
 
     using PromiseType = SharedPointer<std::promise<int>>;
-    using ServerType = SharedPointer<Server>;
+    using ServerType = SharedPointer<Socket>;
     using ThreadType = SharedPointer<std::thread>;
     using HandlerType = std::tuple<PromiseType, ServerType, ThreadType>;
 
@@ -63,84 +63,96 @@ public:
 
     for (const auto &[port, host] : listeners) {
       PromiseType result = SharedPointer<std::promise<int>>::make();
-      ServerType server = Modules::Networking::TCP::Server::create();
+      ServerType server = Modules::Networking::TCP::Socket::create();
 
-      server->listening += [](auto server) {
+      server->on_listening += [](auto server) {
         // debug a acknowlegement
         Logging::LoggerManager::info("Connected");
       };
 
       // Add a closed callback
-      server->closed +=
+      server->on_closed +=
           [](auto server) { Logging::LoggerManager::info("Disconnected"); };
 
       // Add an error callback
-      server->error += [](auto server, int error) {
-        Logging::LoggerManager::info("Error {}", strerror(error));
+      server->on_error += [](auto server, auto error) {
+        Logging::LoggerManager::info("Error {}", error);
       };
 
       shared_from_this()->on_request +=
-          [](auto server, auto request, auto response) {
+          [](auto server, auto client, auto request, auto response) {
+            auto lock = response->acquire_lock();
+
             auto route = server->match_route(request);
 
             if (route != nullptr && route->callback != nullptr) {
               request->data = route->data;
-              route->callback(request, response);
+              ThreadPool::get_instance().submit(
+                  [route, request, response, client]() {
+                    auto lock = route->acquire_lock();
+                    route->callback(client, request, response);
+                  });
               return;
             }
 
             response->status = {404, "Not Found"};
             response->headers["Connection"] = "Close";
-            response->send();
-            response->client->close();
+            // client->write(response->to_string(), true);
+            client->close();
           };
 
       // Add a client accepted callback so you can define the server
       // application
-      server->client_accepted += [self = shared_from_this()](auto server,
-                                                             auto client) {
-        Logging::LoggerManager::info("Client Accepted");
+      server->on_accept +=
+          [self = shared_from_this()](auto server, auto client) {
+            auto lock = client->acquire_lock();
 
-        // For each client, define a disconnection message
-        client->disconnected += [](auto client) {
-          Logging::LoggerManager::info("Client Disconnected");
-        };
+            Logging::LoggerManager::info("Client Accepted");
 
-        // For each client, register an error callback
-        client->error += [](auto client, auto error) {
-          Logging::LoggerManager::info("Client Error");
-        };
+            // For each client, define a disconnection message
+            client->on_disconnected += [](auto client) {
+              Logging::LoggerManager::info("Client Disconnected");
+            };
 
-        // Register a data_received callback
-        client->data_received += [server, self](auto client, auto data) {
-          auto response = Response::create();
-          response->status = {200, "OK"};
-          response->client = SharedPointer<HTTPClientConnection>::make(client);
+            // For each client, register an error callback
+            client->on_error += [](auto client, auto error) {
+              Logging::LoggerManager::info("Client Error");
+            };
 
-          auto chunk = String(data.begin(), data.end());
+            // Register a data_received callback
+            client->on_data += [server, self](auto client, auto data) {
+              auto response = Response::create();
+              response->status = {200, "OK"};
 
-          auto [result, request] = Request::parse(chunk);
+              auto chunk = String(data->begin(), data->end());
+              auto [result, request] = Request::parse(chunk);
 
-          if (result == Request::ParseResultStatus::Failure) {
-            response->status = ResponseStatus{400, "Invalid Request"};
-            response->headers["Connection"] = "Close";
-            response->send();
-            return;
-          }
+              if (result == Request::ParseResultStatus::Failure) {
+                response->status = ResponseStatus{400, "Invalid Request"};
+                response->headers["Connection"] = "Close";
+                // client->write(response->to_string());
+                return;
+              }
 
-          self->on_request(self, request, response);
-        };
-      };
+              self->on_request(self, client, request, response);
+            };
+          };
 
       ThreadType thread = ThreadType::make(
           [server, &host, &port]() { server->listen(port, host.c_str()); });
-
-      handlers.push_back({result, server, thread});
+      {
+        auto lock = handlers.acquire_lock();
+        handlers.push_back({result, server, thread});
+      }
     }
 
-    for (auto [result, server, thread] : handlers) {
-      if (thread->joinable()) {
-        thread->join();
+    {
+      auto lock = handlers.acquire_lock();
+      for (auto [result, server, thread] : handlers) {
+
+        if (thread->joinable()) {
+          thread->join();
+        }
       }
     }
 
@@ -152,27 +164,30 @@ private:
   using MatchRouteResult = SharedPointer<Route>;
 
   MatchRouteResult match_route(const SharedPointer<Request> request) {
+    auto lock1 = routes.acquire_lock();
 
-    auto resource = request->resource;
-
-    auto el =
-        std::find_if(routes.begin(), routes.end(), [resource](auto route) {
-          try {
-            auto data = route->parse(resource);
-            route->data = data;
-            return true;
-          } catch (std::exception &ex) {
-            // ignore route
-          }
-          return false;
-        });
+    auto el = std::find_if(routes.begin(), routes.end(), [request](auto route) {
+      try {
+        request->acquire_lock();
+        auto lock = route->acquire_lock();
+        auto data = route->parse(request->resource);
+        route->data = data;
+        return true;
+      } catch (std::exception &ex) {
+        // ignore route
+      }
+      return false;
+    });
 
     if (el == routes.end()) {
       return nullptr;
     }
 
-    if ((*el)->method != request->method) {
-      return nullptr;
+    {
+      request->acquire_lock();
+      if ((*el)->method != request->method) {
+        return nullptr;
+      }
     }
 
     return *el;
