@@ -6,7 +6,7 @@
 #include <Core/Threading/ThreadPool.hpp>
 
 namespace Core::Threading {
-template <typename... args_types> class AnonymousSignal {
+template <typename... ArgsTypes> class AnonymousSignal {
 public:
   AnonymousSignal() = default;
 
@@ -18,7 +18,7 @@ public:
 
   ~AnonymousSignal() { disconnect_all(); }
 
-  using slot_type = Function<void(args_types...)>;
+  using slot_type = Function<void(ArgsTypes...)>;
   using handle_type = std::list<slot_type>::iterator;
 
   const std::list<slot_type>::iterator connect(const slot_type &slot) {
@@ -36,7 +36,7 @@ public:
     _sinks.clear();
   }
 
-  void operator()(args_types... args) {
+  void operator()(ArgsTypes... args) {
     std::unique_lock<std::mutex> lock(_mutex);
 
     for (const auto &slot : _sinks) {

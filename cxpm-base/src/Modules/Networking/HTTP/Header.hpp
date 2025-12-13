@@ -17,7 +17,7 @@ public:
     Header result;
 
     for (auto line : lines) {
-      auto kv = Core::Containers::String::split(line, ":");
+      auto kv = line.split( ":");
       auto key = Core::Containers::String::trim(kv[0]);
       auto value = Core::Containers::String::trim(kv[1]);
       result[key] = value;

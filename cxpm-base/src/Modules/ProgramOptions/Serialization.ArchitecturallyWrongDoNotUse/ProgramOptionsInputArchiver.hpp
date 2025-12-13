@@ -36,7 +36,7 @@ public:
       cmdline.push_back(c);
     }
 
-    tokens = String::split(cmdline, " ");
+    tokens = cmdline.split( " ");
 
     return *this;
   }

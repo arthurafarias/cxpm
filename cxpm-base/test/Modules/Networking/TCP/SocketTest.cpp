@@ -17,7 +17,7 @@ int main(int argc, char *argv[]) {
     Logging::LoggerManager::info("Client Accepted");
     client->on_data += [](auto client, auto data) {
       static int counter = 0;
-      client->write("Counter: {}, FD: {}\n", counter++, client->_fd);
+      client->write("Counter: {}, FD: {}\n", counter++, client->_fd.load());
       client->close();
     };
   };

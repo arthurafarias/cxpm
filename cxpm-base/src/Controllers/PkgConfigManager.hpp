@@ -25,7 +25,7 @@ public:
     auto cmdline = std::format("pkg-config --cflags --libs {}", name.c_str());
     auto [code, out, err] = Utils::Unix::ShellManager::exec(cmdline);
 
-    auto splitted = String::split(out, " ");
+    auto splitted = out.split( " ");
 
     for (auto el : splitted) {
 

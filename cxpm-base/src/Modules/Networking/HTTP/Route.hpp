@@ -71,7 +71,7 @@ public:
   Map<String, String> parse(const String &resource) {
 
     auto result = Map<String, String>();
-    auto haystack = String::split(resource, "/");
+    auto haystack = resource.split( "/");
     auto compiled = context();
 
     if (compiled.size() != haystack.size()) {
@@ -111,7 +111,7 @@ private:
   inline static Map<String, RouteTag> compile(const String &model) {
     auto context = Map<String, RouteTag>();
 
-    auto path_collection = String::split(model, "/");
+    auto path_collection = model.split( "/");
 
     for (size_t i = 0; i < path_collection.size(); i++) {
 

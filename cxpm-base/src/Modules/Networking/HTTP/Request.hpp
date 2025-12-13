@@ -34,9 +34,9 @@ public:
     using namespace Core::Containers;
     auto _ = std::remove_if(text.begin(), text.end(),
                             [](auto c) { return c == '\r'; });
-    auto lines = String::split(text, "\n");
+    auto lines = text.split( "\n");
 
-    auto elements = String::split(lines.front(), " ");
+    auto elements = lines.front().split( " ");
     lines.pop_front();
 
     if (elements.size() != 3) {
@@ -85,7 +85,7 @@ class RouteTest : public Modules::Testing::TestCase {
     auto compile = [](const String &model) -> Map<String, int> {
       auto context = Map<String, int>();
 
-      auto path_collection = String::split(model, "/");
+      auto path_collection = model.split( "/");
 
       for (size_t i = 0; i < path_collection.size(); i++) {
         if (path_collection[i].starts_with(":")) {
@@ -99,7 +99,7 @@ class RouteTest : public Modules::Testing::TestCase {
     auto parse = [](const Map<String, int> context,
                     String url) -> Map<String, String> {
       auto result = Map<String, String>();
-      auto haystack = String::split(url, "/");
+      auto haystack = url.split( "/");
 
       for (auto [key, value] : context) {
         if (value < haystack.size()) {

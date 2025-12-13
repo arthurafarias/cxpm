@@ -13,7 +13,7 @@ namespace Modules::Networking::HTTP {
 struct Version {
 
   Version(const String &value) {
-    auto protocol = String::split(value, "/");
+    auto protocol = value.split( "/");
 
     if (protocol.size() != 2) {
       throw Core::Exceptions::RuntimeException(
@@ -25,7 +25,7 @@ struct Version {
           "Failed to decode HTTP Protocol with string {}", value);
     }
 
-    auto version = String::split(protocol[1], ".");
+    auto version = protocol[1].split( ".");
 
     if (version.size() != 2) {
       throw Core::Exceptions::RuntimeException(

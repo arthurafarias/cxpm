@@ -69,8 +69,10 @@ public:
                          end + 1); // end + 1 because substr length is exclusive
   }
 
-  static inline Collection<String> split(String haystack, String needle) {
+  Collection<String> split(String needle) const {
+    auto lock = acquire_lock();
     Collection<String> splitted;
+    auto &haystack = *this;
     size_t position_last = 0;
     size_t position = 0;
 
@@ -90,7 +92,6 @@ public:
 
     return splitted;
   }
-  
 };
 
 } // namespace Core::Containers

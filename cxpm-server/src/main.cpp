@@ -1,7 +1,7 @@
 
-#include "Core/Globals.hpp"
 #include "Core/Containers/String.hpp"
 #include "Core/Exceptions/RuntimeException.hpp"
+#include "Core/Globals.hpp"
 #include "Core/Logging/LoggerManager.hpp"
 #include "Core/SharedPointer.hpp"
 #include "Modules/Networking/HTTP/Method.hpp"
@@ -84,7 +84,8 @@ struct Router {
     client->write_string(res->to_string());
   }
 
-  void user_profile_get(SharedPointer<Socket> client, SharedPointer<Request> req,
+  void user_profile_get(SharedPointer<Socket> client,
+                        SharedPointer<Request> req,
                         SharedPointer<Response> res) {
     auto lock0 = req->acquire_lock();
     auto lock1 = res->acquire_lock();
@@ -133,13 +134,15 @@ struct Router {
     client->write_string(res->to_string());
   }
 
-  void user_log_out(SharedPointer<Socket> client, SharedPointer<Request> req, SharedPointer<Response> res) {
+  void user_log_out(SharedPointer<Socket> client, SharedPointer<Request> req,
+                    SharedPointer<Response> res) {
     auto lock0 = req->acquire_lock();
     auto lock1 = res->acquire_lock();
     client->write_string(res->to_string());
   }
 
-  void user_log_in(SharedPointer<Socket> client, SharedPointer<Request> req, SharedPointer<Response> res) {
+  void user_log_in(SharedPointer<Socket> client, SharedPointer<Request> req,
+                   SharedPointer<Response> res) {
     auto lock0 = req->acquire_lock();
     auto lock1 = res->acquire_lock();
     std::stringstream ss;
@@ -194,19 +197,24 @@ int main(int argc, char *argv[]) {
           ->listener_add(3000, "127.0.0.1")
           ->route_add(Method::GET, "/",
                       std::bind(&Router::default_handler, router,
-                                std::placeholders::_1, std::placeholders::_2, std::placeholders::_3))
+                                std::placeholders::_1, std::placeholders::_2,
+                                std::placeholders::_3))
           ->route_add(Method::POST, "/login",
                       std::bind(&Router::user_log_in, router,
-                                std::placeholders::_1, std::placeholders::_2, std::placeholders::_3))
+                                std::placeholders::_1, std::placeholders::_2,
+                                std::placeholders::_3))
           ->route_add(Method::GET, "/:user/:sessionid/profile",
                       std::bind(&Router::user_profile_get, router,
-                                std::placeholders::_1, std::placeholders::_2, std::placeholders::_3))
+                                std::placeholders::_1, std::placeholders::_2,
+                                std::placeholders::_3))
           ->route_add(Method::POST, "/:user/:sessionid/keepalive",
                       std::bind(&Router::user_log_in, router,
-                                std::placeholders::_1, std::placeholders::_2, std::placeholders::_3))
+                                std::placeholders::_1, std::placeholders::_2,
+                                std::placeholders::_3))
           ->route_add(Method::POST, "/:user/:sessionid/logout",
                       std::bind(&Router::user_log_in, router,
-                                std::placeholders::_1, std::placeholders::_2, std::placeholders::_3))
+                                std::placeholders::_1, std::placeholders::_2,
+                                std::placeholders::_3))
           ->run();
 
   return 0;

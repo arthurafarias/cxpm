@@ -5,6 +5,7 @@
 #include "Core/Exceptions/RuntimeException.hpp"
 #include "Core/Logging/LoggerManager.hpp"
 #include "Core/SharedPointer.hpp"
+#include "Core/Threading/AnonymousSignal.hpp"
 #include "Core/Threading/Poll.hpp"
 #include "Core/Threading/Signal.hpp"
 #include "Modules/Networking/TCP/V4.hpp"
@@ -55,17 +56,17 @@ struct Socket : public Object, public Utils::Patterns::Prototype<Socket> {
   Signal<SharedPointer<Socket>> on_disconnected;
   Signal<SharedPointer<Socket>, String> on_error;
   Signal<SharedPointer<Socket>> on_connected;
-  Signal<SharedPointer<Socket>> on_closed;
+  AnonymousSignal<SharedPointer<Socket>> on_closed;
   Signal<SharedPointer<Socket>> on_listening;
   Signal<SharedPointer<Socket>, SharedPointer<Socket>> on_accept;
   Signal<SharedPointer<Socket>, SharedPointer<ContiguousCollection<uint8_t>>>
       on_data;
 
   String name;
-  int _fd;
+  std::atomic<int> _fd;
   char buffer[2048];
-  bool _close;
-  bool closed = false;
+  std::atomic<bool> _close;
+  std::atomic<bool> closed = false;
   Collection<SharedPointer<Socket>> clients;
 
   Socket() : Socket(::socket(AF_INET, SOCK_STREAM, 0)) {}
@@ -87,41 +88,53 @@ struct Socket : public Object, public Utils::Patterns::Prototype<Socket> {
 
   virtual ~Socket() {
 
-    if (!closed) {
-      ::close(_fd);
+    if (accept_poll != nullptr && accept_poll->joinable()) {
+      accept_poll->quit();
+      accept_poll->join();
+      accept_poll = nullptr;
     }
 
     if (read_poll != nullptr && read_poll->joinable()) {
+      read_poll->quit();
       read_poll->join();
+      read_poll = nullptr;
+    }
+
+    if (!closed && _fd >= 0) {
+      ::close(_fd);
+      closed = true;
+      _fd = -1;
     }
   }
 
   void close() {
+    auto lock = acquire_lock();
+    auto self = shared_from_this();
 
-    if (closed) {
+    if (self == nullptr) {
       return;
     }
 
-    closed = true;
-
-    if (accept_poll != nullptr) {
-      accept_poll->quit();
-
-      if (accept_poll->joinable()) {
-        accept_poll->join();
-      }
+    if (self->closed) {
+      return;
     }
 
-    if (read_poll != nullptr) {
-      read_poll->quit();
-      if (read_poll->joinable()) {
-        read_poll->join();
-      }
+    if (self->accept_poll != nullptr && self->accept_poll->joinable()) {
+      self->accept_poll->quit();
+      self->accept_poll->join();
     }
 
-    ::close(_fd);
+    if (self->read_poll != nullptr && self->read_poll->joinable()) {
+      self->read_poll->quit();
+      self->read_poll->join();
+    }
 
-    on_closed(shared_from_this());
+    if (!self->closed && self->_fd >= 0) {
+      ::close(_fd);
+      self->closed = true;
+    }
+
+    on_closed(self);
   }
 
   void listen(int port = 3000, const String &host = "0.0.0.0") {
@@ -149,7 +162,7 @@ struct Socket : public Object, public Utils::Patterns::Prototype<Socket> {
                                                name.c_str(), strerror(errno));
     }
 
-    name = std::format("(server fd: {})", _fd);
+    name = std::format("(server fd: {})", _fd.load());
 
     if (accept_poll == nullptr) {
       accept_poll = Poll::create(std::bind(&Socket::accept_handle, clone()));
@@ -179,7 +192,7 @@ struct Socket : public Object, public Utils::Patterns::Prototype<Socket> {
 
     on_connected(shared_from_this());
 
-    read_start();
+    read_handle_start();
   }
 
   virtual int reuseaddr_set(bool value) {
@@ -276,7 +289,7 @@ private:
   SharedPointer<Poll> accept_poll;
   SharedPointer<Poll> read_poll;
 
-  void read_start() {
+  void read_handle_start() {
     if (read_poll == nullptr) {
       read_poll =
           Poll::create(std::bind(&Socket::read_handle, shared_from_this()));
@@ -325,6 +338,11 @@ private:
 
     conn->on_closed += [self = shared_from_this()](auto client) {
       auto lock = self->clients.acquire_lock();
+
+      if (client == nullptr) {
+        return;
+      }
+
       Logger::debug("{}: Removing: {}", self->name.c_str(),
                     client->name.c_str());
       auto _ = std::remove_if(
@@ -350,12 +368,12 @@ private:
       }
     }
 
-    conn->read_start();
+    conn->read_handle_start();
   }
 
   void read_handle() {
 
-    Logger::info("reading from fd = {}", _fd);
+    Logger::info("reading from fd = {}", _fd.load());
 
     fd_set read_set;
     fd_set err_set;
