@@ -2,6 +2,7 @@
 
 #include "Models/TargetDescriptor.hpp"
 #include <Core/Containers/String.hpp>
+#include <iterator>
 using namespace Core::Containers;
 namespace Models {
 
@@ -33,26 +34,28 @@ public:
 
   constexpr TargetDescriptorInterface<DerivedType> &
   options_append(const Collection<String> &options) {
-    this->options.append_range(options);
+    std::copy(options.begin(), options.end(),
+              std::back_inserter(this->options));
     return *this;
   }
-  
+
   constexpr TargetDescriptorInterface<DerivedType> &
   link_directories_append(const Collection<String> &paths) {
-    this->link_directories.append_range(paths);
+    this->link_directories.push_back(paths.begin(), paths.end());
     return *this;
   }
 
   constexpr TargetDescriptorInterface<DerivedType> &
   link_libraries_append(const Collection<String> &link_libraries) {
-    this->link_libraries.append_range(link_libraries);
+    this->link_libraries.push_back(link_libraries.begin(),
+                                   link_libraries.end());
     return *this;
   }
 
-
   constexpr TargetDescriptorInterface<DerivedType> &
   include_directories_append(const Collection<String> &paths) {
-    this->include_directories.append_range(paths);
+    std::copy(paths.begin(), paths.end(),
+              std::back_inserter(this->include_directories));
     return *this;
   }
 
@@ -64,18 +67,19 @@ public:
 
   constexpr TargetDescriptorInterface<DerivedType> &
   dependencies_append(const Collection<String> &paths) {
-    this->dependencies.append_range(paths);
+    this->dependencies.push_back(paths.begin(), paths.end());
     return *this;
   }
 
   constexpr TargetDescriptorInterface<DerivedType> &
   sources_append(const Collection<String> &sources) {
-    this->sources.append_range(sources);
+    std::copy(sources.begin(), sources.end(),
+              std::back_inserter(this->sources));
     return *this;
   }
-  
+
   constexpr const DerivedType &create() {
-    return static_cast<DerivedType&>(*this);
+    return static_cast<DerivedType &>(*this);
   }
 };
 } // namespace Models

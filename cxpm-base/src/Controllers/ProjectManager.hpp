@@ -10,10 +10,9 @@
 #include "Models/Toolchain.hpp"
 #include "Models/ToolchainDescriptor.hpp"
 #include "Modules/Serialization/JSON/JSONOutputArchiver.hpp"
-#include "Modules/Serialization/JSON/JSONValue.hpp"
 #include <Controllers/ToolchainManager.hpp>
 #include <Core/Containers/String.hpp>
-#include <Modules/Templating/MustacheLite.hpp>
+#include <Modules/Templating/MustacheOutputVisitor.hpp>
 #include <Utils/Unused.hpp>
 #include <dlfcn.h>
 
@@ -95,7 +94,7 @@ StaticClass(ProjectManager)
         Controllers::ProjectManager::build_manifest(build_path.string(),
                                                     modules_search_paths);
 
-    commands.append_range(build_manifest_comands);
+std::copy(build_manifest_comands.begin(), build_manifest_comands.end(), std::back_inserter(    commands));
 
     if (build_manifest_result != 0) {
 
@@ -120,7 +119,7 @@ StaticClass(ProjectManager)
         }
 
       } catch (std::exception &ex) {
-        Core::Logging::LoggerManager::error(
+        Core::Logging::Logger::error(
             "Couldn't append toolchain specified in project {}", ex.what());
       }
     }
@@ -138,7 +137,7 @@ StaticClass(ProjectManager)
 
         target.compile_commands = build_commands;
 
-        commands.append_range(target.compile_commands);
+std::copy(target.compile_commands.begin(), target.compile_commands.end(), std::back_inserter(        commands));
 
         if (build_result != 0) {
           throw Core::Exceptions::RuntimeException(
@@ -147,7 +146,7 @@ StaticClass(ProjectManager)
         }
 
       } catch (std::exception &ex) {
-        Core::Logging::LoggerManager::error("Couldn't build the project: {}",
+        Core::Logging::Logger::error("Couldn't build the project: {}",
                                             ex.what());
       }
     }
@@ -299,7 +298,7 @@ URL: {{url}}
 Cflags: -I{{install_prefix}}/include/{{name}}
 Libs: -l{{name}}
           )"};
-        auto renderer = MustacheLite(view);
+        auto renderer = Modules::Templating::Mustache::MustacheOutputVisitor(view);
         renderer % target;
 
         auto rendered = renderer.render();
@@ -307,8 +306,7 @@ Libs: -l{{name}}
         auto pc_file_stream =
             std::ofstream(pc_install_path.append(target.name + ".pc"),
                           std::ios_base::out | std::ios_base::trunc);
-        auto syncstream = std::osyncstream(pc_file_stream);
-        syncstream << rendered;
+        pc_file_stream << rendered;
       }
     }
 

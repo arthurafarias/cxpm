@@ -1,10 +1,10 @@
 
-#include "Core/Logging/LoggerManager.hpp"
+#include "Core/Logging/Manager.hpp"
 #include "Modules/Networking/TCP/Socket.hpp"
 
 using namespace Modules::Networking::TCP;
 
-using Logger = Core::Logging::LoggerManager;
+using Logger = Core::Logging::Logger;
 
 int main(int argc, char *argv[]) {
   Logger::stream_set(Logger::stream_cout());

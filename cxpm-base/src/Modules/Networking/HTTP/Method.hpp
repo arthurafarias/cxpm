@@ -1,6 +1,6 @@
 #pragma once
 
-#include <map>
+#include "Core/Containers/Map.hpp"
 #include <string>
 
 #include <Core/Containers/String.hpp>
@@ -21,7 +21,7 @@ enum class Method {
   TRACE
 };
 
-inline const std::map<Method, String> MethodMap = {
+inline const Map<Method, String> MethodMap = {
     {Method::GET, "GET"},       {Method::POST, "POST"},
     {Method::PUT, "POST"},      {Method::DELETE, "DELETE"},
     {Method::UPDATE, "UPDATE"}, {Method::CONNECT, "CONNECT"},
@@ -29,7 +29,7 @@ inline const std::map<Method, String> MethodMap = {
     {Method::TRACE, "TRACE"},
 };
 
-inline const std::map<String, Method> MethodReverseMap = {
+inline const Map<String, Method> MethodReverseMap = {
     {"GET", Method::GET},       {"POST", Method::POST},
     {"POST", Method::PUT},      {"DELETE", Method::DELETE},
     {"UPDATE", Method::UPDATE}, {"CONNECT", Method::CONNECT},

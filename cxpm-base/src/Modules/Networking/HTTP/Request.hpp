@@ -3,20 +3,16 @@
 #include "Core/Containers/Collection.hpp"
 #include "Core/Containers/Map.hpp"
 #include "Core/Containers/String.hpp"
-#include "Core/Exceptions/RuntimeException.hpp"
 #include "Core/SharedPointer.hpp"
 #include "Modules/Networking/HTTP/Header.hpp"
-#include "Modules/Networking/HTTP/HeaderElement.hpp"
 #include "Modules/Networking/HTTP/Method.hpp"
 #include "Modules/Networking/HTTP/RequestDescriptor.hpp"
 #include "Modules/Networking/HTTP/Version.hpp"
 #include "Modules/Testing/TestCase.hpp"
 #include "Utils/Patterns/Creator.hpp"
-#include "Utils/Unused.hpp"
-#include <sstream>
-#include <string>
+#include <algorithm>
 
-namespace Modules::Networking::HTTP {
+namespace Modules { namespace Networking { namespace HTTP {
 
 class Request : public RequestDescriptor,
                 public Object,
@@ -33,7 +29,7 @@ public:
 
     using namespace Core::Containers;
     auto _ = std::remove_if(text.begin(), text.end(),
-                            [](auto c) { return c == '\r'; });
+                            [](const char& c) { return c == '\r'; });
     auto lines = text.split( "\n");
 
     auto elements = lines.front().split( " ");
@@ -117,4 +113,4 @@ class RouteTest : public Modules::Testing::TestCase {
   }
 };
 
-} // namespace Modules::Networking::HTTP
+} } } // namespace Modules::Networking::HTTP

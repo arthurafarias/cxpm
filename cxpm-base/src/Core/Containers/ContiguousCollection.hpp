@@ -25,11 +25,5 @@ public:
 
     return std::move(retval);
   }
-
-
-  // void append_range(const ContiguousCollection<ContainedType>& element) const {
-  //   auto casted = static_cast<std::vector<ContainedType>>(element);
-  //   append_range(casted);
-  // }
 };
 } // namespace Core::Containers

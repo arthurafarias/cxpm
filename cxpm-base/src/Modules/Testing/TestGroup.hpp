@@ -2,7 +2,7 @@
 
 #include "Core/Containers/String.hpp"
 #include "Core/Functional/Function.hpp"
-#include "Core/Logging/LoggerManager.hpp"
+#include "Core/Logging/Manager.hpp"
 #include "Core/SharedPointer.hpp"
 #include "Modules/Testing/TestCase.hpp"
 #include <exception>
@@ -23,20 +23,20 @@ public:
   void run() {
     auto lk = acquire_lock();
 
-    Logging::LoggerManager::info("TestGroup: {}: Ended", name.c_str());
+    Logging::Logger::info("TestGroup: {}: Ended", name.c_str());
     for (auto test : tests) {
-      Logging::LoggerManager::info("Test: {}: Started", test->name.c_str());
+      Logging::Logger::info("Test: {}: Started", test->name.c_str());
       try {
         test->run();
-        Logging::LoggerManager::info("Test: {}: Ok", test->name.c_str());
+        Logging::Logger::info("Test: {}: Ok", test->name.c_str());
       } catch (std::exception &ex) {
-        Logging::LoggerManager::info("Test: {}: Failed", test->name.c_str());
-        Logging::LoggerManager::info("Test: {}: Reason: {}", test->name.c_str(),
+        Logging::Logger::info("Test: {}: Failed", test->name.c_str());
+        Logging::Logger::info("Test: {}: Reason: {}", test->name.c_str(),
                                      ex.what());
       }
     }
 
-    Logging::LoggerManager::info("TestGroup: {}: Ok", name.c_str());
+    Logging::Logger::info("TestGroup: {}: Ok", name.c_str());
   }
 };
 } // namespace Modules::Testing

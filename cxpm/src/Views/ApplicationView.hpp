@@ -2,17 +2,18 @@
 
 #include "Core/Containers/Collection.hpp"
 #include "Core/Exceptions/RuntimeException.hpp"
-#include "Core/Logging/LoggerManager.hpp"
+#include "Core/Logging/Manager.hpp"
+#include "Models/Project.hpp"
 #include "Models/ProjectDescriptor.hpp"
 #include "Models/TargetDescriptor.hpp"
 #include "Modules/Console/AbstractConsoleApplication.hpp"
 #include "Modules/ProgramOptions/OptionDescriptorCollection.hpp"
 #include "Modules/ProgramOptions/Parse.hpp"
-#include <Modules/Templating/MustacheLite.hpp>
+#include <Modules/Templating/MustacheOutputVisitor.hpp>
 #include <filesystem>
 
 #include <Controllers/ProjectManager.hpp>
-
+using namespace Controllers;
 using namespace Modules::Console;
 
 namespace Views {
@@ -79,7 +80,10 @@ public:
         prefix = options["prefix"].front();
       }
 
-      auto [status, project] = install_project(values.front(), prefix);
+      InstallProjectResultStatus status;
+      ProjectDescriptor project;
+
+      std::tie(status, project) = install_project(values.front(), prefix);
 
       switch (status) {
       case InstallProjectResultStatus::Failure:
@@ -96,7 +100,7 @@ public:
   }
 
   void print_usage() {
-    std::osyncstream(std::cout) << R"(
+    std::cout << R"(
 cxpm: A simple package manager written in C++ for C++
 Usage:
     cxpm [option] [arguments]
@@ -112,10 +116,8 @@ Options:
 protected:
   int setup() override {
 
-    Core::Logging::LoggerManager::stream_set(
-        Core::Logging::LoggerManager::stream_cout());
-    Core::Logging::LoggerManager::level_set(
-        Core::Logging::LoggerManager::Level::Max);
+    Core::Logging::Logger::stream_set(Core::Logging::Logger::stream_cout());
+    Core::Logging::Logger::level_set(Core::Logging::Logger::Level::Max);
 
     Controllers::ProjectManager::initialize();
     return 0;
@@ -131,7 +133,11 @@ private:
   install_target(TargetDescriptor &target,
                  const String &prefix_override = "/usr/local") {
 
-    auto [result, build, toolchain] =
+    ProjectManager::BuildTargetOutputResultStatus result;
+    TargetDescriptor build;
+    ToolchainDescriptor toolchain;
+
+    std::tie(result, build, toolchain) =
         Controllers::ProjectManager::build_target(target, prefix_override);
 
     switch (result) {
@@ -144,7 +150,8 @@ private:
       break;
     }
 
-    return Controllers::ProjectManager::install_target(target, toolchain, prefix_override);
+    return Controllers::ProjectManager::install_target(target, toolchain,
+                                                       prefix_override);
   }
 
   enum class InstallProjectResultStatus { Success, Failure };
@@ -170,9 +177,7 @@ private:
     return {InstallProjectResultStatus::Success, project};
   }
 
-  void uninstall(const String &directory) {
-    UNUSED(directory);
-  }
+  void uninstall(const String &directory) { UNUSED(directory); }
 
   void assert_project_directory(const String &directory) {
     if (!std::filesystem::exists(directory.c_str())) {

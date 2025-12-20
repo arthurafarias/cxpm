@@ -5,7 +5,7 @@
 
 using namespace Core::Containers;
 
-namespace Modules::Serialization::Base {
+namespace Modules { namespace Serialization { namespace Base {
 struct TagBase {
   TagBase() {}
   TagBase(const String &name, const TagPart &part = TagPart::DoNotApply,
@@ -15,4 +15,4 @@ struct TagBase {
   TagPart part = TagPart::DoNotApply;
   TagType type = TagType::Value;
 };
-} // namespace Modules::Serialization::Base
+} } } // namespace Modules::Serialization::Base

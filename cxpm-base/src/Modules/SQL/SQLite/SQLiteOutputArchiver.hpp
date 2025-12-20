@@ -19,7 +19,7 @@ public:
 private:
 };
 
-SQLiteOutputArchiver constexpr &operator%(SQLiteOutputArchiver &ar,
+inline SQLiteOutputArchiver &operator%(SQLiteOutputArchiver &ar,
                                           const SharedPointer<ObjectTag> &tag) {
 
   if (tag->part == TagPart::Start) {
@@ -37,19 +37,19 @@ SQLiteOutputArchiver constexpr &operator%(SQLiteOutputArchiver &ar,
   return ar;
 }
 
-SQLiteOutputArchiver constexpr &
+inline SQLiteOutputArchiver &
 operator%(SQLiteOutputArchiver &ar, SharedPointer<KeyValueTag<double>> tag) {
   ar.expression->value(*tag->value);
   return ar;
 }
 
-SQLiteOutputArchiver constexpr &operator%(SQLiteOutputArchiver &ar,
+inline SQLiteOutputArchiver &operator%(SQLiteOutputArchiver &ar,
                                           SharedPointer<KeyValueTag<int>> tag) {
   ar.expression->value(*tag->value);
   return ar;
 }
 
-SQLiteOutputArchiver constexpr &
+inline SQLiteOutputArchiver &
 operator%(SQLiteOutputArchiver &ar, SharedPointer<KeyValueTag<String>> tag) {
   ar.expression->value(*tag->value);
   return ar;

@@ -4,7 +4,6 @@
 #include <Core/Containers/String.hpp>
 
 #include <exception>
-#include <format>
 #include <string>
 
 using namespace Core::Containers;
@@ -57,6 +56,6 @@ struct Version {
 
 namespace std {
 inline String to_string(const Modules::Networking::HTTP::Version &version) {
-  return std::format("{}.{}", version.major, version.minor);
+  return String::format("{}.{}", version.major, version.minor);
 }
 } // namespace std

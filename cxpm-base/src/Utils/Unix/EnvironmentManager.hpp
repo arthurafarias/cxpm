@@ -48,7 +48,7 @@ public:
   inline static const Core::Containers::String which(const char *filename) {
 
     auto folders = Core::Containers::Collection<Core::Containers::String>();
-    folders.append_range(Utils::Unix::EnvironmentManager::get("PATH"));
+std::copy(Utils::Unix::EnvironmentManager::get("PATH").begin(), Utils::Unix::EnvironmentManager::get("PATH").end(), std::back_inserter(    folders));
 
     if (std::filesystem::path(filename).is_absolute()) {
 

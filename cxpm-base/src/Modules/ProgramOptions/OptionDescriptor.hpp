@@ -18,17 +18,17 @@ struct OptionDescriptor {
 
 template <typename Archiver>
 inline Archiver &operator%(Archiver &ar MaybeUnused, const OptionDescriptor &option) {
-  ArchiveTagFactory::make_object_start("OptionDescriptor");
-  ArchiveTagFactory::make_named_value_property("name",
+  TagFactory::make_object_start("OptionDescriptor");
+  TagFactory::make_named_value_property("name",
                                                              option.name);
-  ArchiveTagFactory::make_named_value_property("name_short",
+  TagFactory::make_named_value_property("name_short",
                                                              option.name_short);
-  ArchiveTagFactory::make_named_value_property("value",
+  TagFactory::make_named_value_property("value",
                                                              option.value);
-  ArchiveTagFactory::make_named_value_property(
+  TagFactory::make_named_value_property(
       "value_default", option.value_default);
-  ArchiveTagFactory::make_named_value_property(
+  TagFactory::make_named_value_property(
       "description", option.description);
-  ArchiveTagFactory::make_object_end("OptionDescriptor");
+  TagFactory::make_object_end("OptionDescriptor");
 }
 } // namespace Modules::Console::ProgramOptions

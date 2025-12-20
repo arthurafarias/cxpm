@@ -22,7 +22,7 @@ inline int database_init(database_handle *handle) { return 0; }
 
 template <typename... ArgumentsTypes>
 int database_query(database_handle *handle, query_handle *result,
-                   const std::format_string<ArgumentsTypes...>,
+                   const String::format_string<ArgumentsTypes...>,
                    ArgumentsTypes &&...args) {
   return 0;
 }

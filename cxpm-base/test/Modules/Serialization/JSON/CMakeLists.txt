@@ -1,0 +1,5 @@
+add_executable(${PROJECT_NAME}_Modules_JSON_OutputArchiverTest OutputArchiverTest.cpp)
+target_link_libraries(${PROJECT_NAME}_Modules_JSON_OutputArchiverTest PUBLIC cxpm-base)
+
+add_executable(${PROJECT_NAME}_Modules_JSON_InputArchiverTest InputArchiverTest.cpp)
+target_link_libraries(${PROJECT_NAME}_Modules_JSON_InputArchiverTest PUBLIC cxpm-base)

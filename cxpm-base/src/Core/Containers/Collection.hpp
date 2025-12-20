@@ -3,15 +3,15 @@
 #include "Core/Object.hpp"
 #include <deque>
 #include <functional>
+#include <initializer_list>
 #include <utility>
 
 namespace Core::Containers {
 template <typename ContainedType>
 class Collection : public std::deque<ContainedType>, public Object {
 public:
-  template <typename... ArgsTypes>
-  Collection(const ArgsTypes&&... args)
-      : std::deque<ContainedType>(std::forward<const ArgsTypes>(args)...) {}
+  Collection(const std::initializer_list<ContainedType> &list)
+      : std::deque<ContainedType>(list) {}
   using std::deque<ContainedType>::deque;
 
   template <typename ReturnType>
@@ -26,10 +26,14 @@ public:
     return std::move(retval);
   }
 
-
-  // void append_range(const Collection<ContainedType>& element) const {
-  //   auto casted = static_cast<std::deque<ContainedType>>(element);
-  //   append_range(casted);
-  // }
+  Collection<ContainedType>
+  slice(const Collection<ContainedType>::iterator &begin,
+        const Collection<ContainedType>::iterator &end) {
+    Collection<ContainedType> sliced;
+    auto el = begin;
+    while (el != end) {
+      sliced.push_back(*el++);
+    }
+  }
 };
 } // namespace Core::Containers

@@ -28,7 +28,7 @@ StaticClass(ClangdManager)
     auto stream = std::ostringstream();
     JSONOutputArchiver output(stream);
     Collection<CompileCommandDescriptor> compile_commands;
-    output << compile_commands;
+    output % compile_commands;
     return stream.str();
   }
 };

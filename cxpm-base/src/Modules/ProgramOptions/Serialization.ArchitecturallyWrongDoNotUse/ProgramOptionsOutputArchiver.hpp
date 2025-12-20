@@ -26,7 +26,7 @@ private:
 inline ProgramOptionsOutputArchiver &
 operator%(ProgramOptionsOutputArchiver &ar,
           const ::Modules::Serialization::ValueTag<OptionDescriptor> &tag) {
-  ar.stream() << std::format("{}|{}: {} ({})", tag.value.name_short,
+  ar.stream() << String::format("{}|{}: {} ({})", tag.value.name_short,
                              tag.value.name, tag.value.description,
                              tag.value.value_default);
   return ar;
@@ -35,7 +35,7 @@ operator%(ProgramOptionsOutputArchiver &ar,
 inline ProgramOptionsOutputArchiver &
 operator%(ProgramOptionsOutputArchiver &ar,
           const ::Modules::Serialization::ValueTag<OptionsCollection> &tag) {
-  ar.stream() << std::format("{} \n {}", tag.value.name, tag.value.description);
+  ar.stream() << String::format("{} \n {}", tag.value.name, tag.value.description);
   return ar;
 }
 
@@ -44,7 +44,7 @@ operator%(ProgramOptionsOutputArchiver &ar,
 //           const ::Modules::Serialization::MultipartElementTag &tag) {
 
 //   if (tag.type == ::Modules::Serialization::MultipartElementType::Object) {
-//     ar.stream() << std::format("{} \n Description: {}", tag.value)
+//     ar.stream() << String::format("{} \n Description: {}", tag.value)
 //   }
 
 //   if (tag.type == ::Modules::Serialization::MultipartElementType::Array) {

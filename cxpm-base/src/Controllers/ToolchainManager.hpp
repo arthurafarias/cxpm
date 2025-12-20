@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Core/Logging/LoggerManager.hpp"
+#include "Core/Logging/Manager.hpp"
 #include "Models/TargetDescriptor.hpp"
 #include "Models/ToolchainDescriptor.hpp"
 
@@ -8,8 +8,10 @@
 #include "Models/Toolchain.hpp"
 #include "Utils/Unix/EnvironmentManager.hpp"
 
+#include <algorithm>
 #include <dlfcn.h>
 #include <filesystem>
+#include <iterator>
 
 using namespace Models;
 
@@ -48,7 +50,7 @@ public:
     return true;
   }
 
-  static inline constexpr const ToolchainDescriptor
+  static inline const ToolchainDescriptor
   by_name(const String &name) {
 
     auto result = std::find_if(
@@ -63,7 +65,7 @@ public:
     return *result;
   };
 
-  static inline constexpr const Toolchain
+  static inline const Toolchain
   autoselect(const TargetDescriptor &target) {
     auto result =
         std::find_if(toolchains.begin(), toolchains.end(),
@@ -80,12 +82,12 @@ public:
     return *result;
   };
 
-  static inline constexpr void
+  static inline void
   add(const ToolchainDescriptor &toolchain) {
     toolchains.push_back(toolchain);
   }
 
-  static inline constexpr Toolchain current(const Collection<String>& extra_modules_paths) {
+  static inline Toolchain current(const Collection<String>& extra_modules_paths) {
 
     if (current_toolchain != toolchains.end()) {
       autoscan(extra_modules_paths);
@@ -100,14 +102,14 @@ public:
     return *current_toolchain;
   }
 
-  static inline constexpr void
+  static inline void
   autoscan(Collection<String> extra_paths = {}) {
 
     Collection<String> search_paths = {
         "/usr/share/cxpm/toolchains",
         "/usr/local/share/cxpm/toolchains"};
 
-    search_paths.append_range(extra_paths);
+    std::copy(extra_paths.begin(), extra_paths.end(), std::back_inserter(search_paths));
 
     toolchains.clear();
 
@@ -121,7 +123,7 @@ public:
       for (auto plugin : recursive_directory_iterator(path.c_str())) {
         auto filename = std::filesystem::path(plugin).filename();
 
-        if (filename.string().ends_with(".so")) {
+        if (String(filename).ends_with(".so")) {
 
           typedef Toolchain *(*getter_type)();
 
@@ -143,7 +145,7 @@ public:
             }
 
           } catch (std::exception &ex) {
-            Core::Logging::LoggerManager::error("{}", ex.what());
+            Core::Logging::Logger::error("{}", ex.what());
           }
 
           if (handle != nullptr) {

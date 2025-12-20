@@ -2,12 +2,14 @@
 
 #include "Core/Containers/Collection.hpp"
 #include "Core/Object.hpp"
+#include "Utils/StringUtils/FormatString.hpp"
 #include "Utils/Unused.hpp"
 #include <cctype>
 #include <string>
 #include <utility>
 
-namespace Core::Containers {
+namespace Core {
+namespace Containers {
 
 class String : public std::string, public Object {
 
@@ -92,6 +94,18 @@ public:
 
     return splitted;
   }
+
+  bool starts_with(const String &other) { return find(other) == 0; }
+
+  bool ends_with(const String &other) { return rfind(other) == 0; }
+
+  template <typename... ArgsTypes>
+  static inline String format(const Utils::StringUtils::FormatString &,
+                              ArgsTypes &&...args) {
+    Utils::Unused{args...};
+    return nullptr;
+  }
 };
 
-} // namespace Core::Containers
+} // namespace Containers
+} // namespace Core

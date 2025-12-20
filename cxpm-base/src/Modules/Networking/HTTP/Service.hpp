@@ -1,14 +1,13 @@
 #pragma once
 
 #include "Core/Containers/Collection.hpp"
-#include "Core/Logging/LoggerManager.hpp"
+#include "Core/Logging/Manager.hpp"
 #include "Core/SharedPointer.hpp"
 #include "Core/Threading/ThreadPool.hpp"
 #include "Modules/Networking/HTTP/Method.hpp"
 #include "Modules/Networking/HTTP/Request.hpp"
 #include "Modules/Networking/HTTP/Response.hpp"
 #include "Modules/Networking/HTTP/Route.hpp"
-#include "Modules/Networking/TCP/Socket.hpp"
 #include "Modules/Networking/TCP/Socket.hpp"
 #include <exception>
 #include <future>
@@ -21,8 +20,8 @@ class Service : public Object,
                 public EnableSharedFromThis<Service>,
                 public Creator<Service> {
 public:
-  Signal<SharedPointer<Service>, SharedPointer<Socket>,
-         SharedPointer<Request>, SharedPointer<Response>>
+  Signal<SharedPointer<Service>, SharedPointer<Socket>, SharedPointer<Request>,
+         SharedPointer<Response>>
       on_request;
 
   Service() {}
@@ -67,16 +66,16 @@ public:
 
       server->on_listening += [](auto server) {
         // debug a acknowlegement
-        Logging::LoggerManager::info("Connected");
+        Logging::Logger::info("Connected");
       };
 
       // Add a closed callback
       server->on_closed +=
-          [](auto server) { Logging::LoggerManager::info("Disconnected"); };
+          [](auto server) { Logging::Logger::info("Disconnected"); };
 
       // Add an error callback
       server->on_error += [](auto server, auto error) {
-        Logging::LoggerManager::info("Error {}", error);
+        Logging::Logger::info("Error {}", error);
       };
 
       shared_from_this()->on_request +=
@@ -107,16 +106,16 @@ public:
           [self = shared_from_this()](auto server, auto client) {
             auto lock = client->acquire_lock();
 
-            Logging::LoggerManager::info("Client Accepted");
+            Logging::Logger::info("Client Accepted");
 
             // For each client, define a disconnection message
             client->on_disconnected += [](auto client) {
-              Logging::LoggerManager::info("Client Disconnected");
+              Logging::Logger::info("Client Disconnected");
             };
 
             // For each client, register an error callback
             client->on_error += [](auto client, auto error) {
-              Logging::LoggerManager::info("Client Error");
+              Logging::Logger::info("Client Error");
             };
 
             // Register a data_received callback
@@ -138,8 +137,13 @@ public:
             };
           };
 
-      ThreadType thread = ThreadType::make(
-          [server, &host, &port]() { server->listen(port, host.c_str()); });
+      auto _host = host;
+      auto _port = port;
+
+      ThreadType thread =
+          ThreadType::make([server, host = _host, port = _port]() {
+            server->listen(port, host.c_str());
+          });
       {
         auto lock = handlers.acquire_lock();
         handlers.push_back({result, server, thread});

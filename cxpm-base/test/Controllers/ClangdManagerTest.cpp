@@ -16,7 +16,7 @@ int main(int argc, char *argv[]) {
   auto stream = std::ofstream("compile_commands.json");
   Modules::Serialization::JSON::JSONOutputArchiver ar(stream);
 
-  ar << descriptors;
+  ar % descriptors;
 
   return 0;
 }

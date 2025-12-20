@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Core/Logging/LoggerManager.hpp"
+#include "Core/Logging/Manager.hpp"
 #include "Modules/SQL/Base/Driver.hpp"
 #include "Modules/SQL/Base/QueryBase.hpp"
 #include "Modules/SQL/Base/QueryBuilder.hpp"
@@ -56,7 +56,7 @@ public:
     Callback cb{&collection};
     char *err_msg = nullptr;
 
-    Core::Logging::LoggerManager::info("{}", query->compile().c_str());
+    Core::Logging::Logger::info("{}", query->compile().c_str());
 
     sqlite3_exec(db, query->compile().c_str(), Callback::callback, &cb,
                  &err_msg);
@@ -85,7 +85,7 @@ inline SharedPointer<SQLiteDriver> operator>>(SharedPointer<SQLiteDriver> driver
                                        QueryResult &collection) {
   auto query_string =
       Modules::SQL::Base::QueryBuilder::create()->append_tag(driver->tags());
-  collection.append_range(driver->query(query_string));
+std::copy(driver->query(query_string).begin(), driver->query(query_string).end(), std::back_inserter(  collection));
   return driver;
 }
 

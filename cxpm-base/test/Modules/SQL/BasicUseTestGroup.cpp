@@ -2,7 +2,7 @@
 #include "Modules/SQL/Base/QueryBuilder.hpp"
 #include "Modules/SQL/SQLite/SQLiteDriver.hpp"
 #include <Core/Containers/Collection.hpp>
-#include <Core/Logging/LoggerManager.hpp>
+#include <Core/Logging/Manager.hpp>
 
 #include <Modules/SQL/Base/Testing/BasicUseTestCase.hpp>
 
@@ -26,11 +26,11 @@ struct Person {
 };
 
 template <typename Archiver> Archiver &operator%(Archiver &ar, Person &person) {
-  ar % ArchiveTagFactory::make_object_start("Person");
-  ar % ArchiveTagFactory::make_named_value_property("id", person.id);
-  ar % ArchiveTagFactory::make_named_value_property("name", person.name);
-  ar % ArchiveTagFactory::make_named_value_property("age", person.age);
-  ar % ArchiveTagFactory::make_object_end("Person");
+  ar % TagFactory::make_object_start("Person");
+  ar % TagFactory::make_named_value_property("id", person.id);
+  ar % TagFactory::make_named_value_property("name", person.name);
+  ar % TagFactory::make_named_value_property("age", person.age);
+  ar % TagFactory::make_object_end("Person");
   return ar;
 }
 
@@ -74,10 +74,10 @@ operator<<(Collection<SharedPointer<Map<String, String>>> &to,
 
 int main(int argc, char *argv[]) {
 
-  Core::Logging::LoggerManager::level_set(
-      Core::Logging::LoggerManager::Level::Debug);
-  Core::Logging::LoggerManager::stream_set(
-      Core::Logging::LoggerManager::stream_cout());
+  Core::Logging::Logger::level_set(
+      Core::Logging::Logger::Level::Debug);
+  Core::Logging::Logger::stream_set(
+      Core::Logging::Logger::stream_cout());
 
   {
     auto output = SQLiteOutputArchiver("database.db");
@@ -91,7 +91,7 @@ int main(int argc, char *argv[]) {
     auto input = SQLiteInputArchiver("database.db");
     auto person = Person();
     input % person;
-    Core::Logging::LoggerManager::info("{} {} {}", person.id,
+    Core::Logging::Logger::info("{} {} {}", person.id,
                                        person.name.c_str(), person.age);
   }
 
@@ -106,7 +106,7 @@ int main(int argc, char *argv[]) {
                            ->desc()
                            ->exec(database)->cast<Person>()) {
 
-      Core::Logging::LoggerManager::info("Person ID: {}, Name: {}, Age: {}",
+      Core::Logging::Logger::info("Person ID: {}, Name: {}, Age: {}",
                                          person->id, person->name.c_str(), person->age);
     }
   }

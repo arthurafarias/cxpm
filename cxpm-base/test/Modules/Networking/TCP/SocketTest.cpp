@@ -1,20 +1,20 @@
-#include "Core/Logging/LoggerManager.hpp"
+#include "Core/Logging/Manager.hpp"
 #include <Modules/Networking/TCP/Socket.hpp>
 
 using namespace Modules::Networking::TCP;
 
 int main(int argc, char *argv[]) {
 
-  Logging::LoggerManager::level_set(Logging::LoggerManager::Level::Debug);
-  Logging::LoggerManager::stream_set(Logging::LoggerManager::stream_cout());
+  Logging::Logger::level_set(Logging::Logger::Level::Debug);
+  Logging::Logger::stream_set(Logging::Logger::stream_cout());
 
   auto server = Socket::create();
 
   server->on_listening +=
-      [](auto server) { Logging::LoggerManager::info("Listening"); };
+      [](auto server) { Logging::Logger::info("Listening"); };
 
   server->on_accept += [](auto server, auto client) {
-    Logging::LoggerManager::info("Client Accepted");
+    Logging::Logger::info("Client Accepted");
     client->on_data += [](auto client, auto data) {
       static int counter = 0;
       client->write("Counter: {}, FD: {}\n", counter++, client->_fd.load());
@@ -23,7 +23,7 @@ int main(int argc, char *argv[]) {
   };
 
   server->on_closed +=
-      [](auto server) { Logging::LoggerManager::info("Closed"); };
+      [](auto server) { Logging::Logger::info("Closed"); };
 
   server->listen(3000, "127.0.0.1");
 

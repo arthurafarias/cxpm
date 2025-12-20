@@ -3,13 +3,14 @@
 
 #include "Core/Containers/ContiguousCollection.hpp"
 #include "Core/Exceptions/RuntimeException.hpp"
-#include "Core/Logging/LoggerManager.hpp"
+#include "Core/Logging/Manager.hpp"
 #include "Core/SharedPointer.hpp"
 #include "Core/Threading/AnonymousSignal.hpp"
 #include "Core/Threading/Poll.hpp"
 #include "Core/Threading/Signal.hpp"
 #include "Modules/Networking/TCP/V4.hpp"
 #include "Utils/Patterns/Prototype.hpp"
+#include "Utils/StringUtils/FormatString.hpp"
 #include <Core/Containers/ContiguousCollection.hpp>
 #include <Core/Containers/String.hpp>
 #include <Core/Object.hpp>
@@ -19,6 +20,7 @@
 #include <Modules/Networking/TCP/BasicContext.hpp>
 #include <Modules/Networking/TCP/V4.hpp>
 #include <Utils/Patterns/Creator.hpp>
+#include <algorithm>
 #include <arpa/inet.h>
 #include <asm-generic/socket.h>
 #include <bits/types/struct_timeval.h>
@@ -26,7 +28,6 @@
 #include <cstdio>
 #include <cstring>
 #include <fcntl.h>
-#include <format>
 #include <functional>
 #include <future>
 #include <netinet/in.h>
@@ -40,7 +41,7 @@ using namespace Core::Containers;
 using namespace Core;
 using namespace Core::Threading;
 
-namespace Modules::Networking::TCP {
+namespace Modules { namespace Networking { namespace TCP {
 
 namespace {
 inline static int opened_sockets_count = 0;
@@ -49,7 +50,7 @@ inline static int closed_sockets_count = 0;
 
 using namespace Core::Containers;
 using namespace Core::Threading;
-using Logger = Core::Logging::LoggerManager;
+using Logger = Core::Logging::Logger;
 
 struct Socket : public Object, public Utils::Patterns::Prototype<Socket> {
 
@@ -71,7 +72,7 @@ struct Socket : public Object, public Utils::Patterns::Prototype<Socket> {
 
   Socket() : Socket(::socket(AF_INET, SOCK_STREAM, 0)) {}
 
-  Socket(int fd) : _fd(fd), name(std::format("(socket fd: {})", fd)) {
+  Socket(int fd) : _fd(fd), name(String::format("(socket fd: {})", fd)) {
 
     if (_fd < 0) {
       throw Core::Exceptions::RuntimeException(
@@ -162,7 +163,7 @@ struct Socket : public Object, public Utils::Patterns::Prototype<Socket> {
                                                name.c_str(), strerror(errno));
     }
 
-    name = std::format("(server fd: {})", _fd.load());
+    name = String::format("(server fd: {})", _fd.load());
 
     if (accept_poll == nullptr) {
       accept_poll = Poll::create(std::bind(&Socket::accept_handle, clone()));
@@ -186,7 +187,7 @@ struct Socket : public Object, public Utils::Patterns::Prototype<Socket> {
 
     if (result < 0) {
       on_error(shared_from_this(),
-               std::format("Failed to connect: {}", strerror(errno)));
+               String::format("Failed to connect: {}", strerror(errno)));
       return;
     }
 
@@ -248,8 +249,8 @@ struct Socket : public Object, public Utils::Patterns::Prototype<Socket> {
   virtual int send_buffer_size_max_set(int size) { return 0; }
 
   template <typename... ArgsTypes>
-  void write(const std::format_string<ArgsTypes...> &fmt, ArgsTypes &&...args) {
-    return write_string(std::format(fmt, std::forward<ArgsTypes>(args)...));
+  void write(const Utils::StringUtils::FormatString &fmt, ArgsTypes &&...args) {
+    return write_string(String::format(fmt, std::forward<ArgsTypes>(args)...));
   }
 
   void write_string(const String &str) {
@@ -431,6 +432,6 @@ private:
   }
 };
 
-} // namespace Modules::Networking::TCP
+} } } // namespace Modules::Networking::TCP
 
 #endif

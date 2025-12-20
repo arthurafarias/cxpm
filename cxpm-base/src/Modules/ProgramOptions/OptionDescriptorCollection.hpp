@@ -17,19 +17,19 @@ public:
 template <typename Archiver>
 inline Archiver &operator%(Archiver &ar,
                            const OptionsDescriptorCollection &collection) {
-  ar % ArchiveTagFactory::make_object_start("OptionsCollection");
-  ar % ArchiveTagFactory::make_named_value_property(
+  ar % TagFactory::make_object_start("OptionsCollection");
+  ar % TagFactory::make_named_value_property(
            "name", collection.name);
-  ar % ArchiveTagFactory::make_named_value_property(
+  ar % TagFactory::make_named_value_property(
            "description", collection.description);
-  ar % ArchiveTagFactory::make_array_start("Options");
+  ar % TagFactory::make_array_start("Options");
 
   for (auto el : collection) {
     ar % el;
   }
 
-  ar % ArchiveTagFactory::make_array_end("Options");
-  ar % ArchiveTagFactory::make_object_end("OptionsCollection");
+  ar % TagFactory::make_array_end("Options");
+  ar % TagFactory::make_object_end("OptionsCollection");
   return ar;
 }
 } // namespace Modules::ProgramOptions

@@ -2,8 +2,19 @@
 
 #include "Core/Object.hpp"
 #include <map>
-template <typename... ArgsTypes>
-class Map : public std::map<ArgsTypes...>, public Core::Object {
+template <typename KeyType, typename ValueType>
+class Map : public std::map<KeyType, ValueType>, public Core::Object {
 public:
-  using std::map<ArgsTypes...>::map;
+  using std::map<KeyType, ValueType>::map;
+
+  bool contains(const KeyType &key) const {
+
+    for (auto [k, v] : *this) {
+      if (k == key) {
+        return true;
+      }
+    }
+
+    return false;
+  }
 };

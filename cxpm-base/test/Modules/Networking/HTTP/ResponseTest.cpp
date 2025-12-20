@@ -1,5 +1,5 @@
 #include "Modules/Networking/HTTP/Response.hpp"
-#include "Core/Logging/LoggerManager.hpp"
+#include "Core/Logging/Manager.hpp"
 #include "Modules/Networking/TCP/Socket.hpp"
 #include "Modules/Testing/TestCase.hpp"
 #include "Modules/Testing/TestGroup.hpp"
@@ -22,7 +22,7 @@ public:
 };
 
 int main(int argc, char *argv[]) {
-  Logging::LoggerManager::level_set(Logging::LoggerManager::Level::Max);
-  Logging::LoggerManager::stream_set(Logging::LoggerManager::stream_cout());
+  Logging::Logger::level_set(Logging::Logger::Level::Max);
+  Logging::Logger::stream_set(Logging::Logger::stream_cout());
   ResponseTest().run();
 }

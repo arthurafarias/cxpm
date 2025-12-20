@@ -756,7 +756,7 @@ public:
 int main(int argc, char *argv[]) {
   UNUSED(argc);
   UNUSED(argv);
-  Logging::LoggerManager::level_set(Logging::LoggerManager::Level::Max);
-  Logging::LoggerManager::stream_set(Logging::LoggerManager::stream_cout());
+  Logging::Logger::level_set(Logging::Logger::Level::Max);
+  Logging::Logger::stream_set(Logging::Logger::stream_cout());
   UrlTest().run();
 }

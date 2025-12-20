@@ -1,5 +1,5 @@
 #pragma once
 
-namespace Modules::Serialization::Base {
+namespace Modules { namespace Serialization { namespace Base {
 enum class TagPart { Start, End, DoNotApply };
-}
+} } }

@@ -6,7 +6,7 @@
 
 using namespace Core::Containers;
 
-namespace Modules::Serialization::Base {
+namespace Modules { namespace Serialization { namespace Base {
 
 template <typename ValueType> struct ValueTag : KeyValueTag<ValueType> {
   ValueTag() {}
@@ -16,4 +16,4 @@ template <typename ValueType> struct ValueTag : KeyValueTag<ValueType> {
   virtual ~ValueTag() {}
 };
 
-} // namespace Modules::Serialization::Base
+} } } // namespace Modules::Serialization::Base

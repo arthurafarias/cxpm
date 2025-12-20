@@ -30,7 +30,7 @@ public:
 private:
 };
 
-SQLiteInputArchiver constexpr &operator%(SQLiteInputArchiver &ar,
+inline SQLiteInputArchiver &operator%(SQLiteInputArchiver &ar,
                                          const SharedPointer<ObjectTag> &tag) {
 
   if (tag->part == TagPart::Start) {
@@ -50,7 +50,7 @@ SQLiteInputArchiver constexpr &operator%(SQLiteInputArchiver &ar,
   return ar;
 }
 
-SQLiteInputArchiver constexpr &
+inline SQLiteInputArchiver &
 operator%(SQLiteInputArchiver &ar, SharedPointer<KeyValueTag<double>> tag) {
   ar.callbacks.push_back([&ar, tag]() {
     double value = from_string<double>((*ar.result)[tag->name]);
@@ -59,7 +59,7 @@ operator%(SQLiteInputArchiver &ar, SharedPointer<KeyValueTag<double>> tag) {
   return ar;
 }
 
-SQLiteInputArchiver constexpr &operator%(SQLiteInputArchiver &ar,
+inline SQLiteInputArchiver &operator%(SQLiteInputArchiver &ar,
                                          SharedPointer<KeyValueTag<int>> tag) {
   ar.callbacks.push_back([&ar, tag]() {
     int value = from_string<int>((*ar.result)[tag->name]);
@@ -68,7 +68,7 @@ SQLiteInputArchiver constexpr &operator%(SQLiteInputArchiver &ar,
   return ar;
 }
 
-SQLiteInputArchiver constexpr &
+inline SQLiteInputArchiver &
 operator%(SQLiteInputArchiver &ar, SharedPointer<KeyValueTag<String>> tag) {
   ar.callbacks.push_back([&ar, tag]() {
     String value = (*ar.result)[tag->name];

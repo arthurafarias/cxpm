@@ -12,10 +12,11 @@
 
 using namespace Core::Containers;
 
-namespace Core::Containers {
-template <typename... ArgsTypes> class Variant : public std::variant<ArgsTypes...>, public Object {
+namespace Core {
+namespace Containers {
+template <typename... ArgsTypes> class Variant : public Object {
 public:
-  using std::variant<ArgsTypes...>::variant;
-  using base_type = std::variant<ArgsTypes...>;
+private:
 };
-} // namespace Core::Containers
+} // namespace Containers
+} // namespace Core

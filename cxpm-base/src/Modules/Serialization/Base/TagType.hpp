@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Modules::Serialization::Base
+namespace Modules { namespace Serialization { namespace Base
 {
     enum class TagType { Unknown, Value, KeyValue, Object, Array };
-}
+} } }

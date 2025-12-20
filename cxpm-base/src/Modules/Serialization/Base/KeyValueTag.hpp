@@ -2,9 +2,8 @@
 
 #include <Modules/Serialization/Base/TagBase.hpp>
 
-#include <format>
 
-namespace Modules::Serialization::Base {
+namespace Modules { namespace Serialization { namespace Base {
 template <typename ValueType> struct KeyValueTag : TagBase {
   KeyValueTag() {}
   KeyValueTag(const String &name, ValueType* value)
@@ -12,7 +11,7 @@ template <typename ValueType> struct KeyValueTag : TagBase {
   ValueType* value;
   static inline String anonymous_name() {
     static int index = 0;
-    return std::format("anonymous-{}", index++);
+    return String::format("anonymous-{}", index++);
   }
 };
-} // namespace Modules::Serialization::Base
+} } } // namespace Modules::Serialization::Base

@@ -2,10 +2,7 @@
 
 #include "Core/Containers/Map.hpp"
 #include "Core/Containers/String.hpp"
-#include "Modules/Serialization/Base/AbstractArchiver.hpp"
-#include "Modules/Serialization/JSON/JSONOutputArchiver.hpp"
 #include "Modules/Serialization/JSON/JSONValue.hpp"
-#include "Modules/Serialization/JSON/JSONObject.hpp"
 #include "Utils/Patterns/Creator.hpp"
 #include <Modules/Streams/OutputStringStream.hpp>
 #include <Modules/Testing/TestGroup.hpp>
@@ -14,12 +11,13 @@ using namespace Core::Containers;
 using namespace Modules::Testing;
 using namespace Modules::Serialization::Base;
 
-namespace Modules::Serialization::JSON {
+namespace Modules { namespace Serialization { namespace JSON {
 struct JSONValue;
-struct JSONObject : public Map<String, JSONValue> {
-  using Map<String, JSONValue>::Map;
-  using BaseType = Map<String, JSONValue>;
-};
+// struct JSONObject : public Map<String, JSONValue> {
+//   using Map<String, JSONValue>::Map;
+//   using BaseType = Map<String, JSONValue>;
+// };
+using JSONObject = Map<String, JSONValue>;
 
 namespace Testing {
 struct JSONValueTest_BasicFunctionality_SerializeObject
@@ -34,11 +32,6 @@ struct JSONValueTest_BasicFunctionality_SerializeObject
     using namespace Modules::Serialization::Base;
     OutputStringStream os;
     // JSONOutputArchiver joa(os);
-
-    // joa << JSONObject{{"Hello", "World"}};
-
-    // assert(joa.to_string() == R"({"Hello":"World"})",
-    //        R"(Couldn't Serialize Object {"Hello":"World"} correctly)");
   }
 };
 
@@ -49,4 +42,4 @@ struct JSONValueTest_BasicFunctionality : public TestGroup {
   }
 };
 } // namespace Testing
-} // namespace Modules::Serialization::JSON
+} } } // namespace Modules::Serialization::JSON

@@ -19,14 +19,14 @@ public:
   ~AnonymousSignal() { disconnect_all(); }
 
   using slot_type = Function<void(ArgsTypes...)>;
-  using handle_type = std::list<slot_type>::iterator;
+  using handle_type = typename std::list<slot_type>::iterator;
 
-  const std::list<slot_type>::iterator connect(const slot_type &slot) {
+  const typename std::list<slot_type>::iterator connect(const slot_type &slot) {
     std::unique_lock<std::mutex> lock(_mutex);
     return _sinks.insert(_sinks.end(), std::move(slot));
   }
 
-  void disconnect(const std::list<slot_type>::iterator &it) {
+  void disconnect(const typename std::list<slot_type>::iterator &it) {
     std::unique_lock<std::mutex> lock(_mutex);
     _sinks.erase(it);
   }
@@ -49,7 +49,7 @@ public:
     return *this;
   }
 
-  AnonymousSignal &operator-=(const std::list<slot_type>::iterator &it) {
+  AnonymousSignal &operator-=(const typename std::list<slot_type>::iterator &it) {
     disconnect(it);
     return *this;
   }

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Core/Exceptions/NotImplementedException.hpp"
-#include "Core/Logging/LoggerManager.hpp"
+#include "Core/Logging/Manager.hpp"
 #include "Models/BuildOutputResult.hpp"
 #include "Models/CompilerCommandDescriptor.hpp"
 #include "Models/ToolchainDescriptorFactoryInterface.hpp"
@@ -13,8 +13,10 @@
 #include <Core/Containers/Variant.hpp>
 #include <Models/ProjectDescriptor.hpp>
 #include <Models/ToolchainDescriptor.hpp>
+#include <algorithm>
 #include <filesystem>
 #include <future>
+#include <iterator>
 #include <memory>
 
 using namespace Core::Containers;
@@ -32,13 +34,14 @@ public:
   virtual ObjectBuildResult object_build(const String &source,
                                          const TargetDescriptor &target,
                                          bool dry = false) override {
-    Core::Logging::LoggerManager::info("building {}: started", source.c_str());
+    Core::Logging::Logger::info("building {}: started", source.c_str());
 
     Collection<String> command;
 
     command.push_back(compiler_executable);
 
-    command.append_range(target.options);
+    std::copy(target.options.begin(), target.options.end(),
+              std::back_inserter(command));
 
     command.push_back("-fPIC");
 
@@ -49,7 +52,8 @@ public:
             });
 
     for (auto include_directory_argument : include_directories_arguments) {
-      command.append_range(include_directory_argument);
+      std::copy(include_directory_argument.begin(),
+                include_directory_argument.end(), std::back_inserter(command));
     }
 
     auto link_directories_arguments =
@@ -59,7 +63,8 @@ public:
             });
 
     for (auto link_directory_argument : link_directories_arguments) {
-      command.append_range(link_directory_argument);
+      std::copy(link_directory_argument.begin(), link_directory_argument.end(),
+                std::back_inserter(command));
     }
 
     auto link_libraries_arguments =
@@ -69,34 +74,36 @@ public:
             });
 
     for (auto link_library_argument : link_libraries_arguments) {
-      command.append_range(link_library_argument);
+      std::copy(link_library_argument.begin(), link_library_argument.end(),
+                std::back_inserter(command));
     }
 
-    command.append_range(Core::Containers::Collection<Core::Containers::String>{
-        source_specifier_prefix, source});
+    {
+      auto elements = Core::Containers::Collection<Core::Containers::String>{
+          source_specifier_prefix, source};
+      std::copy(elements.begin(), elements.end(), std::back_inserter(command));
+    }
 
-    command.append_range(
-        Collection<String>({object_specifier_prefix, source + ".o"}));
+    {
+      auto elements =
+          Collection<String>({object_specifier_prefix, source + ".o"});
+      std::copy(elements.begin(), elements.end(), std::back_inserter(command));
+    }
 
     auto command_line = String::join(command, " ");
 
-    Core::Logging::LoggerManager::debug("Calling: {}", command_line.c_str());
+    Core::Logging::Logger::debug("Calling: {}", command_line.c_str());
     std::tuple<int, String, String> exec_result;
     const auto &[result_code, out, err] = exec_result;
     if (!dry) {
       exec_result = Utils::Unix::ShellManager::exec(command_line, dry);
     }
-    Core::Logging::LoggerManager::info("building {}: ended", source.c_str());
+    Core::Logging::Logger::info("building {}: ended", source.c_str());
 
     return {ObjectBuildResultStatus::Success,
-            CompileCommandDescriptor{
-                .directory = std::filesystem::current_path(),
-                .command = command_line,
-                .file = source,
-                .output = source + ".o",
-                .stdout = out,
-                .stderr = err,
-            }};
+            CompileCommandDescriptor{std::filesystem::current_path(),
+                                     command_line, source, source + ".o", out,
+                                     err}};
   }
 
   virtual ObjectBuildResultPromiseType
@@ -114,7 +121,8 @@ public:
 
     command.push_back(compiler_executable);
 
-    command.append_range(target.options);
+    std::copy(target.options.begin(), target.options.end(),
+              std::back_inserter(command));
 
     command.push_back("-fPIE");
 
@@ -125,7 +133,9 @@ public:
             });
 
     for (auto include_directory_argument : include_directories_arguments) {
-      command.append_range(include_directory_argument);
+      std::copy(include_directory_argument.begin(),
+                include_directory_argument.end(),
+                std::back_inserter(include_directory_argument));
     }
 
     auto link_directories_arguments =
@@ -135,7 +145,8 @@ public:
             });
 
     for (auto link_directory_argument : link_directories_arguments) {
-      command.append_range(link_directory_argument);
+      std::copy(link_directory_argument.begin(), link_directory_argument.end(),
+                std::back_inserter(command));
     }
 
     auto link_libraries_arguments =
@@ -145,10 +156,14 @@ public:
             });
 
     for (auto link_library_argument : link_libraries_arguments) {
-      command.append_range(link_library_argument);
+      std::copy(link_library_argument.begin(), link_library_argument.end(),
+                std::back_inserter(link_library_argument));
     }
 
-    command.append_range(Collection<String>{"-o", target.name});
+    {
+      auto elements = Collection<String>{"-o", target.name};
+      std::copy(elements.begin(), elements.end(), std::back_inserter(command));
+    }
 
     for (auto source : target.sources) {
       command.push_back(source + ".o");
@@ -156,23 +171,17 @@ public:
 
     auto command_line = String::join(command, " ");
 
-    Core::Logging::LoggerManager::debug("Calling: {}", command_line.c_str());
+    Core::Logging::Logger::debug("Calling: {}", command_line.c_str());
     std::tuple<int, String, String> exec_result;
     const auto &[result_code, out, err] = exec_result;
 
     exec_result = Utils::Unix::ShellManager::exec(command_line, dry);
 
-    Core::Logging::LoggerManager::info("building: ended");
+    Core::Logging::Logger::info("building: ended");
 
     return {ExecutableLinkResultStatus::Success,
-            CompileCommandDescriptor{
-                .directory = std::filesystem::current_path(),
-                .command = command_line,
-                .file = "",
-                .output = target.name,
-                .stdout = out,
-                .stderr = err,
-            }};
+            CompileCommandDescriptor{std::filesystem::current_path(),
+                                     command_line, "", target.name, out, err}};
   }
 
   virtual ExecutableLinkResultPromise
@@ -191,9 +200,11 @@ public:
     command.push_back("-fPIC");
     command.push_back("-shared");
 
-    command.append_range(this->linker_options);
+    std::copy(this->linker_options.begin(), this->linker_options.end(),
+              std::back_inserter(command));
 
-    command.append_range(target.options);
+    std::copy(target.options.begin(), target.options.end(),
+              std::back_inserter(command));
 
     auto include_directories_arguments =
         target.include_directories.transform<Collection<String>>(
@@ -202,7 +213,8 @@ public:
             });
 
     for (auto include_directory_argument : include_directories_arguments) {
-      command.append_range(include_directory_argument);
+      std::copy(include_directory_argument.begin(),
+                include_directory_argument.end(), std::back_inserter(command));
     }
 
     auto link_directories_arguments =
@@ -212,7 +224,8 @@ public:
             });
 
     for (auto link_directory_argument : link_directories_arguments) {
-      command.append_range(link_directory_argument);
+      std::copy(link_directory_argument.begin(), link_directory_argument.end(),
+                std::back_inserter(command));
     }
 
     auto link_libraries_arguments =
@@ -222,11 +235,15 @@ public:
             });
 
     for (auto link_library_argument : link_libraries_arguments) {
-      command.append_range(link_library_argument);
+      std::copy(link_library_argument.begin(), link_library_argument.end(),
+                std::back_inserter(command));
     }
 
-    command.append_range(
-        Collection<String>{"-o", library_prefix + target.name + ".so"});
+    {
+      auto elements =
+          Collection<String>{"-o", library_prefix + target.name + ".so"};
+      std::copy(elements.begin(), elements.end(), std::back_inserter(command));
+    }
 
     for (auto source : target.sources) {
       command.push_back(source + ".o");
@@ -234,22 +251,22 @@ public:
 
     auto command_line = String::join(command, " ");
 
-    Core::Logging::LoggerManager::debug("Calling: {}", command_line.c_str());
+    Core::Logging::Logger::debug("Calling: {}", command_line.c_str());
     std::tuple<int, String, String> exec_result;
     const auto &[result_code, out, err] = exec_result;
     if (!dry) {
       exec_result = Utils::Unix::ShellManager::exec(command_line, dry);
     }
-    Core::Logging::LoggerManager::info("building: ended");
+    Core::Logging::Logger::info("building: ended");
 
     return {SharedObjectLinkResultStatus::Success,
             CompileCommandDescriptor{
-                .directory = std::filesystem::current_path(),
-                .command = command_line,
-                .file = "",
-                .output = library_prefix + target.name + ".so",
-                .stdout = out,
-                .stderr = err,
+                std::filesystem::current_path(),
+                command_line,
+                "",
+                library_prefix + target.name + ".so",
+                out,
+                err,
             }};
   }
 
@@ -261,10 +278,14 @@ public:
 
     command.push_back(archiver_executable);
 
-    command.append_range(this->archiver_options);
+    std::copy(this->archiver_options.begin(), this->archiver_options.end(),
+              std::back_inserter(this->archiver_options));
 
-    command.append_range(
-        Collection<String>{"-o", library_prefix + target.name + ".a"});
+    {
+      auto elements =
+          Collection<String>{"-o", library_prefix + target.name + ".a"};
+      std::copy(elements.begin(), elements.end(), std::back_inserter(command));
+    }
 
     for (auto source : target.sources) {
       command.push_back(source + ".o");
@@ -272,22 +293,22 @@ public:
 
     auto command_line = String::join(command, " ");
 
-    Core::Logging::LoggerManager::debug("Calling: {}", command_line.c_str());
+    Core::Logging::Logger::debug("Calling: {}", command_line.c_str());
     std::tuple<int, String, String> exec_result;
     const auto &[result_code, out, err] = exec_result;
     if (!dry) {
       exec_result = Utils::Unix::ShellManager::exec(command_line, dry);
     }
-    Core::Logging::LoggerManager::info("building: ended");
+    Core::Logging::Logger::info("building: ended");
 
     return {ArchiverLinkResultStatus::Success,
             CompileCommandDescriptor{
-                .directory = std::filesystem::current_path(),
-                .command = command_line,
-                .file = "",
-                .output = target.name + ".a",
-                .stdout = out,
-                .stderr = err,
+                std::filesystem::current_path(),
+                command_line,
+                "",
+                target.name + ".a",
+                out,
+                err,
             }};
   }
 
@@ -302,7 +323,7 @@ public:
 
       code = current_code;
 
-      result.append_range(current_result);
+      std::copy(current_result.begin(), current_result.end(), std::back_inserter(result));
 
       if (code != 0) {
         break;
@@ -326,16 +347,16 @@ public:
     for (auto dependency : package.dependencies) {
 
       auto result = Controllers::PackageConfigManager::find_package(dependency);
-      package.include_directories.append_range(result.include_directories);
-      package.link_directories.append_range(result.link_directories);
-      package.link_libraries.append_range(result.link_libraries);
-      package.options.append_range(result.options);
+      std::copy(result.include_directories.begin(), result.include_directories.end(), std::back_inserter(package.include_directories));
+      std::copy(result.link_directories.begin(), result.link_directories.end(), std::back_inserter(package.link_directories));
+      std::copy(result.link_libraries.begin(), result.link_libraries.end(), std::back_inserter(package.link_libraries));
+      std::copy(result.options.begin(), result.options.end(), std::back_inserter(package.options));
     }
 
     std::deque<std::tuple<String, promise_type>> results;
     for (auto source : package.sources) {
       auto [code, commands] = object_build(source, package, dry);
-      Core::Logging::LoggerManager::debug("{}", std::to_string(code));
+      Core::Logging::Logger::debug("{}", std::to_string(code));
       result_commands.push_back(commands);
       if (code != ObjectBuildResultStatus::Success) {
         return result;
@@ -344,7 +365,7 @@ public:
 
     if (package.type == "executable") {
       auto [code, commands] = executable_link(package, dry);
-      Core::Logging::LoggerManager::debug("{}", std::to_string(code));
+      Core::Logging::Logger::debug("{}", std::to_string(code));
       result_commands.push_back(commands);
       if (code != ExecutableLinkResultStatus::Success) {
         return result;
@@ -353,7 +374,7 @@ public:
 
     if (package.type == "shared-library") {
       auto [code, commands] = shared_object_link(package);
-      Core::Logging::LoggerManager::debug("{}", std::to_string(code));
+      Core::Logging::Logger::debug("{}", std::to_string(code));
       result_commands.push_back(commands);
       if (code != SharedObjectLinkResultStatus::Success) {
         return result;
@@ -362,7 +383,7 @@ public:
 
     if (package.type == "static-library") {
       auto [code, commands] = archive_link(package, dry);
-      Core::Logging::LoggerManager::debug("{}", std::to_string(code));
+      Core::Logging::Logger::debug("{}", std::to_string(code));
       result_commands.push_back(commands);
       if (code != ArchiverLinkResultStatus::Success) {
         return result;

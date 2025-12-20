@@ -2,7 +2,7 @@
 #include "Core/Containers/String.hpp"
 #include "Core/Exceptions/RuntimeException.hpp"
 #include "Core/Globals.hpp"
-#include "Core/Logging/LoggerManager.hpp"
+#include "Core/Logging/Manager.hpp"
 #include "Core/SharedPointer.hpp"
 #include "Modules/Networking/HTTP/Method.hpp"
 #include "Modules/Networking/HTTP/Response.hpp"
@@ -61,7 +61,7 @@ struct Router {
                        ->value("")
                        ->values_end();
 
-      Logging::LoggerManager::info("Executing Query: {}",
+      Logging::Logger::info("Executing Query: {}",
                                    query->compile().c_str());
       db->query(query);
     }
@@ -102,7 +102,7 @@ struct Router {
         ->where("sessionid = '{}'", req->data["sessionid"])
         ->exec(db);
 
-    output << profile;
+    output % profile;
 
     res->body = ss.str();
     client->write_string(res->to_string());
@@ -175,7 +175,7 @@ struct Router {
 
     } catch (std::exception &ex) {
       ss.clear();
-      ss << String(std::format("Authentication Failed: {}", ex.what()));
+      ss << String(String::format("Authentication Failed: {}", ex.what()));
     }
 
     res->body = ss.str();
@@ -187,7 +187,7 @@ int main(int argc, char *argv[]) {
   Utils::Unused{argc, argv};
   ::signal(SIGTERM, Core::Globals::close);
 
-  Logging::LoggerManager::level_set(Logging::LoggerManager::Level::Debug);
+  Logging::Logger::level_set(Logging::Logger::Level::Debug);
   // Logging::LoggerManager::stream_set(Logging::LoggerManager::stream_cout());
 
   auto router = SharedPointer<Router>(new Router());

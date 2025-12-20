@@ -2,14 +2,13 @@
 
 #include "Core/Containers/String.hpp"
 #include "Core/Object.hpp"
-#include "Modules/Networking/HTTP/HeaderElement.hpp"
-#include <format>
+#include "Utils/StringUtils/FormatString.hpp"
 #include <map>
 
 using namespace Core::Containers;
 
 namespace Modules::Networking::HTTP {
-class Header : public std::map<String, String>, public Object {
+class Header : public std::map<String, String>, public Core::Object {
 public:
   using std::map<String, String>::map;
   inline static Header parse(const Collection<String> &lines) {
@@ -29,12 +28,12 @@ public:
 } // namespace Modules::Networking::HTTP
 
 namespace std {
-String to_string(Modules::Networking::HTTP::Header &el) {
+inline String to_string(Modules::Networking::HTTP::Header &el) {
   auto lk = el.acquire_lock();
   String result;
 
   for (const auto &[key, value] : el) {
-    result += std::format("{}:{}", key, value);
+    result += String::format("{}:{}", key, value);
   }
 
   return result;

@@ -16,7 +16,6 @@
 #include "Modules/SQL/Base/QueryBase.hpp"
 #include "Utils/Patterns/Creator.hpp"
 
-#include <format>
 
 using namespace Core::Containers;
 using namespace Utils::Patterns;
@@ -54,7 +53,7 @@ public:
   class Limit : public Tag {
   public:
     Limit(int value = -1)
-        : Tag(std::format("LIMIT {}", std::to_string(value))) {}
+        : Tag(String::format("LIMIT {}", std::to_string(value))) {}
   };
 
   QueryBuilder() {}
@@ -66,36 +65,36 @@ public:
 
   template <typename... FormatTypes>
   SharedPointer<QueryBuilder>
-  create_table(const std::format_string<FormatTypes...> &fmt,
+  create_table(const Utils::StringUtils::FormatString &fmt,
                FormatTypes &&...args) {
     auto lock = query.acquire_lock();
-    auto compiled = std::format(fmt, std::forward<FormatTypes>(args)...);
-    query.push_back(std::format("CREATE TABLE {}", compiled));
+    auto compiled = String::format(fmt, std::forward<FormatTypes>(args)...);
+    query.push_back(String::format("CREATE TABLE {}", compiled));
     return EnableSharedFromThis<QueryBuilder>::shared_from_this();
   }
 
   template <typename... FormatTypes>
   SharedPointer<QueryBuilder>
-  insert_into(const std::format_string<FormatTypes...> &fmt,
+  insert_into(const Utils::StringUtils::FormatString &fmt,
               FormatTypes &&...args) {
     auto lock = query.acquire_lock();
-    auto compiled = std::format(fmt, std::forward<FormatTypes>(args)...);
-    query.push_back(std::format("INSERT INTO {}", compiled));
+    auto compiled = String::format(fmt, std::forward<FormatTypes>(args)...);
+    query.push_back(String::format("INSERT INTO {}", compiled));
     return EnableSharedFromThis<QueryBuilder>::shared_from_this();
   }
 
   template <typename... FormatTypes> SharedPointer<QueryBuilder> insert() {
     auto lock = query.acquire_lock();
-    query.push_back(std::format("INSERT"));
+    query.push_back(String::format("INSERT"));
     return EnableSharedFromThis<QueryBuilder>::shared_from_this();
   }
 
   template <typename... FormatTypes>
   SharedPointer<QueryBuilder>
-  field(const std::format_string<FormatTypes...> &fmt, FormatTypes &&...args) {
+  field(const Utils::StringUtils::FormatString &fmt, FormatTypes &&...args) {
     auto lock = query.acquire_lock();
-    auto compiled = std::format(fmt, std::forward<FormatTypes>(args)...);
-    fields.push_back(std::format("'{}'", compiled));
+    auto compiled = String::format(fmt, std::forward<FormatTypes>(args)...);
+    fields.push_back(String::format("'{}'", compiled));
     return EnableSharedFromThis<QueryBuilder>::shared_from_this();
   };
 
@@ -106,103 +105,103 @@ public:
 
   SharedPointer<QueryBuilder> fields_end() {
     auto lock = query.acquire_lock();
-    query.push_back(std::format("( {} )", String::join(fields, ",").c_str()));
+    query.push_back(String::format("( {} )", String::join(fields, ",").c_str()));
     return EnableSharedFromThis<QueryBuilder>::shared_from_this();
   };
 
   SharedPointer<QueryBuilder> values_start() {
     auto lock = query.acquire_lock();
-    query.push_back(std::format("VALUES "));
+    query.push_back(String::format("VALUES "));
     return EnableSharedFromThis<QueryBuilder>::shared_from_this();
   };
 
   SharedPointer<QueryBuilder> values_end() {
     auto lock = query.acquire_lock();
-    query.push_back(std::format("( {} )", String::join(values, ",").c_str()));
+    query.push_back(String::format("( {} )", String::join(values, ",").c_str()));
     return EnableSharedFromThis<QueryBuilder>::shared_from_this();
   };
 
   template <typename... FormatTypes>
   SharedPointer<QueryBuilder>
-  into(const std::format_string<FormatTypes...> &fmt, FormatTypes &&...args) {
+  into(const Utils::StringUtils::FormatString &fmt, FormatTypes &&...args) {
     auto lock = query.acquire_lock();
-    auto compiled = std::format(fmt, std::forward<FormatTypes>(args)...);
-    query.push_back(std::format("INTO {}", compiled));
+    auto compiled = String::format(fmt, std::forward<FormatTypes>(args)...);
+    query.push_back(String::format("INTO {}", compiled));
     return EnableSharedFromThis<QueryBuilder>::shared_from_this();
   }
 
   SharedPointer<QueryBuilder> value(const String &value) {
     auto lock = query.acquire_lock();
-    values.push_back(std::format("'{}'", value.c_str()));
+    values.push_back(String::format("'{}'", value.c_str()));
     return EnableSharedFromThis<QueryBuilder>::shared_from_this();
   }
 
   SharedPointer<QueryBuilder> value(const double &value) {
     auto lock = query.acquire_lock();
-    values.push_back(std::format("{}", value));
+    values.push_back(String::format("{}", value));
     return EnableSharedFromThis<QueryBuilder>::shared_from_this();
   }
 
   SharedPointer<QueryBuilder> value(const int &value) {
     auto lock = query.acquire_lock();
-    values.push_back(std::format("{}", value));
+    values.push_back(String::format("{}", value));
     return EnableSharedFromThis<QueryBuilder>::shared_from_this();
   }
 
   template <typename... FormatTypes>
   SharedPointer<QueryBuilder>
-  select(const std::format_string<FormatTypes...> &fmt, FormatTypes &&...args) {
+  select(const Utils::StringUtils::FormatString &fmt, FormatTypes &&...args) {
     auto lock = query.acquire_lock();
-    auto compiled = std::format(fmt, std::forward<FormatTypes>(args)...);
-    query.push_back(std::format("SELECT {}", compiled));
+    auto compiled = String::format(fmt, std::forward<FormatTypes>(args)...);
+    query.push_back(String::format("SELECT {}", compiled));
     return EnableSharedFromThis<QueryBuilder>::shared_from_this();
   }
 
   template <typename... FormatTypes>
   SharedPointer<QueryBuilder>
-  where(const std::format_string<FormatTypes...> &fmt, FormatTypes &&...args) {
+  where(const Utils::StringUtils::FormatString &fmt, FormatTypes &&...args) {
     auto lock = query.acquire_lock();
-    auto compiled = std::format(fmt, std::forward<FormatTypes>(args)...);
-    query.push_back(std::format("WHERE {}", compiled));
+    auto compiled = String::format(fmt, std::forward<FormatTypes>(args)...);
+    query.push_back(String::format("WHERE {}", compiled));
     return EnableSharedFromThis<QueryBuilder>::shared_from_this();
   }
 
   template <typename... FormatTypes>
   SharedPointer<QueryBuilder>
-  from(const std::format_string<FormatTypes...> &fmt, FormatTypes &&...args) {
+  from(const Utils::StringUtils::FormatString &fmt, FormatTypes &&...args) {
     auto lock = query.acquire_lock();
-    auto compiled = std::format(fmt, std::forward<FormatTypes>(args)...);
-    query.push_back(std::format("FROM {}", compiled));
+    auto compiled = String::format(fmt, std::forward<FormatTypes>(args)...);
+    query.push_back(String::format("FROM {}", compiled));
     return EnableSharedFromThis<QueryBuilder>::shared_from_this();
   }
 
   template <typename... FormatTypes>
-  SharedPointer<QueryBuilder> order_by(std::format_string<FormatTypes...> fmt,
+  SharedPointer<QueryBuilder> order_by(Utils::StringUtils::FormatString fmt,
                                        const FormatTypes &&...args) {
     auto lock = query.acquire_lock();
-    auto compiled = std::format(fmt, std::forward<FormatTypes>(args)...);
-    query.push_back(std::format("ORDER BY {}", compiled));
+    auto compiled = String::format(fmt, std::forward<FormatTypes>(args)...);
+    query.push_back(String::format("ORDER BY {}", compiled));
     return EnableSharedFromThis<QueryBuilder>::shared_from_this();
   }
 
   SharedPointer<QueryBuilder> desc() {
     auto lock = query.acquire_lock();
-    query.push_back(std::format("DESC"));
+    query.push_back(String::format("DESC"));
     return EnableSharedFromThis<QueryBuilder>::shared_from_this();
   }
 
   SharedPointer<QueryBuilder> asc() {
     auto lock = query.acquire_lock();
-    query.push_back(std::format("ASC"));
+    query.push_back(String::format("ASC"));
     return EnableSharedFromThis<QueryBuilder>::shared_from_this();
   }
 
   template <typename... FormatTypes>
   SharedPointer<QueryBuilder>
-  limit(const std::format_string<FormatTypes...> &fmt, FormatTypes &&...args) {
+  limit(const Utils::StringUtils::FormatString &fmt, FormatTypes &&...args) {
     auto lock = query.acquire_lock();
-    auto compiled = std::format(fmt, std::forward<FormatTypes>(args)...);
-    query.push_back(std::format("LIMIT {}", compiled));
+    auto compiled = String::format(fmt, std::forward<FormatTypes>(args)...);
+    query.push_back(String::format("LIMIT {}", compiled));
     return EnableSharedFromThis<QueryBuilder>::shared_from_this();
   }
 

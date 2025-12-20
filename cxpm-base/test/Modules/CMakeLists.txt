@@ -1,2 +1,3 @@
 add_subdirectory(Networking)
+add_subdirectory(Serialization)
 add_subdirectory(SQL)

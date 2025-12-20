@@ -3,7 +3,6 @@
 #include "Core/Containers/Collection.hpp"
 #include "Core/Containers/String.hpp"
 #include "Modules/Streams/OutputStringStream.hpp"
-#include <format>
 
 using namespace Core::Containers;
 
@@ -17,20 +16,20 @@ struct URL {
 
   String string() const {
     Streams::OutputStringStream ss;
-    ss << std::format("{}:", scheme.c_str());
+    ss << String::format("{}:", scheme.c_str());
 
     if (!authority.empty()) {
-      ss << std::format("//{}", authority.c_str());
+      ss << String::format("//{}", authority.c_str());
     }
 
-    ss << std::format("{}", path.c_str());
+    ss << String::format("{}", path.c_str());
 
     if (!query.empty()) {
-      ss << std::format("?{}", query.c_str());
+      ss << String::format("?{}", query.c_str());
     }
 
     if (!fragment.empty()) {
-      ss << std::format("#{}", fragment.c_str());
+      ss << String::format("#{}", fragment.c_str());
     }
 
     return ss.str();
