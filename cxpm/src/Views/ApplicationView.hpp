@@ -17,7 +17,6 @@
 #include "Modules/Serialization/AbstractArchiver.hpp"
 #include "Modules/Serialization/JsonOutputArchiver.hpp"
 #include "Utils/Unix/EnvironmentManager.hpp"
-#include <Modules/Templating/MustacheLite.hpp>
 #include <filesystem>
 
 #include <Controllers/ProjectManager.hpp>

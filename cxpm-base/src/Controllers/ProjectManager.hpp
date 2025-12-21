@@ -12,7 +12,6 @@
 #include "Modules/Serialization/JsonOutputArchiver.hpp"
 #include <Controllers/ToolchainManager.hpp>
 #include <Core/Containers/String.hpp>
-#include <Modules/Templating/MustacheLite.hpp>
 #include <Utils/Unused.hpp>
 #include <dlfcn.h>
 
@@ -283,19 +282,16 @@ StaticClass(ProjectManager)
       // install pc file
       {
         using namespace Models;
-        using namespace Modules::Templating;
-        String view = {R"(
-Name: {{name}}
-Description: {{description}}
-Version: {{version}}
-URL: {{url}}
-Cflags: -I{{install_prefix}}/include/{{name}}
-Libs: -l{{name}}
-          )"};
-        auto renderer = MustacheLite(view);
-        renderer % target;
 
-        auto rendered = renderer.render();
+        auto rendered = std::format(
+            "Name: {}\n"
+            "Description: {}\n"
+            "Version: {}\n"
+            "URL: {}\n"
+            "Cflags: -I{}/include/{}\n"
+            "Libs: -l{}\n",
+            target.name, target.description, target.version, target.url,
+            target.install_prefix, target.name, target.name);
 
         auto pc_file_stream =
             std::ofstream(pc_install_path.append(target.name + ".pc"),
