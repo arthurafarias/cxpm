@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Models/CompilerCommandDescriptor.hpp"
+#include "Models/TargetDescriptor.hpp"
+#include "Models/ToolchainDescriptor.hpp"
 #include <Models/ToolchainDescriptor.hpp>
 #include <Models/TargetDescriptor.hpp>
 

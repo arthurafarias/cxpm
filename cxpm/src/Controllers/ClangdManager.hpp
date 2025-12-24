@@ -8,7 +8,6 @@
 #include <Models/CompilerCommandDescriptor.hpp>
 #include <Models/PackageDescriptor.hpp>
 #include <Utils/Macros/StaticClass.hpp>
-#include <fstream>
 #include <sstream>
 
 using namespace Core::Containers;

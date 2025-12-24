@@ -4,6 +4,7 @@
 #include "Models/TargetDescriptor.hpp"
 #include <Models/Target.hpp>
 #include <Models/ToolchainBasicCommandInterface.hpp>
+#include <future>
 
 namespace Models {
 
@@ -12,10 +13,10 @@ struct ToolchainExecutableLinkInterface : ToolchainBasicCommandInterface {
   enum class ExecutableLinkResultStatus { Success, Failure };
   using ExecutableLinkResult =
       std::tuple<ExecutableLinkResultStatus, CompileCommandDescriptor>;
-  using ExecutableLinkResultPromise = std::promise<ExecutableLinkResult>;
+  using ExecutableLinkResultPromiseType = std::shared_future<ExecutableLinkResult>;
   virtual ExecutableLinkResult executable_link(const TargetDescriptor &target,
                                                bool dry) = 0;
-  virtual ExecutableLinkResultPromise
+  virtual ExecutableLinkResultPromiseType
   executable_link_async(const TargetDescriptor &target) = 0;
 };
 } // namespace Models

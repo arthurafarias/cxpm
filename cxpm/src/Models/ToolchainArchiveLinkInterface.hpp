@@ -3,6 +3,7 @@
 #include "Models/CompilerCommandDescriptor.hpp"
 #include <Models/Target.hpp>
 #include <Models/ToolchainBasicCommandInterface.hpp>
+#include <future>
 
 namespace Models {
 struct ToolchainArchiveLinkInterface : ToolchainBasicCommandInterface {
@@ -10,8 +11,13 @@ struct ToolchainArchiveLinkInterface : ToolchainBasicCommandInterface {
   enum class ArchiverLinkResultStatus { Success, Failure };
   using ArchiveLinkResult =
       std::tuple<ArchiverLinkResultStatus, CompileCommandDescriptor>;
-  virtual ArchiveLinkResult archive_link(const TargetDescriptor &target,
-                                         bool dry, const String& library_prefix = "lib") = 0;
+  using ArchiveLinkResultPromiseType = std::shared_future<ArchiveLinkResult>;
+  virtual ArchiveLinkResult
+  archive_link(const TargetDescriptor &target, bool dry,
+               const String &library_prefix = "lib") = 0;
+  virtual ArchiveLinkResultPromiseType
+  archive_link_async(const TargetDescriptor &target, bool dry,
+                     const String &library_prefix = "lib") = 0;
 };
 } // namespace Models
 

@@ -12,14 +12,14 @@ struct ToolchainObjectBuildInterface : ToolchainBasicCommandInterface {
 
   using ObjectBuildResult =
       std::tuple<ObjectBuildResultStatus, CompileCommandDescriptor>;
-  using ObjectBuildResultPromiseType = std::promise<ObjectBuildResult>;
+  using ObjectBuildResultPromiseType = std::shared_future<ObjectBuildResult>;
 
   virtual ObjectBuildResult object_build(const String &source,
                                          const TargetDescriptor &target,
                                          bool dry) = 0;
 
   virtual ObjectBuildResultPromiseType
-  object_build_async(const String &source, const TargetDescriptor &target) = 0;
+  object_build_async(const String &source, const TargetDescriptor &target, bool dry) = 0;
 };
 } // namespace Models
 

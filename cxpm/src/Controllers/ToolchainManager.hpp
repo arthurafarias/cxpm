@@ -15,9 +15,8 @@ using namespace Models;
 
 namespace Controllers {
 class ToolchainManager final {
-  StaticClass(ToolchainManager)
-public:
-  static inline bool valid(const ToolchainDescriptor &toolchain) {
+StaticClass(ToolchainManager) public
+    : static inline bool valid(const ToolchainDescriptor &toolchain) {
 
     if (toolchain.name.empty()) {
       return false;
@@ -48,8 +47,7 @@ public:
     return true;
   }
 
-  static inline constexpr const ToolchainDescriptor
-  by_name(const String &name) {
+  static inline constexpr const ToolchainDescriptor by_name(const String &name) {
 
     auto result = std::find_if(
         toolchains.begin(), toolchains.end(),
@@ -63,13 +61,12 @@ public:
     return *result;
   };
 
-  static inline constexpr const Toolchain
+  static inline constexpr const ToolchainDescriptor
   autoselect(const TargetDescriptor &target) {
-    auto result =
-        std::find_if(toolchains.begin(), toolchains.end(),
-                     [&target](const ToolchainDescriptor &toolchain) {
-                       return target.language == toolchain.language;
-                     });
+    auto result = std::find_if(toolchains.begin(), toolchains.end(),
+                               [&target](const ToolchainDescriptor &toolchain) {
+                                 return target.language == toolchain.language;
+                               });
 
     if (result == toolchains.end()) {
       throw Core::Exceptions::RuntimeException(
@@ -80,12 +77,12 @@ public:
     return *result;
   };
 
-  static inline constexpr void
-  add(const ToolchainDescriptor &toolchain) {
+  static inline constexpr void add(const ToolchainDescriptor &toolchain) {
     toolchains.push_back(toolchain);
   }
 
-  static inline constexpr Toolchain current(const Collection<String>& extra_modules_paths) {
+  static inline constexpr ToolchainDescriptor
+  current(const Collection<String> &extra_modules_paths) {
 
     if (current_toolchain != toolchains.end()) {
       autoscan(extra_modules_paths);
@@ -100,12 +97,10 @@ public:
     return *current_toolchain;
   }
 
-  static inline constexpr void
-  autoscan(Collection<String> extra_paths = {}) {
+  static inline constexpr void autoscan(Collection<String> extra_paths = {}) {
 
-    Collection<String> search_paths = {
-        "/usr/share/cxpm/toolchains",
-        "/usr/local/share/cxpm/toolchains"};
+    Collection<String> search_paths = {"/usr/share/cxpm/toolchains",
+                                       "/usr/local/share/cxpm/toolchains"};
 
     search_paths.append_range(extra_paths);
 
@@ -156,7 +151,6 @@ public:
 
 private:
   static inline Collection<ToolchainDescriptor> toolchains;
-  static inline Collection<ToolchainDescriptor>::iterator
-      current_toolchain;
+  static inline Collection<ToolchainDescriptor>::iterator current_toolchain;
 };
 } // namespace Controllers

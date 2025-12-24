@@ -345,7 +345,8 @@ StaticClass(ProjectManager)
     }
 
     auto [loader_build_result, loader_compile_commands] =
-        Controllers::ToolchainManager::current(extra_toolchain_search_paths)
+        Toolchain(Controllers::ToolchainManager::current(
+                      extra_toolchain_search_paths))
             .build(ManifestPackage);
 
     return {BuildManifestResultStatus::Success, loader_compile_commands};

@@ -1,11 +1,7 @@
 #pragma once
 
 #include "Core/Containers/Collection.hpp"
-#include <algorithm>
 #include <cctype>
-#include <deque>
-#include <filesystem>
-#include <iterator>
 #include <string>
 #include <utility>
 

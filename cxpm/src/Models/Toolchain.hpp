@@ -4,8 +4,10 @@
 #include "Core/Logging/LoggerManager.hpp"
 #include "Models/BuildOutputResult.hpp"
 #include "Models/CompilerCommandDescriptor.hpp"
-#include "Models/ToolchainDescriptorFactoryInterface.hpp"
-#include "Models/ToolchainInterface.hpp"
+#include "Models/ToolchainArchiveLinkInterface.hpp"
+#include "Models/ToolchainExecutableLinkInterface.hpp"
+#include "Models/ToolchainObjectBuildInterface.hpp"
+#include "Models/ToolchainSharedObjectLinkInterface.hpp"
 #include "Utils/Unix/ShellManager.hpp"
 #include <Controllers/PkgConfigManager.hpp>
 #include <Core/Containers/Collection.hpp>
@@ -13,6 +15,7 @@
 #include <Core/Containers/Variant.hpp>
 #include <Models/ProjectDescriptor.hpp>
 #include <Models/ToolchainDescriptor.hpp>
+#include <algorithm>
 #include <filesystem>
 #include <future>
 #include <memory>
@@ -21,14 +24,16 @@ using namespace Core::Containers;
 
 namespace Models {
 
-class Toolchain : public ToolchainDescriptorFactoryInterface<Toolchain>,
-                  public ToolchainInterface {
+class Toolchain : public ToolchainDescriptor,
+                  public ToolchainObjectBuildInterface,
+                  public ToolchainSharedObjectLinkInterface,
+                  public ToolchainArchiveLinkInterface,
+                  public ToolchainExecutableLinkInterface {
 
 public:
-  using ToolchainInterface::ToolchainInterface;
-  using ToolchainDescriptorFactoryInterface<
-      Toolchain>::ToolchainDescriptorFactoryInterface;
-
+  Toolchain() {}
+  Toolchain(const ToolchainDescriptor &descriptor)
+      : ToolchainDescriptor(descriptor) {}
   virtual ObjectBuildResult object_build(const String &source,
                                          const TargetDescriptor &target,
                                          bool dry = false) override {
@@ -99,10 +104,12 @@ public:
             }};
   }
 
-  virtual ObjectBuildResultPromiseType
-  object_build_async(const String &source,
-                     const TargetDescriptor &target) override {
-    return {};
+  ObjectBuildResultPromiseType
+  object_build_async(const String &source, const TargetDescriptor &target,
+                     bool dry) override {
+    return std::async(std::launch::async,
+                      [&]() { return this->object_build(source, target, dry); })
+        .share();
   }
 
   virtual ExecutableLinkResult executable_link(const TargetDescriptor &target,
@@ -173,9 +180,21 @@ public:
             }};
   }
 
-  virtual ExecutableLinkResultPromise
-  executable_link_async(const TargetDescriptor & /*target*/) override {
-    return ExecutableLinkResultPromise();
+  virtual ExecutableLinkResultPromiseType
+  executable_link_async(const TargetDescriptor &target) override {
+    return std::async(std::launch::async,
+                      [&]() { return executable_link(target); })
+        .share();
+  }
+
+  virtual SharedObjectLinkResultPromiseType
+  shared_object_link_async(const TargetDescriptor &target, bool dry = false,
+                           const String &library_prefix = "lib") override {
+    return std::async(std::launch::async,
+                      [&]() {
+                        return shared_object_link(target, dry, library_prefix);
+                      })
+        .share();
   }
 
   virtual SharedObjectLinkResult
@@ -251,6 +270,15 @@ public:
             }};
   }
 
+  virtual ArchiveLinkResultPromiseType
+  archive_link_async(const TargetDescriptor &target, bool dry = false,
+                     const String &library_prefix = "lib") override {
+    return std::async(
+               std::launch::async,
+               [&]() { return archive_link(target, dry, library_prefix); })
+        .share();
+  }
+
   virtual ArchiveLinkResult
   archive_link(const TargetDescriptor &target, bool dry = false,
                const String &library_prefix = "lib") override {
@@ -289,10 +317,10 @@ public:
             }};
   }
 
-  virtual BuildResult build(const ProjectDescriptor &project,
-                            bool dry = false) override {
+  virtual BuildOutputResult build(const ProjectDescriptor &project,
+                                  bool dry = false) {
 
-    BuildResult retval;
+    BuildOutputResult retval;
     auto &[code, result] = retval;
 
     for (auto package : project.targets) {
@@ -310,13 +338,13 @@ public:
     return retval;
   }
 
-  virtual BuildResult build(const TargetDescriptor &input,
-                            bool dry = false) override {
+  virtual BuildOutputResult build(const TargetDescriptor &input,
+                                  bool dry = false) {
 
     auto package = input;
 
-    BuildResult result;
-    auto &[result_code, result_commands] = result;
+    BuildOutputResult build_result = {BuildOutputResultStatus::Failure, {}};
+    auto &[result_code, result_commands] = build_result;
 
     using promise_type =
         std::shared_ptr<std::promise<std::tuple<int, String, String>>>;
@@ -330,13 +358,18 @@ public:
       package.options.append_range(result.options);
     }
 
-    std::deque<std::tuple<String, promise_type>> results;
+    std::deque<ObjectBuildResultPromiseType> results;
+
     for (auto source : package.sources) {
-      auto [code, commands] = object_build(source, package, dry);
+      results.push_back(object_build_async(source, package, dry));
+    };
+
+    for (auto result : results) {
+      auto [code, commands] = result.get();
       Core::Logging::LoggerManager::debug("{}", std::to_string(code));
       result_commands.push_back(commands);
       if (code != ObjectBuildResultStatus::Success) {
-        return result;
+        return build_result;
       }
     }
 
@@ -345,7 +378,7 @@ public:
       Core::Logging::LoggerManager::debug("{}", std::to_string(code));
       result_commands.push_back(commands);
       if (code != ExecutableLinkResultStatus::Success) {
-        return result;
+        return build_result;
       }
     }
 
@@ -354,7 +387,7 @@ public:
       Core::Logging::LoggerManager::debug("{}", std::to_string(code));
       result_commands.push_back(commands);
       if (code != SharedObjectLinkResultStatus::Success) {
-        return result;
+        return build_result;
       }
     }
 
@@ -363,19 +396,19 @@ public:
       Core::Logging::LoggerManager::debug("{}", std::to_string(code));
       result_commands.push_back(commands);
       if (code != ArchiverLinkResultStatus::Success) {
-        return result;
+        return build_result;
       }
     }
 
-    return result;
+    return build_result;
   }
 
-  virtual int install(const Models::ProjectDescriptor &target) override {
+  virtual int install(const Models::ProjectDescriptor &target) {
     throw Core::Exceptions::NotImplementedException();
     return 0;
   }
 
-  virtual int install(const Models::TargetDescriptor &target) override {
+  virtual int install(const Models::TargetDescriptor &target) {
     throw Core::Exceptions::NotImplementedException();
     return 0;
   }
