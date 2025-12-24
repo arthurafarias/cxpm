@@ -2,7 +2,9 @@
 
 #include "Core/Containers/Collection.hpp"
 #include <cctype>
+#include <format>
 #include <string>
+#include <type_traits>
 #include <utility>
 
 namespace Core::Containers {
@@ -17,6 +19,8 @@ public:
   template <typename... ArgumentTypes>
   String(const ArgumentTypes &&...args)
       : std::string(std::forward<const ArgumentTypes>(args)...) {}
+
+  inline operator const char *() { return c_str(); }
 
   inline static String join(const Collection<String> &collection,
                             String delimiter) {
@@ -87,3 +91,13 @@ public:
 };
 
 } // namespace Core::Containers
+
+template <>
+struct std::formatter<Core::Containers::String, char>
+    : public std::formatter<std::string> {
+  using Parent = std::formatter<std::string>;
+  auto format(const Core::Containers::String &mi,
+              std::format_context &format_ctx) const {
+    return Parent::format(mi, format_ctx);
+  }
+};

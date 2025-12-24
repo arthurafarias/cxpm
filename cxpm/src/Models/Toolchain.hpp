@@ -37,7 +37,7 @@ public:
   virtual ObjectBuildResult object_build(const String &source,
                                          const TargetDescriptor &target,
                                          bool dry = false) override {
-    Core::Logging::LoggerManager::info("building {}: started", source.c_str());
+    Core::Logging::LoggerManager::info("building {}: started", source);
 
     Collection<String> command;
 
@@ -85,13 +85,13 @@ public:
 
     auto command_line = String::join(command, " ");
 
-    Core::Logging::LoggerManager::debug("Calling: {}", command_line.c_str());
+    Core::Logging::LoggerManager::debug("Calling: {}", command_line);
     std::tuple<int, String, String> exec_result;
     const auto &[result_code, out, err] = exec_result;
     if (!dry) {
       exec_result = Utils::Unix::ShellManager::exec(command_line, dry);
     }
-    Core::Logging::LoggerManager::info("building {}: ended", source.c_str());
+    Core::Logging::LoggerManager::info("building {}: ended", source);
 
     return {ObjectBuildResultStatus::Success,
             CompileCommandDescriptor{
@@ -161,7 +161,7 @@ public:
 
     auto command_line = String::join(command, " ");
 
-    Core::Logging::LoggerManager::debug("Calling: {}", command_line.c_str());
+    Core::Logging::LoggerManager::debug("Calling: {}", command_line);
     std::tuple<int, String, String> exec_result;
     const auto &[result_code, out, err] = exec_result;
 
@@ -251,7 +251,7 @@ public:
 
     auto command_line = String::join(command, " ");
 
-    Core::Logging::LoggerManager::debug("Calling: {}", command_line.c_str());
+    Core::Logging::LoggerManager::debug("Calling: {}", command_line);
     std::tuple<int, String, String> exec_result;
     const auto &[result_code, out, err] = exec_result;
     if (!dry) {
@@ -298,7 +298,7 @@ public:
 
     auto command_line = String::join(command, " ");
 
-    Core::Logging::LoggerManager::debug("Calling: {}", command_line.c_str());
+    Core::Logging::LoggerManager::debug("Calling: {}", command_line);
     std::tuple<int, String, String> exec_result;
     const auto &[result_code, out, err] = exec_result;
     if (!dry) {

@@ -22,7 +22,7 @@ public:
 
     PackageDescriptor package;
 
-    auto cmdline = std::format("pkg-config --cflags --libs {}", name.c_str());
+    auto cmdline = std::format("pkg-config --cflags --libs {}", name);
     auto [code, out, err] = Utils::Unix::ShellManager::exec(cmdline);
 
     auto splitted = String::split(out, " ");

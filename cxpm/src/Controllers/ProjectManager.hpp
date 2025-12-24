@@ -253,29 +253,27 @@ StaticClass(ProjectManager)
 
       if (target.type == "executable") {
         std::filesystem::copy(
-            target.name.c_str(),
-            std::filesystem::path(binnaries_install_path.c_str()),
+            target.name.c_str(), std::filesystem::path(binnaries_install_path),
             std::filesystem::copy_options::overwrite_existing);
       }
 
       if (target.type == "shared-library") {
         std::filesystem::copy(
             "lib" + target.name + ".so",
-            std::filesystem::path(library_install_path.c_str()),
+            std::filesystem::path(library_install_path),
             std::filesystem::copy_options::overwrite_existing);
       }
 
       if (target.type == "static-library") {
         std::filesystem::copy(
             "lib" + target.name + ".a",
-            std::filesystem::path(archive_install_path.c_str()),
+            std::filesystem::path(archive_install_path),
             std::filesystem::copy_options::overwrite_existing);
       }
 
       if (target.type == "object-library") {
         std::filesystem::copy(
-            target.name + ".o",
-            std::filesystem::path(library_install_path.c_str()),
+            target.name + ".o", std::filesystem::path(library_install_path),
             std::filesystem::copy_options::overwrite_existing);
       }
 
@@ -361,8 +359,7 @@ StaticClass(ProjectManager)
 
     if (handle == nullptr) {
       throw Core::Exceptions::RuntimeException(
-          "Couldn't load manifest at path {}: not found!",
-          manifest_path.c_str());
+          "Couldn't load manifest at path {}: not found!", manifest_path);
     }
 
     auto get_project =

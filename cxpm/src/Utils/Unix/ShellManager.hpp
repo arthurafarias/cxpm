@@ -35,17 +35,17 @@ public:
     ::memset(buffer, '\0', sizeof(buffer));
 
     if (shell) {
-      command = std::format("/usr/bin/bash -c \"{}\"", command.c_str());
+      command = std::format("/usr/bin/bash -c \"{}\"", command);
     }
 
-    Core::Logging::LoggerManager::debug("{}", command.c_str());
+    Core::Logging::LoggerManager::debug("{}", command);
 
     if (!dry) {
-      auto fp = ::popen(command.c_str(), "r");
+      auto fp = ::popen(command, "r");
 
       if (fp == nullptr) {
         throw std::runtime_error(
-            std::format("failed to run {}", command).c_str());
+            std::format("failed to run {}", command));
       }
 
       while (fgets(buffer, sizeof(buffer), fp)) {
