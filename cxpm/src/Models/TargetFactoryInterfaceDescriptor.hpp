@@ -36,7 +36,7 @@ public:
     this->options.append_range(options);
     return *this;
   }
-  
+
   constexpr TargetDescriptorInterface<DerivedType> &
   link_directories_append(const Collection<String> &paths) {
     this->link_directories.append_range(paths);
@@ -49,10 +49,15 @@ public:
     return *this;
   }
 
-
   constexpr TargetDescriptorInterface<DerivedType> &
   include_directories_append(const Collection<String> &paths) {
     this->include_directories.append_range(paths);
+    return *this;
+  }
+
+  constexpr TargetDescriptorInterface<DerivedType> &
+  dependencies_append(const TargetDescriptor &dependency) {
+    this->dependencies.push_back(dependency.name);
     return *this;
   }
 
@@ -73,9 +78,9 @@ public:
     this->sources.append_range(sources);
     return *this;
   }
-  
+
   constexpr const DerivedType &create() {
-    return static_cast<DerivedType&>(*this);
+    return static_cast<DerivedType &>(*this);
   }
 };
 } // namespace Models

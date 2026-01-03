@@ -4,36 +4,179 @@
 #include "Core/Logging/LoggerManager.hpp"
 #include "Models/BuildOutputResult.hpp"
 #include "Models/CompilerCommandDescriptor.hpp"
-#include "Models/ToolchainArchiveLinkInterface.hpp"
-#include "Models/ToolchainExecutableLinkInterface.hpp"
-#include "Models/ToolchainObjectBuildInterface.hpp"
-#include "Models/ToolchainSharedObjectLinkInterface.hpp"
+#include "Models/Toolchain.hpp"
+#include "Models/ToolchainBuildInterface.hpp"
+#include "Models/ToolchainInstallInterface.hpp"
 #include "Utils/Unix/ShellManager.hpp"
+#include "Utils/Unused.hpp"
 #include <Controllers/PkgConfigManager.hpp>
 #include <Core/Containers/Collection.hpp>
 #include <Core/Containers/String.hpp>
 #include <Core/Containers/Variant.hpp>
 #include <Models/ProjectDescriptor.hpp>
 #include <Models/ToolchainDescriptor.hpp>
-#include <algorithm>
+
 #include <filesystem>
 #include <future>
 #include <memory>
+
+// Utilities
+#define ExportToolchain(name)                                                  \
+  extern "C" Toolchain *get_toolchain() { return &name; }
 
 using namespace Core::Containers;
 
 namespace Models {
 
-class Toolchain : public ToolchainDescriptor,
-                  public ToolchainObjectBuildInterface,
-                  public ToolchainSharedObjectLinkInterface,
-                  public ToolchainArchiveLinkInterface,
-                  public ToolchainExecutableLinkInterface {
+class Toolchain : public ToolchainDescriptor, public ToolchainBuildInterface, public ToolchainInstallInterface {
 
 public:
-  Toolchain() {}
+  Toolchain() : ToolchainDescriptor() {}
   Toolchain(const ToolchainDescriptor &descriptor)
       : ToolchainDescriptor(descriptor) {}
+
+  Toolchain &name_set(const String &value) {
+    name = value;
+    return *this;
+  };
+
+  const String &name_get() { return name; };
+
+  Toolchain &version_set(const String &value) {
+    version = value;
+    return *this;
+  };
+
+  const String &version_get() { return version; };
+
+  Toolchain &language_set(const String &value) {
+    language = value;
+    return *this;
+  };
+
+  const String &language_get() { return language; };
+
+  Toolchain &install_prefix_set(const String &value) {
+    install_prefix = value;
+    return *this;
+  };
+
+  const String &install_prefix_get() { return install_prefix; };
+
+  Toolchain &include_directory_prefix_set(const String &value) {
+    include_directory_prefix = value;
+    return *this;
+  };
+
+  const String &include_directory_prefix_get() {
+    return include_directory_prefix;
+  };
+
+  Toolchain &include_directories_set(const Collection<String> &value) {
+    include_directories = value;
+    return *this;
+  };
+
+  const Collection<String> &include_directories_get() {
+    return include_directories;
+  };
+
+  Toolchain &compiler_executable_set(const String &value) {
+    compiler_executable = value;
+    return *this;
+  };
+
+  const String &compiler_executable_get() { return compiler_executable; };
+
+  Toolchain &compiler_options_set(const Collection<String> &value) {
+    compiler_options = value;
+    return *this;
+  };
+
+  Toolchain &compiler_options_append(const String &value) {
+    compiler_options.push_back(value);
+    return *this;
+  };
+
+  const Collection<String> &compiler_options_get() { return compiler_options; };
+
+  Toolchain &archiver_executable_set(const String &value) {
+    archiver_executable = value;
+    return *this;
+  };
+
+  const String &archiver_executable_get() { return archiver_executable; };
+
+  Toolchain &archiver_options_set(const Collection<String> &value) {
+    archiver_options = value;
+    return *this;
+  };
+
+  Toolchain &archiver_options_append(const String &value) {
+    archiver_options.push_back(value);
+    return *this;
+  };
+
+  const Collection<String> &archiver_options_get() { return archiver_options; };
+
+  Toolchain &linker_executable_set(const String &value) {
+    linker_executable = value;
+    return *this;
+  };
+
+  const String &linker_executable_get() { return linker_executable; };
+
+  Toolchain &linker_options_set(const Collection<String> &value) {
+    linker_options = value;
+    return *this;
+  };
+
+  const Collection<String> &linker_options_get() { return linker_options; };
+
+  Toolchain &link_directory_prefix_set(const String &value) {
+    link_directory_prefix = value;
+    return *this;
+  };
+
+  const String &link_directory_prefix_get() { return link_directory_prefix; };
+
+  Toolchain &link_library_prefix_set(const String &value) {
+    link_library_prefix = value;
+    return *this;
+  };
+
+  const String &link_library_prefix_get() { return link_library_prefix; };
+
+  Toolchain &source_specifier_prefix_set(const String &value) {
+    source_specifier_prefix = value;
+    return *this;
+  };
+
+  const String &source_specifier_prefix_get() {
+    return source_specifier_prefix;
+  };
+
+  Toolchain &object_specifier_prefix_set(const String &value) {
+    object_specifier_prefix = value;
+    return *this;
+  };
+
+  const String &object_specifier_prefix_get() {
+    return object_specifier_prefix;
+  };
+
+  Toolchain &link_directories_set(const Collection<String> &value) {
+    link_directories = value;
+    return *this;
+  };
+
+  Toolchain &link_directories_append(const String &value) {
+    link_directories.push_back(value);
+    return *this;
+  };
+
+  const Collection<String> &link_directories_get() { return link_directories; };
+
   virtual ObjectBuildResult object_build(const String &source,
                                          const TargetDescriptor &target,
                                          bool dry = false) override {
@@ -318,18 +461,15 @@ public:
   }
 
   virtual BuildOutputResult build(const ProjectDescriptor &project,
-                                  bool dry = false) {
+                                  bool dry = false) override {
 
     BuildOutputResult retval;
     auto &[code, result] = retval;
 
     for (auto package : project.targets) {
       const auto &[current_code, current_result] = build(package, dry);
-
       code = current_code;
-
       result.append_range(current_result);
-
       if (code != 0) {
         break;
       }
@@ -339,18 +479,14 @@ public:
   }
 
   virtual BuildOutputResult build(const TargetDescriptor &input,
-                                  bool dry = false) {
+                                  bool dry = false) override {
 
     auto package = input;
 
     BuildOutputResult build_result = {BuildOutputResultStatus::Failure, {}};
     auto &[result_code, result_commands] = build_result;
 
-    using promise_type =
-        std::shared_ptr<std::promise<std::tuple<int, String, String>>>;
-
     for (auto dependency : package.dependencies) {
-
       auto result = Controllers::PackageConfigManager::find_package(dependency);
       package.include_directories.append_range(result.include_directories);
       package.link_directories.append_range(result.link_directories);
@@ -403,12 +539,14 @@ public:
     return build_result;
   }
 
-  virtual int install(const Models::ProjectDescriptor &target) {
+  virtual int install(const Models::ProjectDescriptor &target) override {
+    Utils::Unused{target};
     throw Core::Exceptions::NotImplementedException();
     return 0;
   }
 
-  virtual int install(const Models::TargetDescriptor &target) {
+  virtual int install(const Models::TargetDescriptor &target) override {
+    Utils::Unused{target};
     throw Core::Exceptions::NotImplementedException();
     return 0;
   }

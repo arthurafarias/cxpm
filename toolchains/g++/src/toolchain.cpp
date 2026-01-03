@@ -13,7 +13,6 @@ auto toolchain = Toolchain()
                      .archiver_executable_set("/usr/bin/ar")
                      .archiver_options_set({"rcs"})
                      .language_set("c++")
-                     .compiler_options_set({"-pthread"})
-                     .create();
+                     .compiler_options_set({"-pthread"});
 
-extern "C" Toolchain *get_toolchain() { return &toolchain; }
+ExportToolchain(toolchain);

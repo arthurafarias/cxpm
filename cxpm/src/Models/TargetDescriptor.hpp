@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/Containers/Variant.hpp"
 #include "Models/CompilerCommandDescriptor.hpp"
 #include "Models/PackageDescriptor.hpp"
 #include <Modules/Serialization/AbstractArchiver.hpp>

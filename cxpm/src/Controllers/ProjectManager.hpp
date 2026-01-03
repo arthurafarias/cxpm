@@ -163,6 +163,7 @@ StaticClass(ProjectManager)
 
   static inline BuildTargetOutputREsult
   build_target(const TargetDescriptor &target, const String &prefix_override) {
+    Utils::Unused{prefix_override};
     Toolchain toolchain;
     return {BuildTargetOutputResultStatus::Success, target, toolchain};
   }
@@ -174,6 +175,7 @@ StaticClass(ProjectManager)
 
   static inline InstallProjectOutputResult
   install_project(const Project &target, const String prefix) {
+    Utils::Unused{target, prefix};
     return {InstallPRojectOutputResultStatus::Success};
   }
   enum class InstallTargetOutputResultStatus { Success, Failure };

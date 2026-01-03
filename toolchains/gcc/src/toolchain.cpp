@@ -1,4 +1,5 @@
 #include <Models/Toolchain.hpp>
+#include <Models/ExportToolchain.hpp>
 
 using namespace Models;
 
@@ -11,7 +12,7 @@ auto toolchain = Toolchain()
                      .compiler_executable_set("/usr/bin/gcc")
                      .linker_executable_set("/usr/bin/gcc")
                      .language_set("c")
-                     .compiler_options_set({"-pthread"})
-                     .create();
+                     .compiler_options_set({"-pthread"});
 
-extern "C" Toolchain *get_toolchain() { return &toolchain; }
+                     
+ExportToolchain(toolchain);

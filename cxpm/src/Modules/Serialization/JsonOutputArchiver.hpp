@@ -1,9 +1,11 @@
 #pragma once
 
+#include "Core/Exceptions/NotImplementedException.hpp"
 #include "Core/Exceptions/RuntimeException.hpp"
 #include "Core/SharedPointer.hpp"
 #include "Modules/Serialization/AbstractArchiver.hpp"
 #include "Modules/Serialization/ValueDescriptor.hpp"
+#include "Utils/Unused.hpp"
 #include <Core/UniquePointer.hpp>
 #include <cstddef>
 #include <fstream>
@@ -128,6 +130,8 @@ inline void JsonOutputArchiver::value<bool>(const ValueTag<bool> &tag) {
 template <>
 inline void
 JsonOutputArchiver::value<std::nullptr_t>(const ValueTag<std::nullptr_t> &tag) {
+  Utils::Unused{tag};
+  throw Core::Exceptions::NotImplementedException();
 }
 
 template <typename ValueType>

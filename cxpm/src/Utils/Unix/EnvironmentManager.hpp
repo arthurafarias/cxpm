@@ -76,7 +76,7 @@ public:
 
   inline static const Core::Containers::String
   which(const Core::Containers::String &str) {
-    return which(str);
+    return which(str.c_str());
   }
 };
 } // namespace Utils::Unix

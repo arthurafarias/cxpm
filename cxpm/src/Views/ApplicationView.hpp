@@ -3,6 +3,7 @@
 #include "Controllers/ToolchainManager.hpp"
 #include "Core/Containers/Collection.hpp"
 #include "Core/Containers/Tuple.hpp"
+#include "Core/Exceptions/NotImplementedException.hpp"
 #include "Core/Exceptions/RuntimeException.hpp"
 #include "Core/Logging/LoggerManager.hpp"
 #include "Models/BuildOutputResult.hpp"
@@ -17,6 +18,7 @@
 #include "Modules/Serialization/AbstractArchiver.hpp"
 #include "Modules/Serialization/JsonOutputArchiver.hpp"
 #include "Utils/Unix/EnvironmentManager.hpp"
+#include "Utils/Unused.hpp"
 #include <filesystem>
 
 #include <Controllers/ProjectManager.hpp>
@@ -155,7 +157,8 @@ private:
       break;
     }
 
-    return Controllers::ProjectManager::install_target(target, toolchain, prefix_override);
+    return Controllers::ProjectManager::install_target(target, toolchain,
+                                                       prefix_override);
   }
 
   enum class InstallProjectResultStatus { Success, Failure };
@@ -181,7 +184,10 @@ private:
     return {InstallProjectResultStatus::Success, project};
   }
 
-  void uninstall(const String &directory) {}
+  void uninstall(const String &directory) {
+    Utils::Unused{directory};
+    throw Core::Exceptions::NotImplementedException{};
+  }
 
   void assert_project_directory(const String &directory) {
     if (!std::filesystem::exists(directory.c_str())) {
