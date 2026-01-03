@@ -1,7 +1,9 @@
-#include <Models/Project.hpp>
-#include <Models/Target.hpp>
+#include <CXPM/Models/Project.hpp>
+#include <CXPM/Models/Target.hpp>
 
-auto target0 = Models::Target()
+using namespace CXPM::Models;
+
+auto target0 = Target()
                    .name_set("example-static-object")
                    .version_set("1.0.0")
                    .type_set("static-library")
@@ -11,4 +13,4 @@ auto target0 = Models::Target()
                    .include_directories_append({"src"})
                    .create();
 
-auto project = Models::Project().add(target0).create();
+auto project = Project().add(target0).create();

@@ -1,6 +1,6 @@
-#include <Models/Toolchain.hpp>
+#include <CXPM/Models/Toolchain.hpp>
 
-using namespace Models;
+using namespace CXPM::Models;
 
 auto toolchain = Toolchain()
                      .name_set("g++")

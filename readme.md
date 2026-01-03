@@ -19,8 +19,8 @@ If you're interested in discussing or contributing to this idea, feel free to fo
 would have a package.cpp as following
 
 ```cpp
-#include "Models/TargetDescriptor.hpp"
-#include <Models/ProjectDescriptor.hpp>
+#include <CXPM/Models/TargetDescriptor.hpp>
+#include <CXPM/Models/ProjectDescriptor.hpp>
 
  auto example = Models::TargetDescriptor()
                        .name_set("example-executable")
@@ -69,9 +69,9 @@ cxpm --build .
 cxpm now supports custom toolchain definitions, enabling cross-compilation or integration with non-system compilers:
 
 ```c++
-#include <Models/ToolchainDescriptor.hpp>
+#include <CXPM/Models/ToolchainDescriptor.hpp>
 
-using namespace Models;
+using namespace CXPM::Models;
 
 auto toolchain = Toolchain()
                      .name_set("g++")

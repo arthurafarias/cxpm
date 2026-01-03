@@ -1,5 +1,5 @@
-#include "Models/Target.hpp"
-#include "Models/Project.hpp"
+#include <CXPM/Models/Target.hpp>
+#include <CXPM/Models/Project.hpp>
 
 auto cxpm = Models::Target()
                     .name_set("cxpm")

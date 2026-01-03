@@ -1,16 +1,18 @@
-#include "Views/ApplicationView.hpp"
-#include <Controllers/ProjectManager.hpp>
-#include <Controllers/ToolchainManager.hpp>
-#include <Core/Containers/Collection.hpp>
-#include <Core/Containers/String.hpp>
-#include <Core/Exceptions/RuntimeException.hpp>
-#include <Core/Logging/LoggerManager.hpp>
-#include <Utils/Unix/EnvironmentManager.hpp>
+#include <CXPM/Views/ApplicationView.hpp>
+#include <CXPM/Controllers/ProjectManager.hpp>
+#include <CXPM/Controllers/ToolchainManager.hpp>
+#include <CXPM/Core/Containers/Collection.hpp>
+#include <CXPM/Core/Containers/String.hpp>
+#include <CXPM/Core/Exceptions/RuntimeException.hpp>
+#include <CXPM/Core/Logging/LoggerManager.hpp>
+#include <CXPM/Utils/Unix/EnvironmentManager.hpp>
 
 #include <cstdlib>
 #include <exception>
 
 #include <dlfcn.h>
+
+using namespace CXPM;
 
 int main(int argc, char *argv[]) {
   Views::ApplicationView app(argc, argv);

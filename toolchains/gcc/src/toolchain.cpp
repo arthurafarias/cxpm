@@ -1,7 +1,7 @@
-#include <Models/Toolchain.hpp>
-#include <Models/ExportToolchain.hpp>
+#include <CXPM/Models/Toolchain.hpp>
+#include <CXPM/Models/ExportToolchain.hpp>
 
-using namespace Models;
+using namespace CXPM::Models;
 
 auto toolchain = Toolchain()
                      .name_set("gcc")

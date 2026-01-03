@@ -1,5 +1,5 @@
-#include <Models/Project.hpp>
-#include <Models/Target.hpp>
+#include <CXPM/Models/Project.hpp>
+#include <CXPM/Models/Target.hpp>
 
 auto target0 = Models::Target()
                    .name_set("library-00")

@@ -5,3 +5,6 @@ build
 *.o
 *.a
 *.so
+
+## Compile Comands Generated to ClangD
+compile_comands.json

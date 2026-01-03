@@ -1,5 +1,5 @@
-#include <Models/Project.hpp>
-#include <Models/Target.hpp>
+#include <CXPM/Models/Project.hpp>
+#include <CXPM/Models/Target.hpp>
 
 auto example = Models::Target()
                    .name_set("example-executable-with-gstreamer-1.0")
