@@ -1,0 +1,6 @@
+Name: example-executable-with-gstreamer-1.0
+Description: 
+Version: 1.0.0
+URL: 
+Cflags: -I/include/example-executable-with-gstreamer-1.0
+Libs: -lexample-executable-with-gstreamer-1.0

@@ -1,13 +1,12 @@
 #pragma once
 
+#include "CXPM/Models/PackageDescriptor.hpp"
 #include "CXPM/Models/Resources/SharedObjectSuffix.hpp"
-#include "CXPM/Utils/Unix/EnvironmentManager.hpp"
 #include <CXPM/Controllers/PkgConfigManager.hpp>
 #include <CXPM/Core/Containers/Collection.hpp>
 #include <CXPM/Core/Containers/String.hpp>
 #include <CXPM/Core/Containers/Variant.hpp>
 #include <CXPM/Core/Exceptions/NotImplementedException.hpp>
-#include <CXPM/Modules/Logging/LoggerManager.hpp>
 #include <CXPM/Models/BuildOutputResult.hpp>
 #include <CXPM/Models/CompilerCommandDescriptor.hpp>
 #include <CXPM/Models/ProjectDescriptor.hpp>
@@ -15,12 +14,15 @@
 #include <CXPM/Models/ToolchainBuildInterface.hpp>
 #include <CXPM/Models/ToolchainDescriptor.hpp>
 #include <CXPM/Models/ToolchainInstallInterface.hpp>
+#include <CXPM/Modules/Logging/LoggerManager.hpp>
 #include <CXPM/Utils/Unix/ShellManager.hpp>
 #include <CXPM/Utils/Unused.hpp>
 
 #include <filesystem>
 #include <future>
-#include <memory>
+#include <optional>
+#include <ranges>
+#include <type_traits>
 
 #define ExportToolchain(name)                                                  \
   extern "C" Toolchain *get_toolchain() { return &name; }
@@ -231,7 +233,6 @@ public:
 
     auto command_line = String::join(command, " ");
 
-    Modules::Logging::LoggerManager::debug("Calling: {}", command_line);
     std::tuple<int, String, String> exec_result;
     const auto &[result_code, out, err] = exec_result;
     if (!dry) {
@@ -309,7 +310,6 @@ public:
 
     auto command_line = String::join(command, " ");
 
-    Modules::Logging::LoggerManager::debug("Calling: {}", command_line);
     std::tuple<int, String, String> exec_result;
     const auto &[result_code, out, err] = exec_result;
 
@@ -402,7 +402,6 @@ public:
 
     auto command_line = String::join(command, " ");
 
-    Modules::Logging::LoggerManager::debug("Calling: {}", command_line);
     std::tuple<int, String, String> exec_result;
     const auto &[result_code, out, err] = exec_result;
     if (!dry) {
@@ -450,7 +449,6 @@ public:
 
     auto command_line = String::join(command, " ");
 
-    Modules::Logging::LoggerManager::debug("Calling: {}", command_line);
     std::tuple<int, String, String> exec_result;
     const auto &[result_code, out, err] = exec_result;
     if (!dry) {
@@ -494,12 +492,70 @@ public:
 
     auto result_commands = Collection<CompileCommandDescriptor>();
 
-    for (auto dependency : package.dependencies) {
-      auto result = Controllers::PackageConfigManager::find_package(dependency);
-      package.include_directories.append_range(result.include_directories);
-      package.link_directories.append_range(result.link_directories);
-      package.link_libraries.append_range(result.link_libraries);
-      package.options.append_range(result.options);
+    auto all_dependencies =
+        package.link_libraries |
+        std::views::transform([](const String &library)
+                                  -> std::variant<String, PackageDescriptor> {
+          try {
+            PackageDescriptor result =
+                Controllers::PackageConfigManager::find_package(library);
+            return result;
+          } catch (...) {
+            return library;
+          }
+        });
+
+    auto pkg_config_dependencies =
+        all_dependencies |
+        std::views::transform([](const std::variant<String, PackageDescriptor>
+                                     &variant)
+                                  -> std::optional<PackageDescriptor> {
+          return std::visit(
+              [](auto &&var) -> std::optional<PackageDescriptor> {
+                using type = std::decay<decltype(var)>::type;
+                if constexpr (std::is_same<type, PackageDescriptor>::value) {
+                  return std::optional<PackageDescriptor>(var);
+                }
+
+                return std::nullopt;
+              },
+              variant);
+        }) |
+        std::views::filter(
+            [](auto const &optional) { return optional.has_value(); }) |
+        std::views::transform(
+            [](auto const &optional) { return optional.value(); }) |
+        std::ranges::to<Collection<PackageDescriptor>>();
+
+    auto other_dependencies =
+        all_dependencies |
+        std::views::transform(
+            [](const std::variant<String, PackageDescriptor> &variant)
+                -> std::optional<String> {
+              return std::visit(
+                  [](auto &&var) -> std::optional<String> {
+                    using type = typename std::decay<decltype(var)>::type;
+                    if constexpr (std::is_same<type, String>::value) {
+                      return std::optional<String>(var);
+                    }
+
+                    return std::nullopt;
+                  },
+                  variant);
+            }) |
+        std::views::filter(
+            [](auto const &optional) -> auto { return optional.has_value(); }) |
+        std::views::transform(
+            [](auto const &optional) -> String { return optional.value(); }) |
+        std::ranges::to<Collection<String>>();
+
+    package.link_libraries = other_dependencies;
+
+    for (auto descriptor : pkg_config_dependencies) {
+      package.include_directories.append_range(descriptor.include_directories);
+      package.link_directories.append_range(descriptor.link_directories);
+      package.link_libraries.append_range(descriptor.link_libraries);
+      package.options.append_range(descriptor.options);
     }
 
     std::deque<ObjectBuildResultPromiseType> results;

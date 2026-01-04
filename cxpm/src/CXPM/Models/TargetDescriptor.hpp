@@ -19,7 +19,7 @@ struct TargetDescriptor : public PackageDescriptor {
   String toolchain = "g++";
   String build_path;
   Collection<String> sources;
-  Collection<String> dependencies;
+  Collection<TargetDescriptor> dependencies;
   Collection<CompileCommandDescriptor> compile_commands;
 };
 

@@ -9,9 +9,8 @@ auto example = Target()
                    .type_set("executable")
                    .sources_append({"src/main.cpp"})
                    .options_append({"-fPIE", "-fstack-protector-all"})
-                   .link_libraries_append({"m"})
+                   .link_libraries_append({"m", "gstreamer-1.0"})
                    .include_directories_append({"src"})
-                   .dependencies_append("gstreamer-1.0")
                    .create();
 
 auto project = Project().add(example).create();

@@ -46,20 +46,10 @@ struct Target : public TargetDescriptor {
   }
 
   constexpr Target &dependencies_append(const TargetDescriptor &dependency) {
-    this->dependencies.push_back(dependency.name);
-    return *this;
-  }
-
-  constexpr Target &dependencies_append(const String &dependency) {
     this->dependencies.push_back(dependency);
     return *this;
   }
-
-  constexpr Target &dependencies_append(const Collection<String> &paths) {
-    this->dependencies.append_range(paths);
-    return *this;
-  }
-
+  
   constexpr Target &sources_append(const Collection<String> &sources) {
     this->sources.append_range(sources);
     return *this;

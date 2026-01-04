@@ -1,14 +1,14 @@
 {
     "C_Cpp.intelliSenseEngine": "disabled",
     "cmake.debugConfig": {
-        "cwd": "${workspaceFolder}/examples/shared-object",
+        "cwd": "${workspaceFolder}/examples/executable-with-gstreamer-1.0",
         "environment": [
             { "name": "CXPM_EXTRA_MODULES_PATHS", "value": "${workspaceFolder}/build/toolchains/gcc:${workspaceFolder}/build/toolchains/g++"},
             { "name": "CXPM_INTERFACE_PATH", "value": "${workspaceFolder}/cxpm/src"}
         ],
         "args": [
             "--install",
-            "${workspaceFolder}/examples/shared-object",
+            "${workspaceFolder}/examples/executable-with-gstreamer-1.0",
             "--prefix",
             "${workspaceFolder}/.stagging"
         ]

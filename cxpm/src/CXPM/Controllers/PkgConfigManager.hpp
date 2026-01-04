@@ -1,9 +1,10 @@
 #pragma once
 
-#include <CXPM/Models/ToolchainDescriptor.hpp>
-#include <CXPM/Utils/Unix/ShellManager.hpp>
+#include "CXPM/Core/Exceptions/RuntimeException.hpp"
 #include <CXPM/Core/Containers/Collection.hpp>
 #include <CXPM/Core/Containers/String.hpp>
+#include <CXPM/Models/ToolchainDescriptor.hpp>
+#include <CXPM/Utils/Unix/ShellManager.hpp>
 
 #include <CXPM/Models/PackageDescriptor.hpp>
 #include <CXPM/Utils/Macros/StaticClass.hpp>
@@ -15,15 +16,19 @@ namespace CXPM::Controllers {
 
 class PackageConfigManager final {
 
-  StaticClass(PackageConfigManager)
+StaticClass(PackageConfigManager)
 
-public:
-  static inline PackageDescriptor find_package(const String &name) {
+    public : static inline PackageDescriptor find_package(const String &name) {
 
     PackageDescriptor package;
 
     auto cmdline = std::format("pkg-config --cflags --libs {}", name);
+
     auto [code, out, err] = Utils::Unix::ShellManager::exec(cmdline);
+
+    if (code != 0) {
+      throw Core::Exceptions::RuntimeException("{}", err);
+    }
 
     auto splitted = String::split(out, " ");
 
