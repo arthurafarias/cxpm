@@ -3,7 +3,8 @@
     "cmake.debugConfig": {
         "cwd": "${workspaceFolder}/examples/shared-object",
         "environment": [
-            { "name": "cxpm_BUILD_EXTRA_MODULES_PATH", "value": "${workspaceFolder}/build/toolchains/gcc:${workspaceFolder}/build/toolchains/g++"}
+            { "name": "CXPM_EXTRA_MODULES_PATHS", "value": "${workspaceFolder}/build/toolchains/gcc:${workspaceFolder}/build/toolchains/g++"},
+            { "name": "CXPM_INTERFACE_PATH", "value": "${workspaceFolder}/cxpm/src"}
         ],
         "args": [
             "--install",

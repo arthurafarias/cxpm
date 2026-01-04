@@ -1,5 +1,7 @@
 #pragma once
 
+#include "CXPM/Modules/Console/Colors/ANSIColorCode.hpp"
+#include "CXPM/Modules/Console/Colors/Utils/paint_string.hpp"
 #include <atomic>
 #include <chrono>
 #include <filesystem>
@@ -10,7 +12,7 @@
 #include <ostream>
 #include <syncstream>
 
-namespace CXPM::Core::Logging {
+namespace CXPM::Modules::Logging {
 
 class LoggerManager {
   LoggerManager() = delete;
@@ -25,7 +27,7 @@ public:
   enum class Level { Info = 0, Warn = 1, Debug = 2, Max };
 
   template <typename... ArgsTypes>
-  static void log(const char *prefix,
+  static void log(const String &prefix,
                   const std::format_string<ArgsTypes...> &fmt,
                   ArgsTypes &&...args) {
     using namespace std::chrono;
@@ -38,39 +40,44 @@ public:
   template <typename... ArgsTypes>
   static void info(const std::format_string<ArgsTypes...> &fmt,
                    ArgsTypes &&...args) {
-
+    using namespace CXPM::Modules::Console::Colors::Utils;
     if (_level < Level::Info) {
       return;
     }
 
-    log("INFO", fmt, std::forward<ArgsTypes>(args)...);
+    log(paint_string("INFO", Console::Colors::ANSIColorCode::Blue), fmt,
+        std::forward<ArgsTypes>(args)...);
   }
 
   template <typename... ArgsTypes>
   static void warning(const std::format_string<ArgsTypes...> &fmt,
                       ArgsTypes &&...args) {
-
+    using namespace CXPM::Modules::Console::Colors::Utils;
     if (_level < Level::Warn) {
       return;
     }
 
-    log("WARNING", fmt, std::forward<ArgsTypes>(args)...);
+    log(paint_string("WARNING", Console::Colors::ANSIColorCode::Yellow), fmt,
+        std::forward<ArgsTypes>(args)...);
   }
 
   template <typename... ArgsTypes>
   static void debug(const std::format_string<ArgsTypes...> &fmt,
                     ArgsTypes &&...args) {
-
+    using namespace CXPM::Modules::Console::Colors::Utils;
     if (_level < Level::Debug) {
       return;
     }
-    log("DEBUG", fmt, std::forward<ArgsTypes>(args)...);
+    log(paint_string("DEBUG", Console::Colors::ANSIColorCode::Green), fmt,
+        std::forward<ArgsTypes>(args)...);
   }
 
   template <typename... ArgsTypes>
   static void error(const std::format_string<ArgsTypes...> &fmt,
                     ArgsTypes &&...args) {
-    log("ERROR", fmt, std::forward<ArgsTypes>(args)...);
+    using namespace CXPM::Modules::Console::Colors::Utils;
+    log(paint_string("ERROR", Console::Colors::ANSIColorCode::Red), fmt,
+        std::forward<ArgsTypes>(args)...);
   }
 
   static constexpr void level_set(const LoggerManager::Level &level) {
@@ -131,4 +138,4 @@ private:
   static inline std::shared_ptr<std::ostream> _stream_default;
   static inline std::shared_ptr<std::ostream> _stream_current;
 };
-} // namespace CXPM::Core::Logging
+} // namespace CXPM::Modules::Logging

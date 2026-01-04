@@ -29,13 +29,13 @@ static inline std::string to_string(
   switch (value) {
 
   case CXPM::Models::ToolchainObjectBuildInterface::Success:
-    return "ToolchainObjectBuildInterface::Success";
+    return "Success";
     break;
   case CXPM::Models::ToolchainObjectBuildInterface::Failure:
-    return "ToolchainObjectBuildInterface::Failure";
+    return "Failure";
     break;
   }
 
-  return "SharedObjectLinkResultStatus::Failure";
+  return "Failure";
 }
 } // namespace std

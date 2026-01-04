@@ -1,11 +1,13 @@
 #pragma once
 
+#include "CXPM/Models/Resources/SharedObjectSuffix.hpp"
+#include "CXPM/Utils/Unix/EnvironmentManager.hpp"
 #include <CXPM/Controllers/PkgConfigManager.hpp>
 #include <CXPM/Core/Containers/Collection.hpp>
 #include <CXPM/Core/Containers/String.hpp>
 #include <CXPM/Core/Containers/Variant.hpp>
 #include <CXPM/Core/Exceptions/NotImplementedException.hpp>
-#include <CXPM/Core/Logging/LoggerManager.hpp>
+#include <CXPM/Modules/Logging/LoggerManager.hpp>
 #include <CXPM/Models/BuildOutputResult.hpp>
 #include <CXPM/Models/CompilerCommandDescriptor.hpp>
 #include <CXPM/Models/ProjectDescriptor.hpp>
@@ -181,7 +183,7 @@ public:
   virtual ObjectBuildResult object_build(const String &source,
                                          const TargetDescriptor &target,
                                          bool dry = false) override {
-    Core::Logging::LoggerManager::info("building {}: started", source);
+    Modules::Logging::LoggerManager::info("building {}: started", source);
 
     Collection<String> command;
 
@@ -229,13 +231,13 @@ public:
 
     auto command_line = String::join(command, " ");
 
-    Core::Logging::LoggerManager::debug("Calling: {}", command_line);
+    Modules::Logging::LoggerManager::debug("Calling: {}", command_line);
     std::tuple<int, String, String> exec_result;
     const auto &[result_code, out, err] = exec_result;
     if (!dry) {
       exec_result = Utils::Unix::ShellManager::exec(command_line, dry);
     }
-    Core::Logging::LoggerManager::info("building {}: ended", source);
+    Modules::Logging::LoggerManager::info("building {}: ended", source);
 
     return {ObjectBuildResultStatus::Success,
             CompileCommandDescriptor{
@@ -252,7 +254,9 @@ public:
   object_build_async(const String &source, const TargetDescriptor &target,
                      bool dry) override {
     return std::async(std::launch::async,
-                      [&]() { return this->object_build(source, target, dry); })
+                      [this, source, target, dry]() {
+                        return this->object_build(source, target, dry);
+                      })
         .share();
   }
 
@@ -305,13 +309,13 @@ public:
 
     auto command_line = String::join(command, " ");
 
-    Core::Logging::LoggerManager::debug("Calling: {}", command_line);
+    Modules::Logging::LoggerManager::debug("Calling: {}", command_line);
     std::tuple<int, String, String> exec_result;
     const auto &[result_code, out, err] = exec_result;
 
     exec_result = Utils::Unix::ShellManager::exec(command_line, dry);
 
-    Core::Logging::LoggerManager::info("building: ended");
+    Modules::Logging::LoggerManager::info("building: ended");
 
     return {ExecutableLinkResultStatus::Success,
             CompileCommandDescriptor{
@@ -327,7 +331,7 @@ public:
   virtual ExecutableLinkResultPromiseType
   executable_link_async(const TargetDescriptor &target) override {
     return std::async(std::launch::async,
-                      [&]() { return executable_link(target); })
+                      [this, target]() { return executable_link(target); })
         .share();
   }
 
@@ -335,7 +339,7 @@ public:
   shared_object_link_async(const TargetDescriptor &target, bool dry = false,
                            const String &library_prefix = "lib") override {
     return std::async(std::launch::async,
-                      [&]() {
+                      [this, target, dry, library_prefix]() {
                         return shared_object_link(target, dry, library_prefix);
                       })
         .share();
@@ -386,8 +390,11 @@ public:
       command.append_range(link_library_argument);
     }
 
-    command.append_range(
-        Collection<String>{"-o", library_prefix + target.name + ".so"});
+    auto output_path = std::filesystem::path(target.build_path.c_str())
+                           .append(library_prefix + target.name +
+                                   Resources::SharedObjectSuffix());
+
+    command.append_range(Collection<String>{"-o", output_path.c_str()});
 
     for (auto source : target.sources) {
       command.push_back(source + ".o");
@@ -395,13 +402,13 @@ public:
 
     auto command_line = String::join(command, " ");
 
-    Core::Logging::LoggerManager::debug("Calling: {}", command_line);
+    Modules::Logging::LoggerManager::debug("Calling: {}", command_line);
     std::tuple<int, String, String> exec_result;
     const auto &[result_code, out, err] = exec_result;
     if (!dry) {
       exec_result = Utils::Unix::ShellManager::exec(command_line, dry);
     }
-    Core::Logging::LoggerManager::info("building: ended");
+    Modules::Logging::LoggerManager::info("building: ended");
 
     return {SharedObjectLinkResultStatus::Success,
             CompileCommandDescriptor{
@@ -417,9 +424,10 @@ public:
   virtual ArchiveLinkResultPromiseType
   archive_link_async(const TargetDescriptor &target, bool dry = false,
                      const String &library_prefix = "lib") override {
-    return std::async(
-               std::launch::async,
-               [&]() { return archive_link(target, dry, library_prefix); })
+    return std::async(std::launch::async,
+                      [this, target, dry, library_prefix]() {
+                        return archive_link(target, dry, library_prefix);
+                      })
         .share();
   }
 
@@ -442,13 +450,13 @@ public:
 
     auto command_line = String::join(command, " ");
 
-    Core::Logging::LoggerManager::debug("Calling: {}", command_line);
+    Modules::Logging::LoggerManager::debug("Calling: {}", command_line);
     std::tuple<int, String, String> exec_result;
     const auto &[result_code, out, err] = exec_result;
     if (!dry) {
       exec_result = Utils::Unix::ShellManager::exec(command_line, dry);
     }
-    Core::Logging::LoggerManager::info("building: ended");
+    Modules::Logging::LoggerManager::info("building: ended");
 
     return {ArchiverLinkResultStatus::Success,
             CompileCommandDescriptor{
@@ -484,8 +492,7 @@ public:
 
     auto package = input;
 
-    BuildOutputResult build_result = {BuildOutputResultStatus::Failure, {}};
-    auto &[result_code, result_commands] = build_result;
+    auto result_commands = Collection<CompileCommandDescriptor>();
 
     for (auto dependency : package.dependencies) {
       auto result = Controllers::PackageConfigManager::find_package(dependency);
@@ -503,41 +510,41 @@ public:
 
     for (auto result : results) {
       auto [code, commands] = result.get();
-      Core::Logging::LoggerManager::debug("{}", std::to_string(code));
+      Modules::Logging::LoggerManager::debug("{}", std::to_string(code));
       result_commands.push_back(commands);
       if (code != ObjectBuildResultStatus::Success) {
-        return build_result;
+        return {BuildOutputResultStatus::Failure, result_commands};
       }
     }
 
     if (package.type == "executable") {
       auto [code, commands] = executable_link(package, dry);
-      Core::Logging::LoggerManager::debug("{}", std::to_string(code));
+      Modules::Logging::LoggerManager::debug("{}", std::to_string(code));
       result_commands.push_back(commands);
       if (code != ExecutableLinkResultStatus::Success) {
-        return build_result;
+        return {BuildOutputResultStatus::Failure, result_commands};
       }
     }
 
     if (package.type == "shared-library") {
       auto [code, commands] = shared_object_link(package);
-      Core::Logging::LoggerManager::debug("{}", std::to_string(code));
+      Modules::Logging::LoggerManager::debug("{}", std::to_string(code));
       result_commands.push_back(commands);
       if (code != SharedObjectLinkResultStatus::Success) {
-        return build_result;
+        return {BuildOutputResultStatus::Failure, result_commands};
       }
     }
 
     if (package.type == "static-library") {
       auto [code, commands] = archive_link(package, dry);
-      Core::Logging::LoggerManager::debug("{}", std::to_string(code));
+      Modules::Logging::LoggerManager::debug("{}", std::to_string(code));
       result_commands.push_back(commands);
       if (code != ArchiverLinkResultStatus::Success) {
-        return build_result;
+        return {BuildOutputResultStatus::Failure, result_commands};
       }
     }
 
-    return build_result;
+    return {BuildOutputResultStatus::Success, result_commands};
   }
 
   virtual int install(const Models::ProjectDescriptor &target) override {

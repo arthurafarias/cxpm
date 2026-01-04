@@ -1,7 +1,7 @@
 #pragma once
 
 #include <CXPM/Core/Containers/String.hpp>
-#include <CXPM/Core/Logging/LoggerManager.hpp>
+#include <CXPM/Modules/Logging/LoggerManager.hpp>
 #include <CXPM/Core/Containers/Tuple.hpp>
 #include <CXPM/Core/Threading/ThreadPool.hpp>
 
@@ -38,7 +38,7 @@ public:
       command = std::format("/usr/bin/bash -c \"{}\"", command);
     }
 
-    Core::Logging::LoggerManager::debug("{}", command);
+    Modules::Logging::LoggerManager::debug("{}", command);
 
     if (!dry) {
       auto fp = ::popen(command, "r");

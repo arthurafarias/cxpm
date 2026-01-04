@@ -17,6 +17,7 @@ struct TargetDescriptor : public PackageDescriptor {
   String language = "c++";
   String description = "";
   String toolchain = "g++";
+  String build_path;
   Collection<String> sources;
   Collection<String> dependencies;
   Collection<CompileCommandDescriptor> compile_commands;

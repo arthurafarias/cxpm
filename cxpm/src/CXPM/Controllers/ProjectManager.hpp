@@ -1,5 +1,7 @@
 #pragma once
 
+#include "CXPM/Models/BuildOutputResult.hpp"
+#include "CXPM/Utils/Unix/EnvironmentManager.hpp"
 #include <CXPM/Core/Containers/Collection.hpp>
 #include <CXPM/Core/Exceptions/RuntimeException.hpp>
 #include <CXPM/Models/CompilerCommandDescriptor.hpp>
@@ -107,6 +109,7 @@ StaticClass(ProjectManager)
             .string());
 
     project_manifest.compile_comands = build_manifest_comands;
+    project_manifest.build_path = directory;
 
     for (auto toolchain : project_manifest.toolchains) {
       try {
@@ -116,7 +119,7 @@ StaticClass(ProjectManager)
         }
 
       } catch (std::exception &ex) {
-        Core::Logging::LoggerManager::error(
+        Modules::Logging::LoggerManager::error(
             "Couldn't append toolchain specified in project {}", ex.what());
       }
     }
@@ -133,17 +136,18 @@ StaticClass(ProjectManager)
         auto [build_result, build_commands] = toolchain.build(target);
 
         target.compile_commands = build_commands;
+        target.build_path = directory;
 
         commands.append_range(target.compile_commands);
 
-        if (build_result != 0) {
+        if (build_result != BuildOutputResultStatus::Success) {
           throw Core::Exceptions::RuntimeException(
               "Couldn't build project {} with language {} and toolchain {}",
               target.name, target.language, toolchain.name);
         }
 
       } catch (std::exception &ex) {
-        Core::Logging::LoggerManager::error("Couldn't build the project: {}",
+        Modules::Logging::LoggerManager::error("Couldn't build the project: {}",
                                             ex.what());
       }
     }
@@ -344,6 +348,10 @@ StaticClass(ProjectManager)
                                  Collection<CompileCommandDescriptor>());
     }
 
+    auto CXPM_INTERFACE_PATH = Utils::Unix::EnvironmentManager::get("CXPM_INTERFACE_PATH");
+
+    ManifestPackage.include_directories_append(CXPM_INTERFACE_PATH);
+
     auto [loader_build_result, loader_compile_commands] =
         Toolchain(Controllers::ToolchainManager::current(
                       extra_toolchain_search_paths))
@@ -415,7 +423,6 @@ private:
               String(cxpm_BASE_INSTALL_PREFIX) + "/lib/cxpm-base/headers",
               String(cxpm_BASE_INSTALL_PREFIX) + "/share/cxpm-base/headers",
               String(cxpm_BASE_INSTALL_PREFIX) + "/include/cxpm-base",
-              String(cxpm_BASE_SOURCE_PREFIX) + "/src",
           })
           .options_append({"-std=c++23", "-Wall", "-Werror", "-pedantic"})
           .sources_append({"package.cpp", "package.loader.cpp"})
@@ -423,6 +430,8 @@ private:
 
   static inline const std::string BasicProjectLoaderSource = R"(
     #include <CXPM/Models/Project.hpp>
+    using namespace CXPM::Models;
+    extern Project project;
     ExportProject(project);
   )";
 

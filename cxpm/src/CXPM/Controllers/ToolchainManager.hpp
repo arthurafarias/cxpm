@@ -1,6 +1,6 @@
 #pragma once
 
-#include <CXPM/Core/Logging/LoggerManager.hpp>
+#include <CXPM/Modules/Logging/LoggerManager.hpp>
 #include <CXPM/Models/TargetDescriptor.hpp>
 #include <CXPM/Models/ToolchainDescriptor.hpp>
 
@@ -99,8 +99,12 @@ StaticClass(ToolchainManager) public
 
   static inline constexpr void autoscan(Collection<String> extra_paths = {}) {
 
+    auto CXPM_EXTRA_MODULES_PATHS = Utils::Unix::EnvironmentManager::get("CXPM_EXTRA_MODULES_PATHS");
+
     Collection<String> search_paths = {"/usr/share/cxpm/toolchains",
                                        "/usr/local/share/cxpm/toolchains"};
+                                       
+    extra_paths.append_range(CXPM_EXTRA_MODULES_PATHS);
 
     search_paths.append_range(extra_paths);
 
@@ -138,7 +142,7 @@ StaticClass(ToolchainManager) public
             }
 
           } catch (std::exception &ex) {
-            Core::Logging::LoggerManager::error("{}", ex.what());
+            Modules::Logging::LoggerManager::error("{}", ex.what());
           }
 
           if (handle != nullptr) {

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "CXPM/Utils/Macros/StaticClass.hpp"
 #include <CXPM/Core/Containers/Collection.hpp>
 #include <cctype>
 #include <format>
@@ -88,6 +89,7 @@ public:
 
     return splitted;
   }
+  
 };
 
 } // namespace CXPM::Core::Containers

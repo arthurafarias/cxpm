@@ -3,7 +3,7 @@
 #include <CXPM/Core/Containers/Collection.hpp>
 #include <CXPM/Core/Exceptions/NotImplementedException.hpp>
 #include <CXPM/Core/Exceptions/RuntimeException.hpp>
-#include <CXPM/Core/Logging/LoggerManager.hpp>
+#include <CXPM/Modules/Logging/LoggerManager.hpp>
 #include <CXPM/Models/ProjectDescriptor.hpp>
 #include <CXPM/Models/TargetDescriptor.hpp>
 #include <CXPM/Modules/Console/AbstractConsoleApplication.hpp>
@@ -104,10 +104,10 @@ public:
 protected:
   int setup() override {
 
-    Core::Logging::LoggerManager::stream_set(
-        Core::Logging::LoggerManager::stream_cout());
-    Core::Logging::LoggerManager::level_set(
-        Core::Logging::LoggerManager::Level::Max);
+    Modules::Logging::LoggerManager::stream_set(
+        Modules::Logging::LoggerManager::stream_cout());
+    Modules::Logging::LoggerManager::level_set(
+        Modules::Logging::LoggerManager::Level::Max);
 
     Controllers::ProjectManager::initialize();
     return 0;

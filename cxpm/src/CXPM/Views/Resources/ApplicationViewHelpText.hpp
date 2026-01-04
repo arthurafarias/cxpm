@@ -1,5 +1,9 @@
 #pragma once
 
+#include <CXPM/Core/Containers/String.hpp>
+
+using namespace CXPM::Core::Containers;
+
 namespace CXPM::Views::Resources
 {
     inline static const 

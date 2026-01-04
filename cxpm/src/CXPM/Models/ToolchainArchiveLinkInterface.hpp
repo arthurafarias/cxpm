@@ -27,11 +27,11 @@ to_string(const CXPM::Models::ToolchainArchiveLinkInterface::ArchiverLinkResultS
               &value) {
   switch (value) {
   case CXPM::Models::ToolchainArchiveLinkInterface::ArchiverLinkResultStatus::Success:
-    return "ArchiverLinkResultStatus::Success";
+    return "Success";
   case CXPM::Models::ToolchainArchiveLinkInterface::ArchiverLinkResultStatus::Failure:
-    return "ArchiverLinkResultStatus::Failure";
+    return "Failure";
   }
 
-  return "ArchiverLinkResultStatus::Failure";
+  return "Failure";
 }
 } // namespace std

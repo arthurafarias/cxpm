@@ -1,7 +1,9 @@
 #include <CXPM/Models/Project.hpp>
 #include <CXPM/Models/Target.hpp>
 
-auto example = Models::Target()
+using namespace CXPM::Models;
+
+auto example = Target()
                    .name_set("example-executable-with-gstreamer-1.0")
                    .version_set("1.0.0")
                    .type_set("executable")
@@ -12,4 +14,4 @@ auto example = Models::Target()
                    .dependencies_append("gstreamer-1.0")
                    .create();
 
-auto project = Models::Project().add(example).create();
+auto project = Project().add(example).create();

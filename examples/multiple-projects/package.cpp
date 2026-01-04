@@ -1,7 +1,9 @@
 #include <CXPM/Models/Project.hpp>
 #include <CXPM/Models/Target.hpp>
 
-auto project = Models::Project()
+using namespace CXPM::Models;
+
+auto project = Project()
     .add("executable")
     .add("library-00")
     .add("library-01")

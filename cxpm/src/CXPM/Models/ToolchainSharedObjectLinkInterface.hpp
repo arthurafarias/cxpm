@@ -28,12 +28,12 @@ inline std::string to_string(const CXPM::Models::ToolchainSharedObjectLinkInterf
   switch (value) {
   case CXPM::Models::ToolchainSharedObjectLinkInterface::
       SharedObjectLinkResultStatus::Success:
-    return "SharedObjectLinkResultStatus::Success";
+    return "Success";
   case CXPM::Models::ToolchainSharedObjectLinkInterface::
       SharedObjectLinkResultStatus::Failure:
-    return "SharedObjectLinkResultStatus::Failure";
+    return "Failure";
   }
 
-  return "SharedObjectLinkResultStatus::Failure";
+  return "Failure";
 }
 } // namespace std
