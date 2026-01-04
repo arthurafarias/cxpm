@@ -8,9 +8,6 @@ namespace CXPM::Core::Containers {
 template <typename ContainedType>
 class Collection : public std::deque<ContainedType> {
 public:
-  // template <typename... ArgsTypes>
-  // Collection(const ArgsTypes&&... args)
-  //     : std::deque<ContainedType>(std::forward<const ArgsTypes>(args)...) {}
   using std::deque<ContainedType>::deque;
 
   template <typename ReturnType>

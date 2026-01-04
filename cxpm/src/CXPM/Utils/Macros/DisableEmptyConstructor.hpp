@@ -1,4 +1,4 @@
 #pragma once
 
-#define DisableEmptyConstructor(ClassName) ClassName() = delete;
+#define DisableEmptyConstructor(ClassName) ClassName() = delete
 

@@ -1,8 +1,13 @@
 #pragma once
 
+#include "CXPM/Core/Containers/Map.hpp"
+#include "CXPM/Core/Containers/Set.hpp"
 #include "CXPM/Models/BuildOutputResult.hpp"
+#include "CXPM/Modules/Logging/LoggerManager.hpp"
 #include "CXPM/Utils/Unix/EnvironmentManager.hpp"
+#include <CXPM/Controllers/ToolchainManager.hpp>
 #include <CXPM/Core/Containers/Collection.hpp>
+#include <CXPM/Core/Containers/String.hpp>
 #include <CXPM/Core/Exceptions/RuntimeException.hpp>
 #include <CXPM/Models/CompilerCommandDescriptor.hpp>
 #include <CXPM/Models/Project.hpp>
@@ -12,13 +17,14 @@
 #include <CXPM/Models/Toolchain.hpp>
 #include <CXPM/Models/ToolchainDescriptor.hpp>
 #include <CXPM/Modules/Serialization/JsonOutputArchiver.hpp>
-#include <CXPM/Controllers/ToolchainManager.hpp>
-#include <CXPM/Core/Containers/String.hpp>
 #include <CXPM/Utils/Unused.hpp>
+#include <algorithm>
 #include <dlfcn.h>
 
 #include <filesystem>
 #include <fstream>
+#include <optional>
+#include <ranges>
 #include <tuple>
 
 #ifndef cxpm_BASE_INSTALL_PREFIX
@@ -37,14 +43,10 @@ namespace CXPM::Controllers {
 
 class ProjectManager final {
 
-StaticClass(ProjectManager)
+  StaticClass(ProjectManager);
 
-    public :
-
-    enum class BuildProjectOutputResultStatus {
-      Success,
-      Failure
-    };
+public:
+  enum class BuildProjectOutputResultStatus { Success, Failure };
 
   static inline void initialize() {
     modules_search_paths =
@@ -76,40 +78,11 @@ StaticClass(ProjectManager)
     }
   }
 
-  static inline Collection<String> modules_search_paths;
-
-  static inline BuildProjectOutputResult build_project(const String directory) {
+  static inline BuildProjectOutputResult
+  project_build(const ProjectDescriptor &project_manifest) {
 
     Toolchain toolchain;
-    Collection<CompileCommandDescriptor> commands;
-
-    auto build_path = std::filesystem::path(directory.c_str());
-
-    if (!directory.empty()) {
-      build_path = directory.c_str();
-    }
-
-    auto [build_manifest_result, build_manifest_comands] =
-        Controllers::ProjectManager::build_manifest(build_path.string(),
-                                                    modules_search_paths);
-
-    commands.append_range(build_manifest_comands);
-
-    if (build_manifest_result != 0) {
-
-      throw Core::Exceptions::RuntimeException(
-          "Failed to build manifest {} using {}",
-          build_path.string() + "/project-manifest.so",
-          build_path.string() + "/package.json");
-    }
-
-    auto project_manifest = Controllers::ProjectManager::load_from_manifest(
-        std::filesystem::path(build_path.string())
-            .append("libproject-manifest.so")
-            .string());
-
-    project_manifest.compile_comands = build_manifest_comands;
-    project_manifest.build_path = directory;
+    Collection<CompileCommandDescriptor> compile_commands;
 
     for (auto toolchain : project_manifest.toolchains) {
       try {
@@ -124,7 +97,7 @@ StaticClass(ProjectManager)
       }
     }
 
-    for (auto target : project_manifest.targets) {
+    for (Target target : project_manifest.targets) {
       try {
 
         toolchain = Controllers::ToolchainManager::autoselect(target);
@@ -136,9 +109,8 @@ StaticClass(ProjectManager)
         auto [build_result, build_commands] = toolchain.build(target);
 
         target.compile_commands = build_commands;
-        target.build_path = directory;
 
-        commands.append_range(target.compile_commands);
+        compile_commands.append_range(target.compile_commands);
 
         if (build_result != BuildOutputResultStatus::Success) {
           throw Core::Exceptions::RuntimeException(
@@ -148,27 +120,107 @@ StaticClass(ProjectManager)
 
       } catch (std::exception &ex) {
         Modules::Logging::LoggerManager::error("Couldn't build the project: {}",
-                                            ex.what());
+                                               ex.what());
       }
     }
 
     auto stream = std::ofstream("compile_commands.json");
     Modules::Serialization::JsonOutputArchiver output(stream);
-    output % commands;
+    output % compile_commands;
 
     return {BuildProjectOutputResultStatus::Success, project_manifest,
             toolchain};
   }
 
   enum class BuildTargetOutputResultStatus { Success, Failure };
-  using BuildTargetOutputREsult =
+  using BuildTargetOutputResult =
       std::tuple<BuildTargetOutputResultStatus, TargetDescriptor,
                  ToolchainDescriptor>;
 
-  static inline BuildTargetOutputREsult
-  build_target(const TargetDescriptor &target, const String &prefix_override) {
+  static inline std::optional<TargetDescriptor>
+  target_find(const String &name) {
+    auto result =
+        std::find_if(project_index.begin(), project_index.end(),
+                     [&name](auto &&pair) { return name == pair.second.name; });
+
+    if (result != project_index.end()) {
+      return result->second;
+    }
+
+    return std::nullopt;
+  }
+
+  static inline void target_library_sanitize(TargetDescriptor &input) {
+
+    auto result = input.link_libraries |
+                  std::views::filter([&input](auto &&link_library) {
+                    auto it =
+                        std::find_if(project_index.begin(), project_index.end(),
+                                     [&link_library](auto &&library) {
+                                       return library.first == link_library;
+                                     });
+                    auto result = (it != project_index.end());
+
+                    if (result == true) {
+                      Modules::Logging::LoggerManager::debug(
+                          "Sanitizer: removing {} from {} link libraries",
+                          link_library, input.name);
+                    }
+
+                    return !result;
+                  }) |
+                  std::ranges::to<Set<String>>();
+
+    input.link_libraries = result;
+  }
+
+  static inline BuildTargetOutputResult
+  target_build(const TargetDescriptor &input,
+               const String &prefix_override = "") {
     Utils::Unused{prefix_override};
-    Toolchain toolchain;
+
+    Target target = input;
+
+    auto CXPM_INTERFACE_PATH =
+        Utils::Unix::EnvironmentManager::get("CXPM_INTERFACE_PATH");
+
+    target.include_directories_append(
+        Set<String>(CXPM_INTERFACE_PATH.begin(), CXPM_INTERFACE_PATH.end()));
+
+    if (!target.link_libraries.empty()) {
+      for (const auto &library : target.link_libraries) {
+        auto result = target_find(library.c_str());
+
+        if (result.has_value()) {
+
+          auto dependency = result.value();
+
+          target_build(dependency, prefix_override);
+
+          target.include_directories_append(dependency.include_directories);
+
+          target.link_libraries_append(dependency.link_libraries);
+          target.link_directories_append(dependency.link_directories);
+
+          target.options_append(dependency.options);
+        }
+      }
+    }
+
+    auto result = ToolchainManager::autoselect_by_language(target.language);
+
+    if (!result.has_value()) {
+      throw Core::Exceptions::RuntimeException(
+          "Couldn't find toolchain for {} language", target.language);
+    }
+
+    Toolchain toolchain = result.value();
+
+    ProjectManager::solve_dependencies(target);
+    PackageConfigManager::solve_dependencies(target);
+
+    auto [status, compiler_commands] = toolchain.build(target);
+
     return {BuildTargetOutputResultStatus::Success, target, toolchain};
   }
 
@@ -178,7 +230,7 @@ StaticClass(ProjectManager)
       std::tuple<InstallPRojectOutputResultStatus>;
 
   static inline InstallProjectOutputResult
-  install_project(const Project &target, const String prefix) {
+  project_install(const Project &target, const String prefix) {
     Utils::Unused{target, prefix};
     return {InstallPRojectOutputResultStatus::Success};
   }
@@ -189,7 +241,7 @@ StaticClass(ProjectManager)
                  ToolchainDescriptor>;
 
   static inline InstallTargetOutputResult
-  install_target(TargetDescriptor &target, const ToolchainDescriptor &toolchain,
+  target_install(TargetDescriptor &target, const ToolchainDescriptor &toolchain,
                  String prefix_override = "") {
     // include directory should be in project directory
     using directory_iterator = std::filesystem::directory_iterator;
@@ -315,7 +367,7 @@ StaticClass(ProjectManager)
       std::tuple<UninstallTargetOutputResultStatus, TargetDescriptor>;
 
   static inline UninstallTargetOutputResult
-  uninstall_target(const TargetDescriptor &target, const String &prefix) {
+  target_uninstall(const TargetDescriptor &target, const String &prefix) {
     Utils::Unused{prefix};
     return {UninstallTargetOutputResultStatus::Success, target};
   }
@@ -326,7 +378,7 @@ StaticClass(ProjectManager)
       std::tuple<UninstallProjectOutputResultStatus, ProjectDescriptor>;
 
   static inline UninstallProjectOutputResult
-  uninstall_project(const ProjectDescriptor &project, const String &) {
+  project_uninstall(const ProjectDescriptor &project, const String &) {
 
     return {UninstallProjectOutputResultStatus::Success, project};
   }
@@ -337,31 +389,44 @@ StaticClass(ProjectManager)
                                          Collection<CompileCommandDescriptor>>;
 
   static inline BuildManifestResult
-  build_manifest(const Core::Containers::String &project_path,
-                 Core::Containers::Collection<Core::Containers::String>
-                     extra_toolchain_search_paths) {
+  manifest_generate(const Core::Containers::String &project_path) {
 
-    auto [generate_loader_result, loader_path] = generate_loader(project_path);
+    auto manifest = manifest_create();
+    manifest.build_path = project_path;
+
+    auto [generate_loader_result, loader_path] = loader_generate(project_path);
 
     if (generate_loader_result == GenerateLoaderResultStatus::Failure) {
       return BuildManifestResult(BuildManifestResultStatus::Failure,
                                  Collection<CompileCommandDescriptor>());
     }
 
-    auto CXPM_INTERFACE_PATH = Utils::Unix::EnvironmentManager::get("CXPM_INTERFACE_PATH");
+    auto CXPM_INTERFACE_PATH =
+        Utils::Unix::EnvironmentManager::get("CXPM_INTERFACE_PATH");
 
-    ManifestPackage.include_directories_append(CXPM_INTERFACE_PATH);
+    manifest.include_directories_append(
+        Set<String>(CXPM_INTERFACE_PATH.begin(), CXPM_INTERFACE_PATH.end()));
 
-    auto [loader_build_result, loader_compile_commands] =
-        Toolchain(Controllers::ToolchainManager::current(
-                      extra_toolchain_search_paths))
-            .build(ManifestPackage);
+    auto result = ToolchainManager::autoselect_by_language(manifest.language);
 
-    return {BuildManifestResultStatus::Success, loader_compile_commands};
+    if (!result.has_value()) {
+      throw Core::Exceptions::RuntimeException(
+          "Couldn't find toolchain for {} language", manifest.language);
+    }
+
+    Toolchain toolchain = result.value();
+
+    auto [status, compiler_commands] = toolchain.build(manifest);
+
+    if (status != BuildOutputResultStatus::Success) {
+      return {BuildManifestResultStatus::Failure, compiler_commands};
+    }
+
+    return {BuildManifestResultStatus::Success, compiler_commands};
   }
 
   static inline Models::ProjectDescriptor
-  load_from_manifest(const Core::Containers::String &manifest_path) {
+  manifest_load_from_path(const Core::Containers::String &manifest_path) {
 
     typedef Models::Project *(*getter_type)();
 
@@ -389,11 +454,11 @@ StaticClass(ProjectManager)
     return retval;
   }
 
-  static inline int clean(const String &project_path,
-                          const Collection<String> &) {
+  static inline int project_clean(const String &project_path,
+                                  const Collection<String> &) {
 
     // objects
-    for (auto source : ManifestPackage.sources) {
+    for (auto source : DefaultManifestPackage.sources) {
       std::filesystem::remove_all(std::filesystem::path(project_path.c_str())
                                       .append(source.c_str())
                                       .append(".o"));
@@ -412,10 +477,88 @@ StaticClass(ProjectManager)
     return 0;
   }
 
-  Core::Containers::Collection<Models::ProjectDescriptor> projects;
+  Collection<String> &
+  modules_search_paths_append(const Collection<String> &paths) {
+    modules_search_paths.append_range(paths);
+    return modules_search_paths;
+  }
+
+  static inline const Collection<String> &modules_search_paths_get() {
+    return modules_search_paths;
+  }
+
+  enum class GenerateLoaderResultStatus { Success, Failure };
+
+  using GenerateLoaderResult = std::tuple<GenerateLoaderResultStatus, String>;
+
+  static GenerateLoaderResult loader_generate(std::string base_path) {
+    std::ofstream loader_source(base_path + "/package.loader.cpp",
+                                std::ios_base::trunc | std::ios_base::out);
+    loader_source << BasicProjectLoaderSource;
+    loader_source.flush();
+    return {
+        GenerateLoaderResultStatus::Success,
+        std::filesystem::path(base_path).append("package.loader.cpp").string()};
+  }
+
+  static inline const Map<String, TargetDescriptor> &targets_get() {
+    return project_index;
+  }
+
+  static inline void targets_append(const TargetDescriptor &range) {
+    // project_index.push_back({range});
+    project_index[range.name] = range;
+  }
+
+  static inline void targets_append(const Collection<TargetDescriptor> &range) {
+    // project_index.append_range(range);
+
+    for (auto target : range) {
+      project_index[target.name] = target;
+    }
+  }
+
+  static inline BuildProjectOutputResult build_all() {
+
+    auto targets = targets_get();
+
+    for (auto [name, target] : targets) {
+      target_build(target);
+    }
+
+    return {BuildProjectOutputResultStatus::Failure, {}, {}};
+  }
+
+  static inline void solve_dependencies(TargetDescriptor &target) {
+    auto pkg_config_dependencies =
+        target.link_libraries |
+        std::views::transform(
+            [](auto &&library) -> std::optional<TargetDescriptor> {
+              return Controllers::ProjectManager::target_find(library);
+            }) |
+        std::views::filter([](auto &&result) { return result.has_value(); }) |
+        std::views::transform([](auto &&result) { return result.value(); });
+
+    for (auto descriptor : pkg_config_dependencies) {
+      target.include_directories.insert_range(descriptor.include_directories);
+      target.link_directories.insert_range(descriptor.link_directories);
+      target.link_directories
+          .insert_range(Set<String>{descriptor.build_path});
+              target.link_libraries.insert_range(descriptor.link_libraries);
+      target.options.insert_range(descriptor.options);
+    }
+  }
 
 private:
-  static inline Models::Target ManifestPackage =
+  static inline Models::Target manifest_create() {
+    return DefaultManifestPackage;
+  };
+
+  Core::Containers::Collection<Models::ProjectDescriptor> projects;
+
+  static inline Collection<String> modules_search_paths;
+
+  static inline Models::Target DefaultManifestPackage =
       Models::Target()
           .name_set("project-manifest")
           .type_set("shared-library")
@@ -435,18 +578,7 @@ private:
     ExportProject(project);
   )";
 
-  enum class GenerateLoaderResultStatus { Success, Failure };
-
-  using GenerateLoaderResult = std::tuple<GenerateLoaderResultStatus, String>;
-
-  static GenerateLoaderResult generate_loader(std::string base_path) {
-    std::ofstream loader_source(base_path + "/package.loader.cpp",
-                                std::ios_base::trunc | std::ios_base::out);
-    loader_source << BasicProjectLoaderSource;
-    loader_source.flush();
-    return {
-        GenerateLoaderResultStatus::Success,
-        std::filesystem::path(base_path).append("package.loader.cpp").string()};
-  }
+private:
+  static inline Map<String, TargetDescriptor> project_index;
 };
 } // namespace CXPM::Controllers

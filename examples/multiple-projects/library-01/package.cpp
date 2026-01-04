@@ -1,15 +1,16 @@
 #include <CXPM/Models/Project.hpp>
 #include <CXPM/Models/Target.hpp>
 
-auto target0 = Models::Target()
+using namespace CXPM::Models;
+
+auto target0 = Target()
                    .name_set("library-01")
                    .version_set("1.0.0")
                    .type_set("shared-library")
                    .sources_append({"src/library.cpp"})
                    .options_append({"-fPIC", "-fstack-protector-all"})
-                   .link_libraries_append({"m"})
-                   .dependencies_append("library-base")
+                   .link_libraries_append({"m", "library-base"})
                    .include_directories_append({"src"})
                    .create();
 
-auto project = Models::Project().add(target0).create();
+auto project = Project().add(target0).create();

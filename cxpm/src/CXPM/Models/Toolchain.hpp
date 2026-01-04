@@ -2,6 +2,7 @@
 
 #include "CXPM/Models/PackageDescriptor.hpp"
 #include "CXPM/Models/Resources/SharedObjectSuffix.hpp"
+#include "CXPM/Models/TargetDescriptor.hpp"
 #include <CXPM/Controllers/PkgConfigManager.hpp>
 #include <CXPM/Core/Containers/Collection.hpp>
 #include <CXPM/Core/Containers/String.hpp>
@@ -18,7 +19,9 @@
 #include <CXPM/Utils/Unix/ShellManager.hpp>
 #include <CXPM/Utils/Unused.hpp>
 
+#include <algorithm>
 #include <filesystem>
+#include <format>
 #include <future>
 #include <optional>
 #include <ranges>
@@ -110,6 +113,11 @@ public:
     return *this;
   };
 
+  Toolchain &executable_options_set(const Collection<String> &value) {
+    executable_options = value;
+    return *this;
+  };
+
   const String &archiver_executable_get() { return archiver_executable; };
 
   Toolchain &archiver_options_set(const Collection<String> &value) {
@@ -195,60 +203,70 @@ public:
 
     command.push_back("-fPIC");
 
-    auto include_directories_arguments =
-        target.include_directories.transform<Collection<String>>(
-            [this](const auto &el) {
-              return Collection<String>{include_directory_prefix, el};
-            });
+    auto include_directories =
+        target.include_directories |
+        std::views::transform([&](auto &&directory) {
+          auto directory_path = std::filesystem::path(directory.c_str());
 
-    for (auto include_directory_argument : include_directories_arguments) {
-      command.append_range(include_directory_argument);
-    }
+          if (directory_path.is_relative()) {
+            directory_path = std::filesystem::path(target.build_path.c_str())
+                                 .append(directory_path.c_str());
+          }
 
-    auto link_directories_arguments =
-        target.link_directories.transform<Collection<String>>(
-            [this](const auto &el) {
-              return Collection<String>{link_directory_prefix, el};
-            });
+          return std::format("{} {}", include_directory_prefix,
+                             directory_path.string());
+        });
 
-    for (auto link_directory_argument : link_directories_arguments) {
-      command.append_range(link_directory_argument);
-    }
+    command.append_range(include_directories);
 
-    auto link_libraries_arguments =
-        target.link_libraries.transform<Collection<String>>(
-            [this](const auto &el) {
-              return Collection<String>{link_library_prefix, el};
-            });
+    auto link_directories =
+        target.link_directories | std::views::transform([&](auto &&directory) {
+          auto directory_path = std::filesystem::path(directory.c_str());
 
-    for (auto link_library_argument : link_libraries_arguments) {
-      command.append_range(link_library_argument);
-    }
+          if (directory_path.is_relative()) {
+            directory_path = std::filesystem::path(target.build_path.c_str())
+                                 .append(directory_path.c_str());
+          }
 
-    command.append_range(Core::Containers::Collection<Core::Containers::String>{
-        source_specifier_prefix, source});
+          return std::format("{} {}", link_directory_prefix,
+                             directory_path.string());
+        });
 
-    command.append_range(
-        Collection<String>({object_specifier_prefix, source + ".o"}));
+    command.append_range(link_directories);
+
+    auto source_path =
+        std::filesystem::path(target.build_path.c_str()).append(source.c_str());
+
+    auto object_path = source_path;
+    object_path.concat(".o");
+
+    command.push_back(source_specifier_prefix);
+    command.push_back(source_path.c_str());
+
+    command.push_back(object_specifier_prefix);
+    command.push_back(object_path.c_str());
 
     auto command_line = String::join(command, " ");
 
-    std::tuple<int, String, String> exec_result;
-    const auto &[result_code, out, err] = exec_result;
-    if (!dry) {
-      exec_result = Utils::Unix::ShellManager::exec(command_line, dry);
+    auto status = ObjectBuildResultStatus::Success;
+
+    const auto &[result_code, out, err] =
+        Utils::Unix::ShellManager::exec(command_line, dry);
+
+    if (result_code != 0) {
+      status = ObjectBuildResultStatus::Failure;
     }
+
     Modules::Logging::LoggerManager::info("building {}: ended", source);
 
-    return {ObjectBuildResultStatus::Success,
-            CompileCommandDescriptor{
-                .directory = std::filesystem::current_path(),
-                .command = command_line,
-                .file = source,
-                .output = source + ".o",
-                .stdout = out,
-                .stderr = err,
-            }};
+    return {status, CompileCommandDescriptor{
+                        .directory = std::filesystem::current_path(),
+                        .command = command_line,
+                        .file = source_path.c_str(),
+                        .output = object_path.c_str(),
+                        .stdout = out,
+                        .stderr = err,
+                    }};
   }
 
   ObjectBuildResultPromiseType
@@ -261,71 +279,102 @@ public:
         .share();
   }
 
-  virtual ExecutableLinkResult executable_link(const TargetDescriptor &target,
-                                               bool dry = false) override {
+  Set<String> command_link_libraries_prepare(const Target &target) {
+    return target.link_libraries | std::views::transform([&](auto &&library) {
+             return std::format("{} {}", link_library_prefix, library);
+           }) |
+           std::ranges::to<Set<String>>();
+  }
 
+  Set<String> command_link_directories_prepare(const Target &target) {
+    auto result =
+        target.link_directories | std::views::transform([&](auto &&directory) {
+          auto directory_path = std::filesystem::path(directory.c_str());
+
+          if (directory_path.is_relative()) {
+            directory_path = std::filesystem::path(target.build_path.c_str())
+                                 .append(directory.c_str());
+          }
+
+          return std::format("{} {}", link_directory_prefix,
+                             directory_path.c_str());
+        }) |
+        std::ranges::to<Set<String>>();
+    return result;
+  }
+
+  Set<String> command_include_directories_prepare(const Target &target) {
+    auto result =
+        target.include_directories |
+        std::views::transform([&](auto &&directory) {
+          auto directory_path = std::filesystem::path(directory.c_str());
+
+          if (directory_path.is_relative()) {
+            directory_path = std::filesystem::path(target.build_path.c_str())
+                                 .append(directory.c_str());
+          }
+
+          return std::format("{} {}", include_directory_prefix,
+                             directory_path.c_str());
+        }) |
+        std::ranges::to<Set<String>>();
+
+    return result;
+  }
+
+  Set<String> command_objects_prepare(const Target &target) {
+    return target.sources | std::views::transform([&](auto &&source) {
+             auto source_path = std::filesystem::path(source.c_str());
+             if (source_path.is_relative()) {
+               source_path = std::filesystem::path(target.build_path.c_str())
+                                 .append(source.c_str());
+             }
+             return std::format("{}{}", source_path.c_str(), ".o");
+           }) |
+           std::ranges::to<Set<String>>();
+  }
+
+  virtual ExecutableLinkResult executable_link(const TargetDescriptor &input,
+                                               bool dry = false) override {
+    Target target = input;
     Collection<String> command;
 
     command.push_back(compiler_executable);
 
     command.append_range(target.options);
 
-    command.push_back("-fPIE");
+    command.append_range(executable_options);
 
-    auto include_directories_arguments =
-        target.include_directories.transform<Collection<String>>(
-            [this](const auto &el) {
-              return Collection<String>{include_directory_prefix, el};
-            });
+    command.append_range(command_include_directories_prepare(target));
+    command.append_range(command_link_directories_prepare(target));
+    command.append_range(command_link_libraries_prepare(target));
 
-    for (auto include_directory_argument : include_directories_arguments) {
-      command.append_range(include_directory_argument);
-    }
+    command.push_back(
+        std::format("{}{}", object_specifier_prefix, target.name));
 
-    auto link_directories_arguments =
-        target.link_directories.transform<Collection<String>>(
-            [this](const auto &el) {
-              return Collection<String>{link_directory_prefix, el};
-            });
-
-    for (auto link_directory_argument : link_directories_arguments) {
-      command.append_range(link_directory_argument);
-    }
-
-    auto link_libraries_arguments =
-        target.link_libraries.transform<Collection<String>>(
-            [this](const auto &el) {
-              return Collection<String>{link_library_prefix, el};
-            });
-
-    for (auto link_library_argument : link_libraries_arguments) {
-      command.append_range(link_library_argument);
-    }
-
-    command.append_range(Collection<String>{"-o", target.name});
-
-    for (auto source : target.sources) {
-      command.push_back(source + ".o");
-    }
+    command.append_range(command_objects_prepare(target));
 
     auto command_line = String::join(command, " ");
 
-    std::tuple<int, String, String> exec_result;
-    const auto &[result_code, out, err] = exec_result;
+    const auto &[result_code, out, err] =
+        Utils::Unix::ShellManager::exec(command_line, dry);
 
-    exec_result = Utils::Unix::ShellManager::exec(command_line, dry);
+    ExecutableLinkResultStatus status = ExecutableLinkResultStatus::Success;
+
+    if (result_code != 0) {
+      status = ExecutableLinkResultStatus::Failure;
+    }
 
     Modules::Logging::LoggerManager::info("building: ended");
 
-    return {ExecutableLinkResultStatus::Success,
-            CompileCommandDescriptor{
-                .directory = std::filesystem::current_path(),
-                .command = command_line,
-                .file = "",
-                .output = target.name,
-                .stdout = out,
-                .stderr = err,
-            }};
+    return {status, CompileCommandDescriptor{
+                        .directory = std::filesystem::current_path(),
+                        .command = command_line,
+                        .file = "",
+                        .output = target.name,
+                        .stdout = out,
+                        .stderr = err,
+                    }};
   }
 
   virtual ExecutableLinkResultPromiseType
@@ -359,36 +408,9 @@ public:
     command.append_range(this->linker_options);
 
     command.append_range(target.options);
-
-    auto include_directories_arguments =
-        target.include_directories.transform<Collection<String>>(
-            [this](const auto &el) {
-              return Collection<String>{include_directory_prefix, el};
-            });
-
-    for (auto include_directory_argument : include_directories_arguments) {
-      command.append_range(include_directory_argument);
-    }
-
-    auto link_directories_arguments =
-        target.link_directories.transform<Collection<String>>(
-            [this](const auto &el) {
-              return Collection<String>{link_directory_prefix, el};
-            });
-
-    for (auto link_directory_argument : link_directories_arguments) {
-      command.append_range(link_directory_argument);
-    }
-
-    auto link_libraries_arguments =
-        target.link_libraries.transform<Collection<String>>(
-            [this](const auto &el) {
-              return Collection<String>{link_library_prefix, el};
-            });
-
-    for (auto link_library_argument : link_libraries_arguments) {
-      command.append_range(link_library_argument);
-    }
+    command.append_range(command_include_directories_prepare(target));
+    command.append_range(command_link_directories_prepare(target));
+    command.append_range(command_link_libraries_prepare(target));
 
     auto output_path = std::filesystem::path(target.build_path.c_str())
                            .append(library_prefix + target.name +
@@ -396,28 +418,29 @@ public:
 
     command.append_range(Collection<String>{"-o", output_path.c_str()});
 
-    for (auto source : target.sources) {
-      command.push_back(source + ".o");
-    }
+    command.append_range(command_objects_prepare(target));
 
     auto command_line = String::join(command, " ");
 
-    std::tuple<int, String, String> exec_result;
-    const auto &[result_code, out, err] = exec_result;
-    if (!dry) {
-      exec_result = Utils::Unix::ShellManager::exec(command_line, dry);
+    const auto &[result_code, out, err] =
+        Utils::Unix::ShellManager::exec(command_line, dry);
+
+    SharedObjectLinkResultStatus status = SharedObjectLinkResultStatus::Success;
+
+    if (result_code != 0) {
+      status = SharedObjectLinkResultStatus::Failure;
     }
+
     Modules::Logging::LoggerManager::info("building: ended");
 
-    return {SharedObjectLinkResultStatus::Success,
-            CompileCommandDescriptor{
-                .directory = std::filesystem::current_path(),
-                .command = command_line,
-                .file = "",
-                .output = library_prefix + target.name + ".so",
-                .stdout = out,
-                .stderr = err,
-            }};
+    return {status, CompileCommandDescriptor{
+                        .directory = std::filesystem::current_path(),
+                        .command = command_line,
+                        .file = "",
+                        .output = library_prefix + target.name + ".so",
+                        .stdout = out,
+                        .stderr = err,
+                    }};
   }
 
   virtual ArchiveLinkResultPromiseType
@@ -439,32 +462,36 @@ public:
     command.push_back(archiver_executable);
 
     command.append_range(this->archiver_options);
+    command.append_range(command_include_directories_prepare(target));
+    command.append_range(command_link_directories_prepare(target));
+    command.append_range(command_link_libraries_prepare(target));
 
     command.append_range(
         Collection<String>{"-o", library_prefix + target.name + ".a"});
 
-    for (auto source : target.sources) {
-      command.push_back(source + ".o");
-    }
+    command.append_range(command_objects_prepare(target));
 
     auto command_line = String::join(command, " ");
 
-    std::tuple<int, String, String> exec_result;
-    const auto &[result_code, out, err] = exec_result;
-    if (!dry) {
-      exec_result = Utils::Unix::ShellManager::exec(command_line, dry);
+    const auto &[result_code, out, err] =
+        Utils::Unix::ShellManager::exec(command_line, dry);
+
+    auto status = ArchiverLinkResultStatus::Success;
+
+    if (result_code != 0) {
+      status = ArchiverLinkResultStatus::Failure;
     }
+
     Modules::Logging::LoggerManager::info("building: ended");
 
-    return {ArchiverLinkResultStatus::Success,
-            CompileCommandDescriptor{
-                .directory = std::filesystem::current_path(),
-                .command = command_line,
-                .file = "",
-                .output = target.name + ".a",
-                .stdout = out,
-                .stderr = err,
-            }};
+    return {status, CompileCommandDescriptor{
+                        .directory = std::filesystem::current_path(),
+                        .command = command_line,
+                        .file = "",
+                        .output = target.name + ".a",
+                        .stdout = out,
+                        .stderr = err,
+                    }};
   }
 
   virtual BuildOutputResult build(const ProjectDescriptor &project,
@@ -488,113 +515,62 @@ public:
   virtual BuildOutputResult build(const TargetDescriptor &input,
                                   bool dry = false) override {
 
-    auto package = input;
+    auto target = input;
 
-    auto result_commands = Collection<CompileCommandDescriptor>();
-
-    auto all_dependencies =
-        package.link_libraries |
-        std::views::transform([](const String &library)
-                                  -> std::variant<String, PackageDescriptor> {
-          try {
-            PackageDescriptor result =
-                Controllers::PackageConfigManager::find_package(library);
-            return result;
-          } catch (...) {
-            return library;
-          }
-        });
-
-    auto pkg_config_dependencies =
-        all_dependencies |
-        std::views::transform([](const std::variant<String, PackageDescriptor>
-                                     &variant)
-                                  -> std::optional<PackageDescriptor> {
-          return std::visit(
-              [](auto &&var) -> std::optional<PackageDescriptor> {
-                using type = std::decay<decltype(var)>::type;
-                if constexpr (std::is_same<type, PackageDescriptor>::value) {
-                  return std::optional<PackageDescriptor>(var);
-                }
-
-                return std::nullopt;
-              },
-              variant);
-        }) |
-        std::views::filter(
-            [](auto const &optional) { return optional.has_value(); }) |
-        std::views::transform(
-            [](auto const &optional) { return optional.value(); }) |
-        std::ranges::to<Collection<PackageDescriptor>>();
-
-    auto other_dependencies =
-        all_dependencies |
-        std::views::transform(
-            [](const std::variant<String, PackageDescriptor> &variant)
-                -> std::optional<String> {
-              return std::visit(
-                  [](auto &&var) -> std::optional<String> {
-                    using type = typename std::decay<decltype(var)>::type;
-                    if constexpr (std::is_same<type, String>::value) {
-                      return std::optional<String>(var);
-                    }
-
-                    return std::nullopt;
-                  },
-                  variant);
-            }) |
-        std::views::filter(
-            [](auto const &optional) -> auto { return optional.has_value(); }) |
-        std::views::transform(
-            [](auto const &optional) -> String { return optional.value(); }) |
-        std::ranges::to<Collection<String>>();
-
-    package.link_libraries = other_dependencies;
-
-    for (auto descriptor : pkg_config_dependencies) {
-      package.include_directories.append_range(descriptor.include_directories);
-      package.link_directories.append_range(descriptor.link_directories);
-      package.link_libraries.append_range(descriptor.link_libraries);
-      package.options.append_range(descriptor.options);
-    }
+    auto result_commands = Collection<CompileCommandDescriptor>();    
 
     std::deque<ObjectBuildResultPromiseType> results;
 
-    for (auto source : package.sources) {
-      results.push_back(object_build_async(source, package, dry));
+    for (auto source : target.sources) {
+      results.push_back(object_build_async(source, target, dry));
     };
 
     for (auto result : results) {
+
       auto [code, commands] = result.get();
+
       Modules::Logging::LoggerManager::debug("{}", std::to_string(code));
+
       result_commands.push_back(commands);
+
       if (code != ObjectBuildResultStatus::Success) {
         return {BuildOutputResultStatus::Failure, result_commands};
       }
     }
 
-    if (package.type == "executable") {
-      auto [code, commands] = executable_link(package, dry);
+    if (target.type == "executable") {
+
+      auto [code, commands] = executable_link(target, dry);
+
       Modules::Logging::LoggerManager::debug("{}", std::to_string(code));
       result_commands.push_back(commands);
+
       if (code != ExecutableLinkResultStatus::Success) {
         return {BuildOutputResultStatus::Failure, result_commands};
       }
     }
 
-    if (package.type == "shared-library") {
-      auto [code, commands] = shared_object_link(package);
+    if (target.type == "shared-library") {
+
+      auto [code, commands] = shared_object_link(target);
+
       Modules::Logging::LoggerManager::debug("{}", std::to_string(code));
+
       result_commands.push_back(commands);
+
       if (code != SharedObjectLinkResultStatus::Success) {
         return {BuildOutputResultStatus::Failure, result_commands};
       }
     }
 
-    if (package.type == "static-library") {
-      auto [code, commands] = archive_link(package, dry);
+    if (target.type == "static-library") {
+
+      auto [code, commands] = archive_link(target, dry);
+
       Modules::Logging::LoggerManager::debug("{}", std::to_string(code));
+
       result_commands.push_back(commands);
+
       if (code != ArchiverLinkResultStatus::Success) {
         return {BuildOutputResultStatus::Failure, result_commands};
       }

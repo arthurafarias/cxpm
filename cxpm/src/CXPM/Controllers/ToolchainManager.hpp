@@ -1,22 +1,37 @@
 #pragma once
 
-#include <CXPM/Modules/Logging/LoggerManager.hpp>
 #include <CXPM/Models/TargetDescriptor.hpp>
 #include <CXPM/Models/ToolchainDescriptor.hpp>
+#include <CXPM/Modules/Logging/LoggerManager.hpp>
 
 #include <CXPM/Core/Exceptions/RuntimeException.hpp>
 #include <CXPM/Models/Toolchain.hpp>
 #include <CXPM/Utils/Unix/EnvironmentManager.hpp>
 
+#include <algorithm>
 #include <dlfcn.h>
 #include <filesystem>
+#include <optional>
 
 using namespace CXPM::Models;
 
 namespace CXPM::Controllers {
 class ToolchainManager final {
-StaticClass(ToolchainManager) public
-    : static inline bool valid(const ToolchainDescriptor &toolchain) {
+  StaticClass(ToolchainManager);
+
+public:
+  static inline void initialize() {
+    auto CXPM_EXTRA_MODULES_PATHS =
+        Utils::Unix::EnvironmentManager::get("CXPM_EXTRA_MODULES_PATHS");
+
+    Collection<String> search_paths = {"/usr/share/cxpm/toolchains",
+                                       "/usr/local/share/cxpm/toolchains"};
+
+                                       search_paths.append_range(CXPM_EXTRA_MODULES_PATHS);
+    autoscan(search_paths);
+  }
+
+  static inline bool valid(const ToolchainDescriptor &toolchain) {
 
     if (toolchain.name.empty()) {
       return false;
@@ -47,7 +62,8 @@ StaticClass(ToolchainManager) public
     return true;
   }
 
-  static inline constexpr const ToolchainDescriptor by_name(const String &name) {
+  static inline constexpr const ToolchainDescriptor
+  by_name(const String &name) {
 
     auto result = std::find_if(
         toolchains.begin(), toolchains.end(),
@@ -81,32 +97,21 @@ StaticClass(ToolchainManager) public
     toolchains.push_back(toolchain);
   }
 
-  static inline constexpr ToolchainDescriptor
-  current(const Collection<String> &extra_modules_paths) {
+  static inline constexpr std::optional<ToolchainDescriptor>
+  autoselect_by_language(const String &language = "c++") {
 
-    if (current_toolchain != toolchains.end()) {
-      autoscan(extra_modules_paths);
-      current_toolchain = toolchains.begin();
+    auto result = std::find_if(toolchains.begin(), toolchains.end(),
+                               [&language](auto &&toolchain) {
+                                 return toolchain.language == language;
+                               });
+    if (result != toolchains.end()) {
+      return *result;
     }
 
-    if (current_toolchain == toolchains.end()) {
-      throw Core::Exceptions::RuntimeException(
-          "Failed to find any toolchain in this system");
-    }
-
-    return *current_toolchain;
+    return std::nullopt;
   }
 
-  static inline constexpr void autoscan(Collection<String> extra_paths = {}) {
-
-    auto CXPM_EXTRA_MODULES_PATHS = Utils::Unix::EnvironmentManager::get("CXPM_EXTRA_MODULES_PATHS");
-
-    Collection<String> search_paths = {"/usr/share/cxpm/toolchains",
-                                       "/usr/local/share/cxpm/toolchains"};
-                                       
-    extra_paths.append_range(CXPM_EXTRA_MODULES_PATHS);
-
-    search_paths.append_range(extra_paths);
+  static inline constexpr void autoscan(Collection<String> search_paths = {}) {
 
     toolchains.clear();
 

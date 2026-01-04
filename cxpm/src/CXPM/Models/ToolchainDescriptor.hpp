@@ -18,6 +18,8 @@ struct ToolchainDescriptor {
   String compiler_executable;
   Collection<String> compiler_options;
 
+  Collection<String> executable_options;
+
   String archiver_executable;
   Collection<String> archiver_options;
 

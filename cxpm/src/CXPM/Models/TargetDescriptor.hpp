@@ -18,8 +18,7 @@ struct TargetDescriptor : public PackageDescriptor {
   String description = "";
   String toolchain = "g++";
   String build_path;
-  Collection<String> sources;
-  Collection<TargetDescriptor> dependencies;
+  Set<String> sources;
   Collection<CompileCommandDescriptor> compile_commands;
 };
 
@@ -39,7 +38,6 @@ Archiver &operator%(Archiver &ar, const TargetDescriptor &td) {
   ar % AbstractArchiver::make_named_value_property("language", td.language);
   ar % AbstractArchiver::make_named_value_property("toolchain", td.toolchain);
   ar % AbstractArchiver::make_named_value_property("sources", td.sources);
-  ar % AbstractArchiver::make_named_value_property("dependencies", td.dependencies);
   ar % AbstractArchiver::make_named_value_property("compile_commands", td.compile_commands);
   ar % AbstractArchiver::make_named_value_property("install_prefix", td.install_prefix);
   ar % AbstractArchiver::make_object_end("TargetDescriptor");

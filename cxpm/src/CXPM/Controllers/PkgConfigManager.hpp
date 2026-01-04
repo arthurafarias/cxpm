@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CXPM/Core/Exceptions/RuntimeException.hpp"
+#include "CXPM/Models/TargetDescriptor.hpp"
 #include <CXPM/Core/Containers/Collection.hpp>
 #include <CXPM/Core/Containers/String.hpp>
 #include <CXPM/Models/ToolchainDescriptor.hpp>
@@ -16,9 +17,10 @@ namespace CXPM::Controllers {
 
 class PackageConfigManager final {
 
-StaticClass(PackageConfigManager)
+  StaticClass(PackageConfigManager);
 
-    public : static inline PackageDescriptor find_package(const String &name) {
+public:
+  static inline PackageDescriptor find_package(const String &name) {
 
     PackageDescriptor package;
 
@@ -35,24 +37,49 @@ StaticClass(PackageConfigManager)
     for (auto el : splitted) {
 
       if (el.starts_with("-I")) {
-        package.include_directories.push_back(el.substr(2, el.size() - 2));
+        package.include_directories.insert(el.substr(2, el.size() - 2));
         continue;
       }
 
       if (el.starts_with("-L")) {
-        package.link_directories.push_back(el.substr(2, el.size() - 2));
+        package.link_directories.insert(el.substr(2, el.size() - 2));
         continue;
       }
 
       if (el.starts_with("-l")) {
-        package.link_libraries.push_back(el.substr(2, el.size() - 2));
+        package.link_libraries.insert(el.substr(2, el.size() - 2));
         continue;
       }
 
-      package.options.push_back(el);
+      package.options.insert(el);
     }
 
     return package;
+  }
+
+  static inline void solve_dependencies(TargetDescriptor &target) {
+
+    auto pkg_config_dependencies =
+        target.link_libraries |
+        std::views::transform(
+            [](const String &library) -> std::optional<PackageDescriptor> {
+              try {
+                PackageDescriptor result =
+                    Controllers::PackageConfigManager::find_package(library);
+                return result;
+              } catch (...) {
+                return std::nullopt;
+              }
+            }) |
+        std::views::filter([](auto &&result) { return result.has_value(); }) |
+        std::views::transform([](auto &&result) { return result.value(); });
+
+    for (auto descriptor : pkg_config_dependencies) {
+      target.include_directories.insert_range(descriptor.include_directories);
+      target.link_directories.insert_range(descriptor.link_directories);
+      target.link_libraries.insert_range(descriptor.link_libraries);
+      target.options.insert_range(descriptor.options);
+    }
   }
 
   static inline String

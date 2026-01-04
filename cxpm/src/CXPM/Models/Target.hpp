@@ -1,10 +1,16 @@
 #pragma once
 
+#include <ranges>
+
 #include <CXPM/Models/TargetDescriptor.hpp>
 
 namespace CXPM::Models {
 struct Target : public TargetDescriptor {
   using TargetDescriptor::TargetDescriptor;
+
+  Target() : TargetDescriptor() {}
+  Target(const TargetDescriptor &target) : TargetDescriptor(target) {}
+
   constexpr Target &name_set(const Core::Containers::String &name) {
     this->name = name;
     return *this;
@@ -23,38 +29,45 @@ struct Target : public TargetDescriptor {
     return *this;
   }
 
-  constexpr Target &options_append(const Collection<String> &options) {
-    this->options.append_range(options);
+  constexpr Target &options_append(const Set<String> &options) {
+    auto range =
+        options | std::views::filter([](auto &&el) { return !el.empty(); });
+    this->options.insert_range(range);
     return *this;
   }
 
-  constexpr Target &link_directories_append(const Collection<String> &paths) {
-    this->link_directories.append_range(paths);
-    return *this;
-  }
-
-  constexpr Target &
-  link_libraries_append(const Collection<String> &link_libraries) {
-    this->link_libraries.append_range(link_libraries);
+  constexpr Target &link_directories_append(const Set<String> &paths) {
+    auto range =
+        paths | std::views::filter([](auto &&el) { return !el.empty(); });
+    this->link_directories.insert_range(range);
     return *this;
   }
 
   constexpr Target &
-  include_directories_append(const Collection<String> &paths) {
-    this->include_directories.append_range(paths);
+  link_libraries_append(const Set<String> &link_libraries) {
+    auto range = link_libraries |
+                 std::views::filter([](auto &&el) { return !el.empty(); });
+    this->link_libraries.insert_range(range);
     return *this;
   }
 
-  constexpr Target &dependencies_append(const TargetDescriptor &dependency) {
-    this->dependencies.push_back(dependency);
+  constexpr Target &
+  include_directories_append(const Set<String> &paths) {
+    auto range =
+        paths | std::views::filter([](auto &&el) { return !el.empty(); });
+    this->include_directories.insert_range(range);
     return *this;
   }
-  
-  constexpr Target &sources_append(const Collection<String> &sources) {
-    this->sources.append_range(sources);
+
+  constexpr Target &sources_append(const Set<String> &sources) {
+    auto range =
+        sources | std::views::filter([](auto &&el) { return !el.empty(); });
+    this->sources.insert_range(range);
     return *this;
   }
 
   constexpr const Target &create() { return *this; }
+
+  bool ready = false;
 };
 } // namespace CXPM::Models

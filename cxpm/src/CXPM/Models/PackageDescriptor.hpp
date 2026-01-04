@@ -1,7 +1,8 @@
 #pragma once
 
-#include <CXPM/Core/Containers/String.hpp>
+#include "CXPM/Core/Containers/Set.hpp"
 #include <CXPM/Core/Containers/Collection.hpp>
+#include <CXPM/Core/Containers/String.hpp>
 
 using namespace CXPM::Core::Containers;
 
@@ -10,9 +11,9 @@ struct PackageDescriptor {
   String name;
   String version;
   String install_prefix;
-  Collection<String> include_directories;
-  Collection<String> link_directories;
-  Collection<String> link_libraries;
-  Collection<String> options;
+  Set<String> include_directories;
+  Set<String> link_directories;
+  Set<String> link_libraries;
+  Set<String> options;
 };
 } // namespace CXPM::Models

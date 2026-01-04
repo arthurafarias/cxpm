@@ -12,6 +12,7 @@ auto toolchain = Toolchain()
                      .linker_executable_set("/usr/bin/g++")
                      .archiver_executable_set("/usr/bin/ar")
                      .archiver_options_set({"rcs"})
+                     .executable_options_set({"-fPIE"})
                      .language_set("c++")
                      .compiler_options_set({"-pthread"});
 

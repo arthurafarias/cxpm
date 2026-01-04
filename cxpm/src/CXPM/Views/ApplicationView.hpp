@@ -1,12 +1,13 @@
 #pragma once
 
+#include "CXPM/Controllers/ToolchainManager.hpp"
 #include <CXPM/Core/Containers/Collection.hpp>
 #include <CXPM/Core/Exceptions/NotImplementedException.hpp>
 #include <CXPM/Core/Exceptions/RuntimeException.hpp>
-#include <CXPM/Modules/Logging/LoggerManager.hpp>
 #include <CXPM/Models/ProjectDescriptor.hpp>
 #include <CXPM/Models/TargetDescriptor.hpp>
 #include <CXPM/Modules/Console/AbstractConsoleApplication.hpp>
+#include <CXPM/Modules/Logging/LoggerManager.hpp>
 #include <CXPM/Modules/ProgramOptions/OptionDescriptorCollection.hpp>
 #include <CXPM/Modules/ProgramOptions/Parse.hpp>
 #include <CXPM/Utils/Unused.hpp>
@@ -14,6 +15,7 @@
 #include <filesystem>
 
 #include <CXPM/Controllers/ProjectManager.hpp>
+#include <ranges>
 
 using namespace CXPM::Modules::Console;
 
@@ -110,13 +112,75 @@ protected:
         Modules::Logging::LoggerManager::Level::Max);
 
     Controllers::ProjectManager::initialize();
+    Controllers::ToolchainManager::initialize();
     return 0;
   }
 
 private:
+  void generate(const String &directory) {
+
+    Collection<CompileCommandDescriptor> project_compile_commands;
+
+    auto build_path = std::filesystem::path(directory.c_str());
+
+    if (!directory.empty()) {
+      build_path = directory.c_str();
+    }
+
+    auto [result, compile_commands] =
+        Controllers::ProjectManager::manifest_generate(build_path.string());
+
+    project_compile_commands.append_range(compile_commands);
+
+    if (result != 0) {
+
+      throw Core::Exceptions::RuntimeException(
+          "Failed to generate manifest {} using {}",
+          build_path.string() + "/project-manifest.so",
+          build_path.string() + "/package.json");
+    }
+
+    auto project_manifest =
+        Controllers::ProjectManager::manifest_load_from_path(
+            std::filesystem::path(build_path.string())
+                .append("libproject-manifest.so")
+                .string());
+
+    project_manifest.compile_comands = compile_commands;
+    project_manifest.build_path = directory;
+
+    for (auto target : project_manifest.targets) {
+
+      if (target.type == "reference") {
+
+        auto path = std::filesystem::path(target.url.c_str());
+
+        if (path.is_relative()) {
+          path = std::filesystem::path(directory.c_str()).append(path.c_str());
+        }
+
+        generate(path.c_str());
+      }
+    }
+
+    auto non_reference_targets =
+        project_manifest.targets |
+        std::views::filter([](auto &&v) { return v.type != "reference"; }) |
+        std::ranges::to<Collection<TargetDescriptor>>();
+
+    for (auto& target : non_reference_targets) {
+      target.build_path = directory;
+    }
+
+    Controllers::ProjectManager::targets_append(non_reference_targets);
+  }
+
   Controllers::ProjectManager::BuildProjectOutputResult
   build(const String &directory) {
-    return Controllers::ProjectManager::build_project(directory);
+
+    generate(directory);
+
+    return Controllers::ProjectManager::build_all();
   }
 
   Controllers::ProjectManager::InstallTargetOutputResult
@@ -124,7 +188,7 @@ private:
                  const String &prefix_override = "/usr/local") {
 
     auto [result, build, toolchain] =
-        Controllers::ProjectManager::build_target(target, prefix_override);
+        Controllers::ProjectManager::target_build(target, prefix_override);
 
     switch (result) {
     case Controllers::ProjectManager::BuildTargetOutputResultStatus::Success:
@@ -136,7 +200,7 @@ private:
       break;
     }
 
-    return Controllers::ProjectManager::install_target(target, toolchain,
+    return Controllers::ProjectManager::target_install(target, toolchain,
                                                        prefix_override);
   }
 

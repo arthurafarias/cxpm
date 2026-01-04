@@ -1,5 +1,6 @@
 #pragma once
 
+#include "CXPM/Models/TargetDescriptor.hpp"
 #include <CXPM/Models/ProjectDescriptor.hpp>
 
 #define ExportProject(name)                                                    \
@@ -9,6 +10,14 @@ namespace CXPM::Models {
 
 class Project : public ProjectDescriptor {
 public:
+  Project &add(const String &path) {
+    TargetDescriptor target;
+    target.type = "reference";
+    target.url = path;
+    targets.push_back(target);
+    return *this;
+  }
+
   Project &add(const TargetDescriptor &target) {
     targets.push_back(target);
     return *this;

@@ -11,8 +11,8 @@
 namespace CXPM::Models {
 struct ProjectDescriptor {
   String build_path;
-  std::deque<ToolchainDescriptor> toolchains;
-  std::deque<TargetDescriptor> targets;
+  Collection<ToolchainDescriptor> toolchains;
+  Collection<TargetDescriptor> targets;
   Collection<CompileCommandDescriptor> compile_comands;
 };
 } // namespace CXPM::Models
