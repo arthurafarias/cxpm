@@ -19,20 +19,23 @@ If you're interested in discussing or contributing to this idea, feel free to fo
 would have a package.cpp as following
 
 ```cpp
-#include <CXPM/Models/TargetDescriptor.hpp>
-#include <CXPM/Models/ProjectDescriptor.hpp>
+#include <CXPM/Models/Target.hpp>
+#include <CXPM/Models/Project.hpp>
 
- auto example = Models::TargetDescriptor()
-                       .name_set("example-executable")
-                       .version_set("1.0.0")
-                       .type_set("executable")
-                       .sources_append({"src/main.cpp"})
-                       .options_append({"-fPIE", "-fstack-protector-all"})
-                       .link_libraries_append({"m"})
-                       .create();
+using namespace CXPM::Models;
 
-auto project = Models::ProjectDescriptor()
-                        .add(example)
+auto cxpm = Target()
+                    .name_set("cxpm")
+                    .version_set("0.1.0")
+                    .type_set("executable")
+                    .sources_append({"src/cxpm.cpp"})
+                    .include_directories_append({"src"})
+                    .options_append({"-fPIE", "-fstack-protector-all", "-std=c++23"})
+                    .link_libraries_append({"m"})
+                    .create();
+
+auto project = Project()
+                        .add(cxpm)
                         .create();
 ```
 
@@ -69,23 +72,24 @@ cxpm --build .
 cxpm now supports custom toolchain definitions, enabling cross-compilation or integration with non-system compilers:
 
 ```c++
-#include <CXPM/Models/ToolchainDescriptor.hpp>
+#include <CXPM/Models/Toolchain.hpp>
+#include <CXPM/Models/ExportToolchain.hpp>
 
 using namespace CXPM::Models;
 
 auto toolchain = Toolchain()
-                     .name_set("g++")
+                     .name_set("gcc")
                      .version_set("generic")
                      .include_directory_prefix_set("-I")
                      .link_directory_prefix_set("-L")
                      .link_library_prefix_set("-l")
-                     .compiler_executable_set("/usr/bin/g++")
-                     .linker_executable_set("/usr/bin/g++")
-                     .language_set("c++")
-                     .compiler_options_set({"-pthread"})
-                     .create();
+                     .compiler_executable_set("/usr/bin/gcc")
+                     .linker_executable_set("/usr/bin/gcc")
+                     .language_set("c")
+                     .compiler_options_set({"-pthread"});
 
-extern "C" Toolchain *get_toolchain() { return &toolchain; }
+                     
+ExportToolchain(toolchain);
 ```
 
 ## Pkg-Config Integration
@@ -93,20 +97,22 @@ extern "C" Toolchain *get_toolchain() { return &toolchain; }
 Pkg-config dependencies are now resolved automatically when specified in the package descriptor:
 
 ```c++
-auto example = Models::TargetDescriptor()
-                   .name_set("example-executable")
+#include <CXPM/Models/Project.hpp>
+#include <CXPM/Models/Target.hpp>
+
+using namespace CXPM::Models;
+
+auto example = Target()
+                   .name_set("example-executable-with-gstreamer-1.0")
                    .version_set("1.0.0")
                    .type_set("executable")
-                   .sources_append({"src/main.cpp", "src/source0.cpp",
-                                    "src/source1.cpp", "src/source2.cpp"})
-                   .sources_append({"src/source3.cpp"})
+                   .sources_append({"src/main.cpp"})
                    .options_append({"-fPIE", "-fstack-protector-all"})
-                   .link_libraries_append({"m"})
-                   .include_directories_append({})
-                   .dependencies_append("gstreamer-1.0") // pkg-config dependency
+                   .link_libraries_append({"m", "gstreamer-1.0"})
+                   .include_directories_append({"src"})
                    .create();
 
-auto project = Models::ProjectDescriptor().add(example).create();
+auto project = Project().add(example).create();
 ```
 
 ## Installation Support

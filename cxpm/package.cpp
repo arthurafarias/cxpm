@@ -1,7 +1,9 @@
 #include <CXPM/Models/Target.hpp>
 #include <CXPM/Models/Project.hpp>
 
-auto cxpm = Models::Target()
+using namespace CXPM::Models;
+
+auto cxpm = Target()
                     .name_set("cxpm")
                     .version_set("0.1.0")
                     .type_set("executable")
@@ -11,6 +13,6 @@ auto cxpm = Models::Target()
                     .link_libraries_append({"m"})
                     .create();
 
-auto project = Models::Project()
+auto project = Project()
                         .add(cxpm)
                         .create();
