@@ -1,6 +1,5 @@
 #pragma once
 
-#include "CXPM/Core/Containers/Collection.hpp"
 #include "CXPM/Core/Exceptions/RuntimeException.hpp"
 #include "CXPM/Core/Logging/LoggerManager.hpp"
 #include "CXPM/ProjectDescriptor.hpp"
@@ -8,6 +7,7 @@
 #include "CXPM/Modules/Console/AbstractConsoleApplication.hpp"
 #include "CXPM/Modules/ProgramOptions/OptionDescriptorCollection.hpp"
 #include "CXPM/Modules/ProgramOptions/Parse.hpp"
+#include "CXPM/Utils/Unused.hpp"
 #include <filesystem>
 
 #include <CXPM/ProjectManager.hpp>
@@ -39,7 +39,7 @@ public:
 
     if (options.contains("build") || options.contains("b")) {
 
-      Collection<String> values;
+      BasicCollection<String> values;
 
       if (options.contains("build")) {
         values = options["build"];
@@ -63,7 +63,7 @@ public:
 
     if (options.contains("install") || options.contains("i")) {
 
-      Collection<String> values;
+      BasicCollection<String> values;
       String prefix = "/usr/local";
 
       if (options.contains("install")) {
@@ -168,7 +168,9 @@ private:
     return {Status::Success, project};
   }
 
-  void uninstall(const String &directory) {}
+  void uninstall(const String &directory) {
+    Utils::Unused{directory};
+  }
 
   void assert_project_directory(const String &directory) {
     if (!std::filesystem::exists(directory.c_str())) {

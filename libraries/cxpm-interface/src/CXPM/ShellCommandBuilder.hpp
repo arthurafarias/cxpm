@@ -2,7 +2,7 @@
 
 #include <CXPM/Core/Containers/String.hpp>
 
-using namespace Core::Containers;
+using namespace CXPM::Core::Containers;
 
 template <typename DerivedType> struct ShellCommandBuilder {
 public:

@@ -11,7 +11,8 @@
 #include <memory>
 #include <stdexcept>
 
-using namespace Core::Containers;
+using namespace CXPM::Core::Containers;
+
 namespace Utils::Unix {
 
 class ShellManager {
@@ -25,11 +26,11 @@ class ShellManager {
   ShellManager operator=(const ShellManager &&) = delete;
 
 public:
-  static inline const std::tuple<int, Core::Containers::String,
-                                 Core::Containers::String>
-  exec(Core::Containers::String command, bool dry = false, bool shell = false) {
+  static inline const std::tuple<int, String,
+                                 String>
+  exec(String command, bool dry = false, bool shell = false) {
 
-    Core::Containers::String result = "";
+    String result = "";
 
     char buffer[1024];
     ::memset(buffer, '\0', sizeof(buffer));
@@ -64,10 +65,10 @@ public:
   }
 
   static inline const std::shared_ptr<std::promise<
-      std::tuple<int, Core::Containers::String, Core::Containers::String>>>
-  exec_async(Core::Containers::String command, bool shell = false) {
+      std::tuple<int, String, String>>>
+  exec_async(String command, bool shell = false) {
     using promise_type = std::promise<
-        std::tuple<int, Core::Containers::String, Core::Containers::String>>;
+        std::tuple<int, String, String>>;
     auto promise = std::make_shared<promise_type>();
 
     Threading::ThreadPool::get_instance().submit([command, shell, promise]() {

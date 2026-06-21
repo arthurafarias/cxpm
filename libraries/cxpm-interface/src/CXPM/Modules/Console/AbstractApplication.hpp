@@ -4,7 +4,7 @@
 #include "CXPM/Core/Containers/String.hpp"
 #include "CXPM/Core/Object.hpp"
 
-using namespace Core::Containers;
+using namespace CXPM::Core::Containers;
 
 namespace Modules::Console {
 class AbstractApplication : public Object {
@@ -16,11 +16,11 @@ public:
 
   virtual int run() = 0;
 
-  virtual const Collection<String> &args() { return args_property; }
+  virtual const BasicCollection<String> &args() { return args_property; }
 
 protected:
   virtual int setup() = 0;
 
-  Collection<String> args_property;
+  BasicCollection<String> args_property;
 };
 } // namespace Modules::Console

@@ -76,12 +76,12 @@ StaticClass(ProjectManager)
     }
   }
 
-  static inline Collection<String> modules_search_paths;
+  static inline BasicCollection<String> modules_search_paths;
 
   static inline BuildProjectOutputResult build_project(const String directory) {
 
     Toolchain toolchain;
-    Collection<CompileCommandDescriptor> commands;
+    BasicCollection<CompileCommandDescriptor> commands;
 
     auto build_path = std::filesystem::path(directory.c_str());
 
@@ -153,9 +153,18 @@ StaticClass(ProjectManager)
       }
     }
 
-    auto stream = std::ofstream("compile_commands.json");
-    Modules::Serialization::JsonOutputArchiver output(stream);
-    output % commands;
+    auto compile_commands_path = std::filesystem::path()
+                                     .append(directory.c_str())
+                                     .append("compile_commands.json");
+
+    auto stream =
+        std::ofstream(std::filesystem::absolute(compile_commands_path));
+
+    {
+      using namespace CXPM::Modules::Serialization;
+      auto joa = JsonOutputArchiver(stream);
+      joa % ValueToken{commands};
+    }
 
     return {Status::Success, project_manifest, toolchain};
   }
@@ -174,7 +183,8 @@ StaticClass(ProjectManager)
 
   static inline InstallProjectOutputResult
   install_project(const Project &target, const String prefix) {
-    return {Status::Success};
+    Utils::Unused{target, prefix};
+    return {Status::Failure};
   }
 
   using InstallTargetOutputResult =
@@ -318,19 +328,19 @@ StaticClass(ProjectManager)
 
   enum BuildManifestResultStatus { Success, Failure };
 
-  using BuildManifestResult = std::tuple<BuildManifestResultStatus,
-                                         Collection<CompileCommandDescriptor>>;
+  using BuildManifestResult =
+      std::tuple<BuildManifestResultStatus,
+                 BasicCollection<CompileCommandDescriptor>>;
 
   static inline BuildManifestResult
-  build_manifest(const Core::Containers::String &project_path,
-                 Core::Containers::Collection<Core::Containers::String>
-                     extra_toolchain_search_paths) {
+  build_manifest(const String &project_path,
+                 BasicCollection<String> extra_toolchain_search_paths) {
 
     auto [generate_loader_result, loader_path] = generate_loader(project_path);
 
     if (generate_loader_result == Status::Failure) {
       return BuildManifestResult(BuildManifestResultStatus::Failure,
-                                 Collection<CompileCommandDescriptor>());
+                                 BasicCollection<CompileCommandDescriptor>());
     }
 
     auto manifest_project = ManifestPackage;
@@ -345,7 +355,7 @@ StaticClass(ProjectManager)
   }
 
   static inline Models::ProjectDescriptor
-  load_from_manifest(const Core::Containers::String &manifest_path) {
+  load_from_manifest(const String &manifest_path) {
 
     typedef Models::Project *(*getter_type)();
 
@@ -374,7 +384,7 @@ StaticClass(ProjectManager)
   }
 
   static inline int clean(const String &project_path,
-                          const Collection<String> &) {
+                          const BasicCollection<String> &) {
 
     // objects
     for (auto source : ManifestPackage.sources) {
@@ -400,7 +410,7 @@ StaticClass(ProjectManager)
     return 0;
   }
 
-  Core::Containers::Collection<Models::ProjectDescriptor> projects;
+  BasicCollection<Models::ProjectDescriptor> projects;
 
 private:
   static inline const Models::Target ManifestPackage =

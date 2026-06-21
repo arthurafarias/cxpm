@@ -4,7 +4,7 @@
 #include "CXPM/Core/Containers/Variant.hpp"
 #include <string>
 
-using namespace Core::Containers;
+using namespace CXPM::Core::Containers;
 
 namespace Modules::Serialization {
 template <typename... ValueTypes>

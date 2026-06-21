@@ -12,6 +12,6 @@ namespace Models {
 struct ProjectDescriptor {
   std::deque<ToolchainDescriptor> toolchains;
   std::deque<TargetDescriptor> targets;
-  Collection<CompileCommandDescriptor> compile_comands;
+  BasicCollection<CompileCommandDescriptor> compile_comands;
 };
 } // namespace Models

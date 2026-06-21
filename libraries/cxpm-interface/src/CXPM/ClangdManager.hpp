@@ -11,7 +11,7 @@
 
 #include <sstream>
 
-using namespace Core::Containers;
+using namespace CXPM::Core::Containers;
 using namespace Models;
 
 namespace Controllers {

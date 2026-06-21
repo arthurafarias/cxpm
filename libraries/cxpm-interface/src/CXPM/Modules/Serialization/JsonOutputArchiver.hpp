@@ -1,172 +1,104 @@
 #pragma once
 
-#include "CXPM/Core/Exceptions/RuntimeException.hpp"
-#include "CXPM/Modules/Serialization/AbstractArchiver.hpp"
-#include "CXPM/Modules/Serialization/ValueDescriptor.hpp"
+#include "CXPM/Modules/Serialization/AbstractOutputArchiver.hpp"
+#include "CXPM/Modules/Serialization/ArrayEndToken.hpp"
+#include "CXPM/Modules/Serialization/ArrayStartToken.hpp"
+#include "CXPM/Modules/Serialization/ObjectEndToken.hpp"
+#include "CXPM/Modules/Serialization/ObjectStartToken.hpp"
+#include "CXPM/Modules/Serialization/PairToken.hpp"
+#include "CXPM/Modules/Serialization/SeparatorToken.hpp"
+#include "CXPM/Modules/Serialization/ValueToken.hpp"
 #include <CXPM/Core/UniquePointer.hpp>
 #include <CXPM/Utils/Unused.hpp>
+#include <cmath>
 #include <cstddef>
+#include <cstdint>
 #include <iomanip>
 #include <ostream>
-#include <syncstream>
 
-namespace Modules::Serialization {
+namespace CXPM::Modules::Serialization {
 
-class JsonOutputArchiver : public AbstractArchiver {
-public:
+struct JsonOutputArchiver : public virtual AbstractOutputArchiver {
   explicit JsonOutputArchiver(std::ostream &ostream)
-      : stream_property(ostream) {}
-
-  std::osyncstream stream() { return std::osyncstream(stream_property); }
-
-  virtual String to_string() { return ""; }
-
-  void object_start(TagBase tag) {
-    stream() << "{";
-    multipart_element_stack.push_front(tag);
-  }
-
-  void object_end(TagBase tag) {
-    validate_tag(tag);
-    stream() << "}";
-    multipart_element_stack.pop_front();
-  }
-
-  void array_start(TagBase tag) {
-    stream() << "[";
-    multipart_element_stack.push_front(tag);
-  }
-
-  void array_end(TagBase tag) {
-    validate_tag(tag);
-    stream() << "]";
-    multipart_element_stack.pop_front();
-  }
-
-  template <typename ValueType> void key_value(KeyValueTag<ValueType> tag) {
-    if (multipart_element_stack.empty()) {
-      throw Core::Exceptions::RuntimeException(
-          "Can't place a key-value node outside an object!");
-    }
-
-    try_print_comma();
-    stream() << std::quoted(tag.name) << ":";
-    (*this) % ValueTag<ValueType>(tag.setter, tag.getter);
-  }
-
-  void multipart(const TagBase &tag) {
-    if (tag.part == TagPart::Start) {
-      multipart_element_stack.push_front(tag);
-    } else {
-      if (tag.name != multipart_element_stack.front().name) {
-        throw Core::Exceptions::RuntimeException(
-            "Closing element with different name.");
-      }
-      multipart_element_stack.pop_front();
-    }
-  }
-
-  template <typename ValueType> void value(const ValueTag<ValueType> &tag) {
-    static int unique_id = 0;
-    unique_id++;
-
-    object_start(TagBase{"object-" + std::to_string(unique_id), TagPart::Start,
-                         TagType::Object});
-    // (*this) % tag;
-    object_end(TagBase{"object-" + std::to_string(unique_id), TagPart::End,
-                       TagType::Object});
-  }
-
-  void try_print_comma() {
-    if (!multipart_element_stack.empty() &&
-        (multipart_element_stack.front().part == TagPart::Start)) {
-      multipart_element_stack.front().part = TagPart::End;
-    } else {
-      stream() << ",";
-    }
-  }
-
-private:
-  void validate_tag(TagBase &tag) {
-    if (multipart_element_stack.empty())
-      return;
-
-    auto current_tag = multipart_element_stack.front();
-    if (current_tag.type != tag.type || current_tag.name != tag.name) {
-      throw Core::Exceptions::RuntimeException(
-          "Failed to serialize element at tag {}", tag.name);
-    }
-  }
-
-private:
-  Collection<TagBase> multipart_element_stack;
-  std::ostream &stream_property;
+      : AbstractOutputArchiver(ostream) {}
 };
 
-template <>
-inline void JsonOutputArchiver::value<int>(const ValueTag<int> &tag) {
-  stream() << tag.getter();
-}
+static inline JsonOutputArchiver &operator%(JsonOutputArchiver &joa,
+                                            const ArrayStartToken &) {
+  joa.stream_get() << "[";
+  return joa;
+};
 
-template <>
-inline void JsonOutputArchiver::value<double>(const ValueTag<double> &tag) {
-  stream() << tag.getter();
-}
+static inline JsonOutputArchiver &operator%(JsonOutputArchiver &joa,
+                                            const ArrayEndToken &) {
+  joa.stream_get() << "]";
+  return joa;
+};
 
-template <>
-inline void JsonOutputArchiver::value<String>(const ValueTag<String> &tag) {
-  stream() << std::quoted(tag.getter());
-}
+static inline JsonOutputArchiver &operator%(JsonOutputArchiver &joa,
+                                            const ObjectStartToken &) {
+  joa.stream_get() << "{";
+  return joa;
+};
 
-template <>
-inline void JsonOutputArchiver::value<bool>(const ValueTag<bool> &tag) {
-  stream() << tag.getter();
-}
+static inline JsonOutputArchiver &operator%(JsonOutputArchiver &joa,
+                                            const ObjectEndToken &) {
+  joa.stream_get() << "}";
+  return joa;
+};
 
-template <>
-inline void
-JsonOutputArchiver::value<std::nullptr_t>(const ValueTag<std::nullptr_t> &tag) {
-  Utils::Unused{tag};
-}
+static inline JsonOutputArchiver &operator%(JsonOutputArchiver &joa,
+                                            const SeparatorToken &) {
+  joa.stream_get() << ",";
+  return joa;
+};
 
-template <typename ValueType>
-inline JsonOutputArchiver &operator%(JsonOutputArchiver &ar,
-                                     const ValueTag<ValueType> &value) {
-  ar.value(value);
-  return ar;
-}
+static inline JsonOutputArchiver &
+operator%(JsonOutputArchiver &joa, const ValueToken<bool> &token) {
+  joa.stream_get() << (token.value_get() ? "true": "false");
+  return joa;
+};
 
-template <typename ValueType>
-inline JsonOutputArchiver &operator%(JsonOutputArchiver &ar,
-                                     const KeyValueTag<ValueType> &value) {
-  ar.key_value(value);
-  return ar;
-}
+static inline JsonOutputArchiver &
+operator%(JsonOutputArchiver &joa, const ValueToken<std::nullptr_t> &) {
+  joa.stream_get() << "null";
+  return joa;
+};
 
-template <typename ValueType>
-inline JsonOutputArchiver &operator%(JsonOutputArchiver &ar,
-                                     const TagBase &descriptor) {
-  ar.multipart(descriptor);
-  return ar;
-}
+static inline JsonOutputArchiver &
+operator%(JsonOutputArchiver &joa, const ValueToken<std::int32_t> & token) {
+  joa.stream_get() << std::to_string(token.value_get());
+  return joa;
+};
 
-template <typename ElementType>
-inline JsonOutputArchiver &
-operator%(JsonOutputArchiver &ar, const Collection<ElementType> &collection) {
-  static int unique_id = 0;
-  unique_id++;
+static inline JsonOutputArchiver &
+operator%(JsonOutputArchiver &joa, const ValueToken<std::double_t> & token) {
+  joa.stream_get() << std::to_string(token.value_get());
+  return joa;
+};
 
-  ar.array_start(TagBase("array-" + std::to_string(unique_id), TagPart::Start,
-                         TagType::Array));
+static inline JsonOutputArchiver &
+operator%(JsonOutputArchiver &joa, const ValueToken<const String> & token) {
+  joa.stream_get() << std::quoted(token.value_get().c_str());
+  return joa;
+};
 
-  for (const auto &el : collection) {
-    ar.try_print_comma();
-    ar.value(ValueTag<ElementType>([&el](const ElementType &v) {}, [&el]() -> const ElementType& { return el; }));
-  }
+template<std::size_t size>
+static inline JsonOutputArchiver &
+operator%(JsonOutputArchiver &joa, const ValueToken<const char[size]> & token) {
+  joa.stream_get() << std::quoted(token.value_get());
+  return joa;
+};
 
-  ar.array_end(TagBase("array-" + std::to_string(unique_id), TagPart::End,
-                       TagType::Array));
-  return ar;
-}
+template <typename KeyType, typename ValueType>
+static inline JsonOutputArchiver &
+operator%(JsonOutputArchiver &joa, const PairToken<KeyType, ValueType> &value) {
+  
+  joa % ValueToken{value.key_get()};
+  joa.stream_get() << ":";
+  joa % ValueToken{value.value_get()};
 
-} // namespace Modules::Serialization
+  return joa;
+};
+
+} // namespace CXPM::Modules::Serialization

@@ -1,13 +1,12 @@
 #pragma once
 
-#include "CXPM/Core/Containers/Collection.hpp"
+#include "CXPM/Core/Containers/BasicCollection.hpp"
 #include <cctype>
 #include <format>
 #include <string>
-#include <type_traits>
 #include <utility>
 
-namespace Core::Containers {
+namespace CXPM::Core::Containers {
 
 class String : public std::string {
 
@@ -22,7 +21,7 @@ public:
 
   inline operator const char *() { return c_str(); }
 
-  inline static String join(const Collection<String> &collection,
+  inline static String join(const BasicCollection<String> &collection,
                             String delimiter) {
 
     String result = collection.front();
@@ -67,8 +66,8 @@ public:
                          end + 1); // end + 1 because substr length is exclusive
   }
 
-  static inline Collection<String> split(String haystack, String needle) {
-    Collection<String> splitted;
+  static inline BasicCollection<String> split(String haystack, String needle) {
+    BasicCollection<String> splitted;
     size_t position_last = 0;
     size_t position = 0;
 
@@ -90,13 +89,13 @@ public:
   }
 };
 
-} // namespace Core::Containers
+} // namespace CXPM::Core::Containers
 
 template <>
-struct std::formatter<Core::Containers::String, char>
+struct std::formatter<CXPM::Core::Containers::String, char>
     : public std::formatter<std::string> {
   using Parent = std::formatter<std::string>;
-  auto format(const Core::Containers::String &mi,
+  auto format(const CXPM::Core::Containers::String &mi,
               std::format_context &format_ctx) const {
     return Parent::format(mi, format_ctx);
   }

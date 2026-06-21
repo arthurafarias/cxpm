@@ -7,7 +7,7 @@
 #include <memory>
 #include <tuple>
 
-using namespace Core::Containers;
+using namespace CXPM::Core::Containers;
 
 namespace Models {
 struct ToolchainBasicCommandInterface {

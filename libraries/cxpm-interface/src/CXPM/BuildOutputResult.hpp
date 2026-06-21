@@ -6,5 +6,5 @@
 namespace Models {
 
 using BuildOutputResult = std::tuple<Status,
-                                     Collection<CompileCommandDescriptor>>;
+                                     BasicCollection<CompileCommandDescriptor>>;
 } // namespace Models

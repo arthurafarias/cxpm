@@ -10,7 +10,7 @@
 #include "CXPM/ToolchainObjectBuildInterface.hpp"
 #include <tuple>
 
-using namespace Core::Containers;
+using namespace CXPM::Core::Containers;
 
 namespace Models {
 

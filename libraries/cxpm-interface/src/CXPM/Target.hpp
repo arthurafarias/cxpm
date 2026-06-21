@@ -25,11 +25,11 @@ struct Target : public TargetDescriptor, public TargetInterface<Target> {
     return install_prefix;
   }
   virtual Target &
-  include_directories_set(const Collection<String> &value) override {
+  include_directories_set(const BasicCollection<String> &value) override {
     include_directories = value;
     return *this;
   }
-  virtual const Collection<String> &include_directories_get() const override {
+  virtual const BasicCollection<String> &include_directories_get() const override {
     return include_directories;
   }
 
@@ -45,11 +45,11 @@ struct Target : public TargetDescriptor, public TargetInterface<Target> {
   }
 
   virtual Target &
-  link_directories_set(const Collection<String> &value) override {
+  link_directories_set(const BasicCollection<String> &value) override {
     link_directories = value;
     return *this;
   }
-  virtual const Collection<String> &link_directories_get() const override {
+  virtual const BasicCollection<String> &link_directories_get() const override {
     return link_directories;
   }
 
@@ -58,12 +58,12 @@ struct Target : public TargetDescriptor, public TargetInterface<Target> {
     return *this;
   }
 
-  virtual Target &link_libraries_set(const Collection<String> &value) override {
+  virtual Target &link_libraries_set(const BasicCollection<String> &value) override {
     link_libraries = value;
     return *this;
   }
 
-  virtual const Collection<String> &link_libraries_get() const override {
+  virtual const BasicCollection<String> &link_libraries_get() const override {
     return link_libraries;
   }
 
@@ -72,11 +72,11 @@ struct Target : public TargetDescriptor, public TargetInterface<Target> {
     return *this;
   }
 
-  virtual Target &options_set(const Collection<String> &value) override {
+  virtual Target &options_set(const BasicCollection<String> &value) override {
     options = value;
     return *this;
   }
-  virtual const Collection<String> &options_get() const override {
+  virtual const BasicCollection<String> &options_get() const override {
     return options;
   }
 
@@ -116,10 +116,10 @@ struct Target : public TargetDescriptor, public TargetInterface<Target> {
     toolchain = value;
     return *this;
   }
-  virtual const Collection<String> &sources_get() const override {
+  virtual const BasicCollection<String> &sources_get() const override {
     return sources;
   }
-  virtual Target &sources_set(const Collection<String> &value) override {
+  virtual Target &sources_set(const BasicCollection<String> &value) override {
     sources = value;
     return *this;
   }
@@ -128,19 +128,19 @@ struct Target : public TargetDescriptor, public TargetInterface<Target> {
     sources.append_range(value);
     return *this;
   }
-  virtual const Collection<String> &dependencies_get() const override {
+  virtual const BasicCollection<String> &dependencies_get() const override {
     return dependencies;
   }
-  virtual Target &dependencies_set(const Collection<String> &value) override {
+  virtual Target &dependencies_set(const BasicCollection<String> &value) override {
     dependencies = value;
     return *this;
   }
-  virtual const Collection<CompileCommandDescriptor> &
+  virtual const BasicCollection<CompileCommandDescriptor> &
   compile_commands_get() const override {
     return compile_commands;
   }
   virtual Target &compile_commands_set(
-      const Collection<CompileCommandDescriptor> &value) override {
+      const BasicCollection<CompileCommandDescriptor> &value) override {
     compile_commands = value;
     return *this;
   }

@@ -1,9 +1,9 @@
-#include <CXPM/ProjectManager.hpp>
-#include <CXPM/ToolchainManager.hpp>
 #include <CXPM/Core/Containers/Collection.hpp>
 #include <CXPM/Core/Containers/String.hpp>
 #include <CXPM/Core/Exceptions/RuntimeException.hpp>
 #include <CXPM/Core/Logging/LoggerManager.hpp>
+#include <CXPM/ProjectManager.hpp>
+#include <CXPM/ToolchainManager.hpp>
 #include <CXPM/Utils/Unix/EnvironmentManager.hpp>
 #include <CXPM/Views/ApplicationView.hpp>
 

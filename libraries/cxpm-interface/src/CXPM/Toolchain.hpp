@@ -19,7 +19,7 @@
 #include <future>
 #include <memory>
 
-using namespace Core::Containers;
+using namespace CXPM::Core::Containers;
 
 namespace Models {
 
@@ -71,11 +71,11 @@ struct Toolchain : public ToolchainDescriptor,
   }
 
   virtual Toolchain &
-  include_directories_set(const Collection<String> &value) override {
+  include_directories_set(const BasicCollection<String> &value) override {
     include_directories = value;
     return *this;
   }
-  virtual const Collection<String> &include_directories_get() const override {
+  virtual const BasicCollection<String> &include_directories_get() const override {
     return include_directories;
   }
 
@@ -89,12 +89,12 @@ struct Toolchain : public ToolchainDescriptor,
   }
 
   virtual Toolchain &
-  compiler_options_set(const Collection<String> &value) override {
+  compiler_options_set(const BasicCollection<String> &value) override {
     compiler_options = value;
     return *this;
   }
 
-  virtual const Collection<String> &compiler_options_get() const override {
+  virtual const BasicCollection<String> &compiler_options_get() const override {
     return compiler_options;
   }
 
@@ -108,12 +108,12 @@ struct Toolchain : public ToolchainDescriptor,
   }
 
   virtual Toolchain &
-  archiver_options_set(const Collection<String> &value) override {
+  archiver_options_set(const BasicCollection<String> &value) override {
     archiver_options = value;
     return *this;
   }
 
-  virtual const Collection<String> &archiver_options_get() const override {
+  virtual const BasicCollection<String> &archiver_options_get() const override {
     return archiver_options;
   }
 
@@ -127,12 +127,12 @@ struct Toolchain : public ToolchainDescriptor,
   }
 
   virtual Toolchain &
-  linker_options_set(const Collection<String> &value) override {
+  linker_options_set(const BasicCollection<String> &value) override {
     linker_options = value;
     return *this;
   }
 
-  virtual const Collection<String> &linker_options_get() const override {
+  virtual const BasicCollection<String> &linker_options_get() const override {
     return linker_options;
   }
 
@@ -172,12 +172,12 @@ struct Toolchain : public ToolchainDescriptor,
   }
 
   virtual Toolchain &
-  link_directories_set(const Collection<String> &value) override {
+  link_directories_set(const BasicCollection<String> &value) override {
     link_directories = value;
     return *this;
   }
 
-  virtual const Collection<String> &link_directories_get() const override {
+  virtual const BasicCollection<String> &link_directories_get() const override {
     return link_directories;
   }
 
@@ -252,7 +252,7 @@ struct Toolchain : public ToolchainDescriptor,
 
     Core::Logging::LoggerManager::info("building {}: started", source);
 
-    Collection<String> command;
+    BasicCollection<String> command;
 
     command.push_back(compiler_executable);
 
@@ -261,7 +261,7 @@ struct Toolchain : public ToolchainDescriptor,
     command.push_back("-fPIC");
 
     auto include_directories_arguments =
-        target.include_directories.transform<Collection<String>>(
+        target.include_directories.transform<BasicCollection<String>>(
             [this, &target](const auto &el) {
               auto path = std::filesystem::path(el.c_str());
 
@@ -271,7 +271,7 @@ struct Toolchain : public ToolchainDescriptor,
                            .append(el.c_str());
               }
 
-              return Collection<String>{
+              return BasicCollection<String>{
                   include_directory_prefix,
                   std::filesystem::absolute(path).string()};
             });
@@ -281,9 +281,9 @@ struct Toolchain : public ToolchainDescriptor,
     }
 
     auto link_directories_arguments =
-        target.link_directories.transform<Collection<String>>(
+        target.link_directories.transform<BasicCollection<String>>(
             [this](const auto &el) {
-              return Collection<String>{link_directory_prefix, el};
+              return BasicCollection<String>{link_directory_prefix, el};
             });
 
     for (auto link_directory_argument : link_directories_arguments) {
@@ -291,9 +291,9 @@ struct Toolchain : public ToolchainDescriptor,
     }
 
     auto link_libraries_arguments =
-        target.link_libraries.transform<Collection<String>>(
+        target.link_libraries.transform<BasicCollection<String>>(
             [this](const auto &el) {
-              return Collection<String>{link_library_prefix, el};
+              return BasicCollection<String>{link_library_prefix, el};
             });
 
     for (auto link_library_argument : link_libraries_arguments) {
@@ -309,11 +309,11 @@ struct Toolchain : public ToolchainDescriptor,
             .append(target.project_path.c_str())
             .append(object_prefix + source_path.string() + object_suffix);
 
-    command.append_range(Core::Containers::Collection<Core::Containers::String>{
+    command.append_range(BasicCollection<String>{
         source_specifier_prefix, source_path.string()});
 
     command.append_range(
-        Collection<String>({object_specifier_prefix, object_path.string()}));
+        BasicCollection<String>({object_specifier_prefix, object_path.string()}));
 
     auto command_line = String::join(command, " ");
 
@@ -354,7 +354,7 @@ struct Toolchain : public ToolchainDescriptor,
   virtual ExecutableLinkResult executable_link(const TargetDescriptor &target,
                                                bool dry = false) override {
 
-    Collection<String> command;
+    BasicCollection<String> command;
 
     command.push_back(compiler_executable);
 
@@ -363,9 +363,9 @@ struct Toolchain : public ToolchainDescriptor,
     command.push_back("-fPIE");
 
     auto include_directories_arguments =
-        target.include_directories.transform<Collection<String>>(
+        target.include_directories.transform<BasicCollection<String>>(
             [this](const auto &el) {
-              return Collection<String>{include_directory_prefix, el};
+              return BasicCollection<String>{include_directory_prefix, el};
             });
 
     for (auto include_directory_argument : include_directories_arguments) {
@@ -373,9 +373,9 @@ struct Toolchain : public ToolchainDescriptor,
     }
 
     auto link_directories_arguments =
-        target.link_directories.transform<Collection<String>>(
+        target.link_directories.transform<BasicCollection<String>>(
             [this](const auto &el) {
-              return Collection<String>{link_directory_prefix, el};
+              return BasicCollection<String>{link_directory_prefix, el};
             });
 
     for (auto link_directory_argument : link_directories_arguments) {
@@ -383,9 +383,9 @@ struct Toolchain : public ToolchainDescriptor,
     }
 
     auto link_libraries_arguments =
-        target.link_libraries.transform<Collection<String>>(
+        target.link_libraries.transform<BasicCollection<String>>(
             [this](const auto &el) {
-              return Collection<String>{link_library_prefix, el};
+              return BasicCollection<String>{link_library_prefix, el};
             });
 
     for (auto link_library_argument : link_libraries_arguments) {
@@ -396,7 +396,7 @@ struct Toolchain : public ToolchainDescriptor,
                            .append(target.project_path.c_str())
                            .append(target.name.c_str());
 
-    command.append_range(Collection<String>{"-o", target_path.string()});
+    command.append_range(BasicCollection<String>{"-o", target_path.string()});
 
     for (auto source : target.sources) {
 
@@ -453,7 +453,7 @@ struct Toolchain : public ToolchainDescriptor,
   shared_object_link(const TargetDescriptor &target, bool dry = false,
                      const String &library_prefix = "lib") override {
 
-    Collection<String> command;
+    BasicCollection<String> command;
 
     command.push_back(compiler_executable);
 
@@ -465,9 +465,9 @@ struct Toolchain : public ToolchainDescriptor,
     command.append_range(target.options);
 
     auto include_directories_arguments =
-        target.include_directories.transform<Collection<String>>(
+        target.include_directories.transform<BasicCollection<String>>(
             [this](const auto &el) {
-              return Collection<String>{include_directory_prefix, el};
+              return BasicCollection<String>{include_directory_prefix, el};
             });
 
     for (auto include_directory_argument : include_directories_arguments) {
@@ -475,9 +475,9 @@ struct Toolchain : public ToolchainDescriptor,
     }
 
     auto link_directories_arguments =
-        target.link_directories.transform<Collection<String>>(
+        target.link_directories.transform<BasicCollection<String>>(
             [this](const auto &el) {
-              return Collection<String>{link_directory_prefix, el};
+              return BasicCollection<String>{link_directory_prefix, el};
             });
 
     for (auto link_directory_argument : link_directories_arguments) {
@@ -485,9 +485,9 @@ struct Toolchain : public ToolchainDescriptor,
     }
 
     auto link_libraries_arguments =
-        target.link_libraries.transform<Collection<String>>(
+        target.link_libraries.transform<BasicCollection<String>>(
             [this](const auto &el) {
-              return Collection<String>{link_library_prefix, el};
+              return BasicCollection<String>{link_library_prefix, el};
             });
 
     for (auto link_library_argument : link_libraries_arguments) {
@@ -499,7 +499,7 @@ struct Toolchain : public ToolchainDescriptor,
                            .append(shared_object_prefix + target.name.c_str() +
                                    shared_object_suffix);
 
-    command.append_range(Collection<String>{"-o", target_path.string()});
+    command.append_range(BasicCollection<String>{"-o", target_path.string()});
 
     for (auto source : target.sources) {
 
@@ -541,7 +541,7 @@ struct Toolchain : public ToolchainDescriptor,
   virtual ArchiveLinkResult archive_link(const TargetDescriptor &target,
                                          bool dry = false) override {
 
-    Collection<String> command;
+    BasicCollection<String> command;
 
     command.push_back(archiver_executable);
 
@@ -552,7 +552,7 @@ struct Toolchain : public ToolchainDescriptor,
             .append(target.project_path.c_str())
             .append(archive_prefix_get() + target.name + archive_suffix_get());
 
-    command.append_range(Collection<String>{"-o", target_path.string()});
+    command.append_range(BasicCollection<String>{"-o", target_path.string()});
 
     for (auto source : target.sources) {
 

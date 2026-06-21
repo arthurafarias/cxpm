@@ -3,17 +3,17 @@
 #include <CXPM/Core/Containers/String.hpp>
 #include <CXPM/Core/Containers/Collection.hpp>
 
-using namespace Core::Containers;
+using namespace CXPM::Core::Containers;
 
 namespace Models {
 struct PackageDescriptor {
   String name;
   String version;
   String install_prefix;
-  Collection<String> include_directories;
-  Collection<String> link_directories;
-  Collection<String> link_libraries;
-  Collection<String> options;
+  BasicCollection<String> include_directories;
+  BasicCollection<String> link_directories;
+  BasicCollection<String> link_libraries;
+  BasicCollection<String> options;
   String project_path = "";
 };
 } // namespace Models

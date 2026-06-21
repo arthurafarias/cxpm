@@ -7,7 +7,7 @@
 #include <CXPM/Core/Containers/Collection.hpp>
 #include <CXPM/Core/Containers/String.hpp>
 
-using namespace Core::Containers;
+using namespace CXPM::Core::Containers;
 
 namespace Utils::Unix {
 
@@ -22,13 +22,13 @@ private:
   EnvironmentManager &operator=(const EnvironmentManager &&) = delete;
 
 public:
-  static inline Core::Containers::Collection<Core::Containers::String>
+  static inline BasicCollection<String>
   get(const char *__str) {
-    Core::Containers::Collection<Core::Containers::String> result;
+    BasicCollection<String> result;
     const auto &__env = getenv(__str);
 
     if (__env == nullptr) {
-      return Collection<String>();
+      return BasicCollection<String>();
     }
     
     auto _result = strdup(__env);
@@ -45,9 +45,9 @@ public:
     return result;
   }
 
-  inline static const Core::Containers::String which(const char *filename) {
+  inline static const String which(const char *filename) {
 
-    auto folders = Core::Containers::Collection<Core::Containers::String>();
+    auto folders = BasicCollection<String>();
     folders.append_range(Utils::Unix::EnvironmentManager::get("PATH"));
 
     if (std::filesystem::path(filename).is_absolute()) {
@@ -74,8 +74,8 @@ public:
     return "";
   }
 
-  inline static const Core::Containers::String
-  which(const Core::Containers::String &str) {
+  inline static const String
+  which(const String &str) {
     return which(str.c_str());
   }
 };

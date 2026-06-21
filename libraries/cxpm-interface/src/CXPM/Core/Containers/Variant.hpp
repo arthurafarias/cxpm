@@ -6,9 +6,7 @@
 
 #include <variant>
 
-using namespace Core::Containers;
-
-namespace Core::Containers {
+namespace CXPM::Core::Containers {
 template <typename... ArgsTypes> class Variant : public std::variant<ArgsTypes...> {
 public:
   using std::variant<ArgsTypes...>::variant;

@@ -1,14 +1,12 @@
 #pragma once
 
 #include "CXPM/ToolchainDescriptor.hpp"
-#include "CXPM/Utils/Unix/ShellManager.hpp"
-#include "CXPM/Core/Containers/Collection.hpp"
 #include "CXPM/Core/Containers/String.hpp"
 
 #include "CXPM/PackageDescriptor.hpp"
 #include <CXPM/Utils/Macros/StaticClass.hpp>
 
-using namespace Core::Containers;
+using namespace CXPM::Core::Containers;
 using namespace Models;
 
 namespace Controllers {

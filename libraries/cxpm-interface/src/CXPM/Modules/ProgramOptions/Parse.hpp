@@ -4,10 +4,10 @@
 #include "CXPM/Modules/ProgramOptions/OptionDescriptorCollection.hpp"
 
 namespace Modules::ProgramOptions {
-inline static Map<String, Collection<String>> Parse(Collection<String> tokens) {
+inline static Map<String, BasicCollection<String>> Parse(BasicCollection<String> tokens) {
 
-  Map<String, Collection<String>> options;
-  options["__positional__"] = Collection<String>();
+  Map<String, BasicCollection<String>> options;
+  options["__positional__"] = BasicCollection<String>();
 
   String current_argument = "";
 
