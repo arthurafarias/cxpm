@@ -70,11 +70,9 @@ cxpm --build .
 cxpm now supports custom toolchain definitions, enabling cross-compilation or integration with non-system compilers:
 
 ```c++
-#include <Models/ToolchainDescriptor.hpp>
+#include <CXPM/Toolchain.hpp>
 
-using namespace Models;
-
-auto toolchain = Toolchain()
+auto toolchain = Models::Toolchain()
                      .name_set("g++")
                      .version_set("generic")
                      .include_directory_prefix_set("-I")
@@ -82,9 +80,18 @@ auto toolchain = Toolchain()
                      .link_library_prefix_set("-l")
                      .compiler_executable_set("/usr/bin/g++")
                      .linker_executable_set("/usr/bin/g++")
+                     .archiver_executable_set("/usr/bin/ar")
+                     .archiver_options_set({"rcs"})
                      .language_set("c++")
                      .compiler_options_set({"-pthread"})
-                     .create();
+                     .object_prefix_set("")
+                     .object_suffix_set(".o")
+                     .shared_object_prefix_set("lib")
+                     .shared_object_suffix_set(".so")
+                     .archive_prefix_set("lib")
+                     .archive_suffix_set(".a")
+                     .executable_prefix_set("")
+                     .executable_suffix_set("");
 
 extern "C" Toolchain *get_toolchain() { return &toolchain; }
 ```
@@ -94,7 +101,10 @@ extern "C" Toolchain *get_toolchain() { return &toolchain; }
 Pkg-config dependencies are now resolved automatically when specified in the package descriptor:
 
 ```c++
-auto example = Models::TargetDescriptor()
+#include <CXPM/Target.hpp>
+#include <CXPM/Project.hpp>
+
+auto example = Models::Target()
                    .name_set("example-executable")
                    .version_set("1.0.0")
                    .type_set("executable")
@@ -103,11 +113,10 @@ auto example = Models::TargetDescriptor()
                    .sources_append({"src/source3.cpp"})
                    .options_append({"-fPIE", "-fstack-protector-all"})
                    .link_libraries_append({"m"})
-                   .include_directories_append({})
-                   .dependencies_append("gstreamer-1.0") // pkg-config dependency
+                   .include_directories_append({"src"})
                    .create();
 
-auto project = Models::ProjectDescriptor().add(example).create();
+auto project = Models::Project().add(example).create();
 ```
 
 ## Installation Support

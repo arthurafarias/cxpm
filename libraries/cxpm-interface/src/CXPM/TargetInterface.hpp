@@ -31,6 +31,7 @@ struct TargetInterface : public PackageInterface<DerivedType> {
   compile_commands_get() const = 0;
   virtual DerivedType &
   compile_commands_set(const Collection<CompileCommandDescriptor> &) = 0;
+  virtual DerivedType& create() = 0;
 };
 
 /** How C++ STL makers plans to create reflections in the language? */

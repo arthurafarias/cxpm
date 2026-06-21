@@ -11,8 +11,8 @@
 #include "CXPM/ToolchainDescriptor.hpp"
 #include "CXPM/ToolchainInterface.hpp"
 #include "CXPM/Utils/Unix/ShellManager.hpp"
-#include <CXPM/PkgConfigManager.hpp>
 #include "CXPM/Utils/Unused.hpp"
+#include <CXPM/PkgConfigManager.hpp>
 
 #include <algorithm>
 #include <filesystem>
@@ -531,15 +531,15 @@ struct Toolchain : public ToolchainDescriptor,
   }
 
   virtual ArchiveLinkResultPromiseType
-  archive_link_async(const TargetDescriptor &target, bool dry = false) override {
-    return std::async(
-               std::launch::async,
-               [&]() { return archive_link(target, dry); })
+  archive_link_async(const TargetDescriptor &target,
+                     bool dry = false) override {
+    return std::async(std::launch::async,
+                      [&]() { return archive_link(target, dry); })
         .share();
   }
 
-  virtual ArchiveLinkResult
-  archive_link(const TargetDescriptor &target, bool dry = false) override {
+  virtual ArchiveLinkResult archive_link(const TargetDescriptor &target,
+                                         bool dry = false) override {
 
     Collection<String> command;
 
@@ -627,7 +627,9 @@ struct Toolchain : public ToolchainDescriptor,
     for (auto result : results) {
       auto [code, command] = result.get();
       Core::Logging::LoggerManager::debug("{}", std::to_string(code));
-      return BuildOutputResult{code, {command}};
+      if (code != Status::Success) {
+        return BuildOutputResult{code, {command}};
+      }
     }
 
     if (package.type == "executable") {

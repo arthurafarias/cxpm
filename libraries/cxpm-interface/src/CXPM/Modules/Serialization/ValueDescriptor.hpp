@@ -31,7 +31,7 @@ template <typename ValueType> struct KeyValueTag : TagBase {
         setter([&value](const ValueType &v) -> void { value = v; }),
         getter([&value]() -> ValueType { return value; }) {}
 
-  KeyValueTag(const String &name, const SetterType &value,
+  KeyValueTag(const String &name, const SetterType &setter,
               const GetterType &getter)
       : TagBase(name), setter(setter), getter(getter) {}
   SetterType setter;

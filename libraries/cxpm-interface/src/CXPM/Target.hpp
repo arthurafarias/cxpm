@@ -153,5 +153,9 @@ struct Target : public TargetDescriptor, public TargetInterface<Target> {
     project_path = value;
     return *this;
   }
+
+  virtual Target& create() override {
+    return *this;
+  }
 };
 } // namespace Models

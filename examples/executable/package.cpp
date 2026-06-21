@@ -10,6 +10,7 @@ auto example = Models::Target()
                    .sources_append({"src/source3.cpp"})
                    .options_append({"-fPIE", "-fstack-protector-all"})
                    .link_libraries_append({"m"})
-                   .include_directories_append({"src"});
+                   .include_directories_append({"src"})
+                   .create();
 
 auto project = Models::Project().add(example).create();
