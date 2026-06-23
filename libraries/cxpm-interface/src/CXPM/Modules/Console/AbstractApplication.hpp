@@ -2,7 +2,7 @@
 
 #include "CXPM/Core/Containers/Collection.hpp"
 #include "CXPM/Core/Containers/String.hpp"
-#include "CXPM/Core/Object.hpp"
+#include "CXPM/Core/Containers/Object.hpp"
 
 using namespace CXPM::Core::Containers;
 

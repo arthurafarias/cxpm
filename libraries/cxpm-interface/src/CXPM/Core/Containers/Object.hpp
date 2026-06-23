@@ -6,7 +6,7 @@
 
 namespace CXPM::Core::Containers {
 
-class Object : public Map<String, Value>, CXPM::Core::Patterns::Lockable {
+class Object : public Map<String, Value>, public CXPM::Core::Patterns::Lockable {
 public:
   using Map<String, Value>::Map;
 };

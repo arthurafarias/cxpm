@@ -1,6 +1,6 @@
 #pragma once
 
-#include "CXPM/Core/Object.hpp"
+#include "CXPM/Core/Containers/Object.hpp"
 #include "CXPM/Core/Threading/UniqueLock.hpp"
 #include <deque>
 
