@@ -21,7 +21,7 @@
 
 using namespace CXPM::Core::Containers;
 
-namespace Models {
+namespace CXPM::Models {
 
 struct Toolchain : public ToolchainDescriptor,
                    public ToolchainInterface<Toolchain> {
@@ -668,4 +668,4 @@ struct Toolchain : public ToolchainDescriptor,
   }
 };
 
-} // namespace Models
+} // namespace CXPM::Models

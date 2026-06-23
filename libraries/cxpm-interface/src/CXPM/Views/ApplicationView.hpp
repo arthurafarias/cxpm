@@ -12,9 +12,9 @@
 
 #include <CXPM/ProjectManager.hpp>
 
-using namespace Modules::Console;
+using namespace CXPM::Modules::Console;
 
-namespace Views {
+namespace CXPM::Views {
 class ApplicationView final : public AbstractConsoleApplication {
 public:
   ApplicationView(int argc, char *argv[])
@@ -27,10 +27,10 @@ public:
 
     auto arguments = args();
 
-    Modules::ProgramOptions::OptionsDescriptorCollection options_schema(
+    CXPM::Modules::ProgramOptions::OptionsDescriptorCollection options_schema(
         "cxpm", "A package manager for C++ using C++");
 
-    auto options = Modules::ProgramOptions::Parse(arguments);
+    auto options = CXPM::Modules::ProgramOptions::Parse(arguments);
 
     if (options.contains("help") || options.contains("h")) {
       print_usage();
@@ -50,7 +50,7 @@ public:
       }
 
       if (values.empty()) {
-        throw Core::Exceptions::RuntimeException(
+        throw CXPM::Core::Exceptions::RuntimeException(
             "Failed to build no build directory suplied");
       }
 
@@ -174,12 +174,12 @@ private:
 
   void assert_project_directory(const String &directory) {
     if (!std::filesystem::exists(directory.c_str())) {
-      throw Core::Exceptions::RuntimeException(
+      throw CXPM::Core::Exceptions::RuntimeException(
           "Failed to build directory doesn't exists");
     }
 
     if (!std::filesystem::is_directory(directory.c_str())) {
-      throw Core::Exceptions::RuntimeException(
+      throw CXPM::Core::Exceptions::RuntimeException(
           "Failed to build folder isn't a directory");
     }
 

@@ -9,9 +9,9 @@
 
 using namespace CXPM::Core::Containers;
 
-namespace Models {
+namespace CXPM::Models {
 struct ToolchainBasicCommandInterface {
   using promise_type = std::shared_ptr<std::promise<
       std::tuple<int, BuildOutputResult>>>;
 };
-} // namespace Models
+} // namespace CXPM::Models

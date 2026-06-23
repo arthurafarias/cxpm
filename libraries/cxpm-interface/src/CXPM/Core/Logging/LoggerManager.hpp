@@ -10,7 +10,7 @@
 #include <ostream>
 #include <syncstream>
 
-namespace Core::Logging {
+namespace CXPM::Core::Logging {
 
 class LoggerManager {
   LoggerManager() = delete;

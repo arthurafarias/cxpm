@@ -3,8 +3,8 @@
 #include "CXPM/CompilerCommandDescriptor.hpp"
 #include "CXPM/Status.hpp"
 
-namespace Models {
+namespace CXPM::Models {
 
 using BuildOutputResult = std::tuple<Status,
                                      BasicCollection<CompileCommandDescriptor>>;
-} // namespace Models
+} // namespace CXPM::Models

@@ -5,7 +5,7 @@
 #include <CXPM/ToolchainBasicCommandInterface.hpp>
 #include <future>
 
-namespace Models {
+namespace CXPM::Models {
 struct ToolchainSharedObjectLinkInterface : ToolchainBasicCommandInterface {
   using SharedObjectLinkResult = std::tuple<Status, CompileCommandDescriptor>;
   using SharedObjectLinkResultPromiseType =
@@ -18,4 +18,4 @@ struct ToolchainSharedObjectLinkInterface : ToolchainBasicCommandInterface {
   shared_object_link_async(const TargetDescriptor &target, bool dry,
                            const String &library_prefix = "lib") = 0;
 };
-} // namespace Models
+} // namespace CXPM::Models

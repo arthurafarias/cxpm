@@ -6,7 +6,7 @@
 #include "CXPM/ToolchainBasicCommandInterface.hpp"
 #include <future>
 
-namespace Models {
+namespace CXPM::Models {
 
 struct ToolchainExecutableLinkInterface : ToolchainBasicCommandInterface {
 
@@ -19,4 +19,4 @@ struct ToolchainExecutableLinkInterface : ToolchainBasicCommandInterface {
   virtual ExecutableLinkResultPromiseType
   executable_link_async(const TargetDescriptor &target) = 0;
 };
-} // namespace Models
+} // namespace CXPM::Models

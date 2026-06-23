@@ -3,16 +3,16 @@
 #include <cstdint>
 #include <string>
 
-namespace Models {
+namespace CXPM::Models {
 enum class Status : std::uint32_t { Success, Failure };
 }
 
 namespace std {
-inline std::string to_string(const Models::Status &value) {
+inline std::string to_string(const CXPM::Models::Status &value) {
   switch (value) {
-  case Models::Status::Success:
+  case CXPM::Models::Status::Success:
     return "Status::Success";
-  case Models::Status::Failure:
+  case CXPM::Models::Status::Failure:
     return "Status::Failure";
   }
 

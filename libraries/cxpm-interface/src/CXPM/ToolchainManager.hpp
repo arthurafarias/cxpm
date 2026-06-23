@@ -11,9 +11,9 @@
 #include <dlfcn.h>
 #include <filesystem>
 
-using namespace Models;
+using namespace CXPM::Models;
 
-namespace Controllers {
+namespace CXPM::Controllers {
 class ToolchainManager final {
 StaticClass(ToolchainManager) public
     : static inline bool valid(const ToolchainDescriptor &toolchain) {

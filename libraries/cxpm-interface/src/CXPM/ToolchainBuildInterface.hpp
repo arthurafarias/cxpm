@@ -12,7 +12,7 @@
 
 using namespace CXPM::Core::Containers;
 
-namespace Models {
+namespace CXPM::Models {
 
 struct ToolchainBuildInterface : ToolchainObjectBuildInterface,
                                  ToolchainExecutableLinkInterface,
@@ -22,4 +22,4 @@ struct ToolchainBuildInterface : ToolchainObjectBuildInterface,
   virtual BuildOutputResult build(const ProjectDescriptor &project, bool dry) = 0;
   virtual BuildOutputResult build(const TargetDescriptor &target, bool dry) = 0;
 };
-} // namespace Models
+} // namespace CXPM::Models

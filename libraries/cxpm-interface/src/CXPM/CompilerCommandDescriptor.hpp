@@ -9,7 +9,7 @@
 using namespace CXPM::Core::Containers;
 using namespace CXPM::Modules::Serialization;
 
-namespace Models {
+namespace CXPM::Models {
 struct CompileCommandDescriptor {
   String directory;
   String command;
@@ -19,7 +19,7 @@ struct CompileCommandDescriptor {
   String stdout;
   String stderr;
 };
-} // namespace Models
+} // namespace CXPM::Models
 
 namespace CXPM::Modules::Serialization {
 template <typename Archiver>

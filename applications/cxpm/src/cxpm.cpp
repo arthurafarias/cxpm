@@ -13,11 +13,11 @@
 #include <dlfcn.h>
 
 int main(int argc, char *argv[]) {
-  Views::ApplicationView app(argc, argv);
+  CXPM::Views::ApplicationView app(argc, argv);
   try {
     return app.run();
   } catch (std::exception &ex) {
-    Core::Logging::LoggerManager::error("Failed: {}", ex.what());
+    CXPM::Core::Logging::LoggerManager::error("Failed: {}", ex.what());
     app.print_usage();
     return EXIT_FAILURE;
   }

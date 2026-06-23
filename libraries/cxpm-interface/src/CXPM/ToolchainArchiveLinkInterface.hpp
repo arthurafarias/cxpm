@@ -6,7 +6,7 @@
 #include <CXPM/ToolchainBasicCommandInterface.hpp>
 #include <future>
 
-namespace Models {
+namespace CXPM::Models {
 struct ToolchainArchiveLinkInterface : ToolchainBasicCommandInterface {
   using ArchiveLinkResult =
       std::tuple<Status, CompileCommandDescriptor>;
@@ -16,4 +16,4 @@ struct ToolchainArchiveLinkInterface : ToolchainBasicCommandInterface {
   virtual ArchiveLinkResultPromiseType
   archive_link_async(const TargetDescriptor &target, bool dry) = 0;
 };
-} // namespace Models
+} // namespace CXPM::Models

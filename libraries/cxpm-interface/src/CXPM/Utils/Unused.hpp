@@ -2,7 +2,7 @@
 
 #define UNUSED(x) ((void)(x))
 
-namespace Utils {
+namespace CXPM::Utils {
 struct Unused {
   template<typename ...UnusedTypes> 
   explicit Unused(const UnusedTypes &...) {}

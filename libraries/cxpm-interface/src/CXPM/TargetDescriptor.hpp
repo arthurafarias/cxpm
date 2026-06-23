@@ -9,7 +9,7 @@
 using namespace CXPM::Core::Containers;
 using namespace CXPM::Modules::Serialization;
 
-namespace Models {
+namespace CXPM::Models {
 struct TargetDescriptor : public PackageDescriptor {
   String type = "executable";
   String url = "";
@@ -51,4 +51,4 @@ struct TargetDescriptor : public PackageDescriptor {
 //   return ar;
 // }
 
-} // namespace Models
+} // namespace CXPM::Models

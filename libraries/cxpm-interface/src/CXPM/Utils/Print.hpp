@@ -2,7 +2,7 @@
 
 #include <ostream>
 
-namespace Utils {
+namespace CXPM::Utils {
 template <typename ArgumentType>
 std::ostream &print(std::ostream &os, ArgumentType workspace);
 

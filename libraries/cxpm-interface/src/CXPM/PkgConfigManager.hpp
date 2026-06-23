@@ -5,9 +5,10 @@
 
 #include "CXPM/PackageDescriptor.hpp"
 #include <CXPM/Utils/Macros/StaticClass.hpp>
+#include <CXPM/Utils/Unix/ShellManager.hpp>
 
 using namespace CXPM::Core::Containers;
-using namespace Models;
+using namespace CXPM::Models;
 
 namespace Controllers {
 
@@ -21,7 +22,7 @@ public:
     PackageDescriptor package;
 
     auto cmdline = std::format("pkg-config --cflags --libs {}", name);
-    auto [code, out, err] = Utils::Unix::ShellManager::exec(cmdline);
+    auto [code, out, err] = CXPM::Utils::Unix::ShellManager::exec(cmdline);
 
     auto splitted = String::split(out, " ");
 

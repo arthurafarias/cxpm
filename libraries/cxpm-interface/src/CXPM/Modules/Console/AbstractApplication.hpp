@@ -6,7 +6,7 @@
 
 using namespace CXPM::Core::Containers;
 
-namespace Modules::Console {
+namespace CXPM::Modules::Console {
 class AbstractApplication : public Object {
 
 public:

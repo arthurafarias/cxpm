@@ -39,7 +39,7 @@
 #define cxpm_DEBUG_PROJECT_PREFIX ""
 #endif
 
-namespace Controllers {
+namespace CXPM::Controllers {
 
 class ProjectManager final {
 
@@ -49,7 +49,7 @@ StaticClass(ProjectManager)
 
     static inline void initialize() {
     modules_search_paths =
-        Utils::Unix::EnvironmentManager::get("cxpm_BUILD_EXTRA_MODULES_PATH");
+        CXPM::Utils::Unix::EnvironmentManager::get("cxpm_BUILD_EXTRA_MODULES_PATH");
 
     extra_module_path_add("/usr/share/cxpm/toolchains");
     extra_module_path_add("/usr/local/share/cxpm/toolchains");
@@ -113,8 +113,8 @@ StaticClass(ProjectManager)
     for (auto toolchain : project_manifest.toolchains) {
       try {
 
-        if (Controllers::ToolchainManager::valid(toolchain)) {
-          Controllers::ToolchainManager::add(toolchain);
+        if (CXPM::Controllers::ToolchainManager::valid(toolchain)) {
+          CXPM::Controllers::ToolchainManager::add(toolchain);
         }
 
       } catch (std::exception &ex) {
@@ -126,10 +126,10 @@ StaticClass(ProjectManager)
     for (auto target : project_manifest.targets) {
       try {
 
-        toolchain = Controllers::ToolchainManager::autoselect(target);
+        toolchain = CXPM::Controllers::ToolchainManager::autoselect(target);
 
         if (target.toolchain != "") {
-          toolchain = Controllers::ToolchainManager::by_name(target.toolchain);
+          toolchain = CXPM::Controllers::ToolchainManager::by_name(target.toolchain);
         }
 
         // fix project path
@@ -287,7 +287,7 @@ StaticClass(ProjectManager)
 
       // install pc file
       {
-        using namespace Models;
+        using namespace CXPM::Models;
 
         auto rendered = std::format(
             "Name: {}\n"
@@ -347,7 +347,7 @@ StaticClass(ProjectManager)
     manifest_project.project_path_set(project_path);
 
     auto [loader_build_result, loader_compile_commands] =
-        Toolchain(Controllers::ToolchainManager::current(
+        Toolchain(CXPM::Controllers::ToolchainManager::current(
                       extra_toolchain_search_paths))
             .build(manifest_project);
 
@@ -441,7 +441,7 @@ private:
 
   static inline const std::string BasicProjectLoaderSource = R"(
     #include <CXPM/ProjectDescriptor.hpp>
-    using namespace Models;
+    using namespace CXPM::Models;
     extern ProjectDescriptor project;
     // should be a weak reference that can be overriten by a custom get_project // more versatile but unsafe.
     extern "C" const ProjectDescriptor* get_project()  { return &project; }

@@ -4,7 +4,7 @@
 #include <stdexcept>
 #include <utility>
 
-namespace Core::Exceptions {
+namespace CXPM::Core::Exceptions {
 class RuntimeException : public std::runtime_error {
 public:
   template <typename... ArgsTypes>

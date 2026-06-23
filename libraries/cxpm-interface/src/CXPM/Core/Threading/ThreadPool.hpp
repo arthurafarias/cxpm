@@ -9,7 +9,7 @@
 #include <thread>
 
 
-namespace Threading {
+namespace CXPM::Threading {
 
 class ThreadPool
 {

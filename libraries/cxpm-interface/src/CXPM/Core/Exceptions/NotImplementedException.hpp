@@ -2,7 +2,7 @@
 
 #include "CXPM/Core/Exceptions/RuntimeException.hpp"
 
-namespace Core::Exceptions {
+namespace CXPM::Core::Exceptions {
 class NotImplementedException : public RuntimeException {
 public:
   using RuntimeException::RuntimeException;

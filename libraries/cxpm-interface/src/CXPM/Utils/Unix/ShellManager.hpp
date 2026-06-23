@@ -13,7 +13,7 @@
 
 using namespace CXPM::Core::Containers;
 
-namespace Utils::Unix {
+namespace CXPM::Utils::Unix {
 
 class ShellManager {
 
@@ -39,7 +39,7 @@ public:
       command = std::format("/usr/bin/bash -c \"{}\"", command);
     }
 
-    Core::Logging::LoggerManager::debug("{}", command);
+    CXPM::Core::Logging::LoggerManager::debug("{}", command);
 
     if (!dry) {
       auto fp = ::popen(command, "r");

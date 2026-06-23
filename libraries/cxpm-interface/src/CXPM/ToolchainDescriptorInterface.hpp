@@ -4,7 +4,7 @@
 
 using namespace CXPM::Core::Containers;
 
-namespace Models {
+namespace CXPM::Models {
 template <typename DerivedType> struct ToolchainDescriptorInterface {
   virtual DerivedType &name_set(const String &) = 0;
   virtual const String &name_get() const = 0;

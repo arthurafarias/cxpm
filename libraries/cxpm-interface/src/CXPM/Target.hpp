@@ -4,7 +4,7 @@
 #include <CXPM/TargetDescriptor.hpp>
 #include <initializer_list>
 
-namespace Models {
+namespace CXPM::Models {
 struct Target : public TargetDescriptor, public TargetInterface<Target> {
 
   virtual Target &name_set(const String &value) override {
@@ -158,4 +158,4 @@ struct Target : public TargetDescriptor, public TargetInterface<Target> {
     return *this;
   }
 };
-} // namespace Models
+} // namespace CXPM::Models

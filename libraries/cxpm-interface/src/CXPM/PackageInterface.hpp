@@ -5,7 +5,7 @@
 
 using namespace CXPM::Core::Containers;
 
-namespace Models {
+namespace CXPM::Models {
 
   template<typename DerivedType>
 struct PackageInterface {
@@ -26,4 +26,4 @@ struct PackageInterface {
   virtual const String& project_path_get() = 0;
   virtual DerivedType& project_path_set(const String&) = 0;
 };
-} // namespace Models
+} // namespace CXPM::Models

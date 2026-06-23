@@ -9,7 +9,7 @@
 
 using namespace CXPM::Core::Containers;
 
-namespace Utils::Unix {
+namespace CXPM::Utils::Unix {
 
 class EnvironmentManager {
 private:

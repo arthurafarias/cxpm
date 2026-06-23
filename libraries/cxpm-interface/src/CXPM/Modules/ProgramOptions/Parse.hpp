@@ -3,7 +3,7 @@
 #include "CXPM/Core/Containers/Map.hpp"
 #include "CXPM/Modules/ProgramOptions/OptionDescriptorCollection.hpp"
 
-namespace Modules::ProgramOptions {
+namespace CXPM::Modules::ProgramOptions {
 inline static Map<String, BasicCollection<String>> Parse(BasicCollection<String> tokens) {
 
   Map<String, BasicCollection<String>> options;

@@ -5,7 +5,7 @@
 #include "CXPM/ToolchainBasicCommandInterface.hpp"
 #include <future>
 
-namespace Models {
+namespace CXPM::Models {
 struct ToolchainObjectBuildInterface : ToolchainBasicCommandInterface {
 
   using ObjectBuildResult =
@@ -19,4 +19,4 @@ struct ToolchainObjectBuildInterface : ToolchainBasicCommandInterface {
   virtual ObjectBuildResultPromiseType
   object_build_async(const String &source, const TargetDescriptor &target, bool dry) = 0;
 };
-} // namespace Models
+} // namespace CXPM::Models
