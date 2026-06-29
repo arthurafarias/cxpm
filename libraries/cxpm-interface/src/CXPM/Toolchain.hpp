@@ -89,6 +89,16 @@ struct Toolchain : public ToolchainDescriptor,
   }
 
   virtual Toolchain &
+  object_build_options_set(const BasicCollection<String> &value) override {
+    object_build_options = value;
+    return *this;
+  }
+
+  virtual const BasicCollection<String> &object_build_options_get() const override {
+    return object_build_options;
+  }
+
+  virtual Toolchain &
   compiler_options_set(const BasicCollection<String> &value) override {
     compiler_options = value;
     return *this;
@@ -256,9 +266,8 @@ struct Toolchain : public ToolchainDescriptor,
 
     command.push_back(compiler_executable);
 
+    command.append_range(object_build_options);
     command.append_range(target.options);
-
-    command.push_back("-fPIC");
 
     auto include_directories_arguments =
         target.include_directories.transform<BasicCollection<String>>(
@@ -360,8 +369,6 @@ struct Toolchain : public ToolchainDescriptor,
 
     command.append_range(target.options);
 
-    command.push_back("-fPIE");
-
     auto include_directories_arguments =
         target.include_directories.transform<BasicCollection<String>>(
             [this](const auto &el) {
@@ -456,9 +463,6 @@ struct Toolchain : public ToolchainDescriptor,
     BasicCollection<String> command;
 
     command.push_back(compiler_executable);
-
-    command.push_back("-fPIC");
-    command.push_back("-shared");
 
     command.append_range(this->linker_options);
 

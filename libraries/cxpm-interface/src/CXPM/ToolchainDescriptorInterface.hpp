@@ -22,6 +22,11 @@ template <typename DerivedType> struct ToolchainDescriptorInterface {
   include_directory_prefix_set(const String &) = 0;
   virtual const String &include_directory_prefix_get() const = 0;
 
+  virtual DerivedType &
+  object_build_options_set(const BasicCollection<String> &value) = 0;
+
+  virtual const BasicCollection<String> &object_build_options_get() const  = 0;
+
   virtual DerivedType &include_directories_set(const BasicCollection<String> &) = 0;
   virtual const BasicCollection<String> &include_directories_get() const = 0;
 

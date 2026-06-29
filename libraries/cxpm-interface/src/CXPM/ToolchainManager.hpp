@@ -47,7 +47,8 @@ StaticClass(ToolchainManager) public
     return true;
   }
 
-  static inline constexpr const ToolchainDescriptor by_name(const String &name) {
+  static inline constexpr const ToolchainDescriptor
+  by_name(const String &name) {
 
     auto result = std::find_if(
         toolchains.begin(), toolchains.end(),
@@ -65,6 +66,7 @@ StaticClass(ToolchainManager) public
   autoselect(const TargetDescriptor &target) {
     auto result = std::find_if(toolchains.begin(), toolchains.end(),
                                [&target](const ToolchainDescriptor &toolchain) {
+                                std::cout << std::format("trying to select toolchain {} with language {} for target {} with language {}\n", toolchain.name, toolchain.language, target.name, target.language);
                                  return target.language == toolchain.language;
                                });
 
@@ -73,6 +75,8 @@ StaticClass(ToolchainManager) public
           "Couldn't find a compatible toolchain to target {} with language {}",
           target.name, target.language);
     }
+
+    std::cout << std::format("Selecting Toolchain: {} with language {} at {}\n", result->name, result->language, result->compiler_executable);
 
     return *result;
   };
@@ -97,10 +101,28 @@ StaticClass(ToolchainManager) public
     return *current_toolchain;
   }
 
-  static inline constexpr void autoscan(BasicCollection<String> extra_paths = {}) {
+  static inline constexpr void
+  autoscan(BasicCollection<String> extra_paths = {}) {
 
-    BasicCollection<String> search_paths = {"/usr/share/cxpm/toolchains",
-                                       "/usr/local/share/cxpm/toolchains"};
+    auto const HOME = Utils::Unix::EnvironmentManager::get("HOME").front();
+
+    BasicCollection<String> search_paths = {
+        "/usr/share/cxpm/toolchains",
+        "/usr/local/share/cxpm/toolchains",
+        std::filesystem::path()
+            .append(HOME.c_str())
+            .append(".local/lib")
+            .c_str(),
+        std::filesystem::path()
+            .append(HOME.c_str())
+            .append(".local/share/toolchains/cxpm")
+            .c_str(),
+        std::filesystem::path()
+            .append(HOME.c_str())
+            .append(".local/lib/toolchains/cxpm")
+            .c_str(),
+
+    };
 
     search_paths.append_range(extra_paths);
 
@@ -151,6 +173,7 @@ StaticClass(ToolchainManager) public
 
 private:
   static inline BasicCollection<ToolchainDescriptor> toolchains;
-  static inline BasicCollection<ToolchainDescriptor>::iterator current_toolchain;
+  static inline BasicCollection<ToolchainDescriptor>::iterator
+      current_toolchain;
 };
-} // namespace Controllers
+} // namespace CXPM::Controllers

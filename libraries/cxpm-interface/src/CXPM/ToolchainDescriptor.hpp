@@ -1,5 +1,6 @@
 #pragma once
 
+#include "CXPM/Core/Containers/BasicCollection.hpp"
 #include <CXPM/Core/Containers/Collection.hpp>
 #include <CXPM/Core/Containers/String.hpp>
 
@@ -38,6 +39,8 @@ struct ToolchainDescriptor {
 
   String executable_prefix = "";
   String executable_suffix = "";
+
+  BasicCollection<String> object_build_options;
 
   String object_prefix = "";
   String object_suffix = ".o";

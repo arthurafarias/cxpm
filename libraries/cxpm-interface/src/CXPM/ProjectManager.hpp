@@ -420,20 +420,20 @@ private:
           .include_directories_append({
               std::filesystem::path()
                   .append(cxpm_BASE_INSTALL_PREFIX)
-                  .append("lib/cxpm/headers")
+                  .append("/lib/cxpm/headers")
                   .string(),
               std::filesystem::path()
                   .append(cxpm_BASE_INSTALL_PREFIX)
-                  .append("share/cxpm/headers")
+                  .append("/share/cxpm/headers")
                   .string(),
               std::filesystem::path()
                   .append(cxpm_BASE_INSTALL_PREFIX)
-                  .append("include/cxpm")
+                  .append("/include")
                   .string(),
               // std::filesystem::path().append(cxpm_DEBUG_BUILD_PREFIX).append("/src").string(),
               std::filesystem::path()
                   .append(cxpm_BASE_SOURCE_PREFIX)
-                  .append("src")
+                  .append("/src")
                   .string(),
           })
           .options_append({"-std=c++23", "-Wall", "-Werror", "-pedantic"})
