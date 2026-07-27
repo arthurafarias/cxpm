@@ -3,3 +3,6 @@ build
 *.o
 *.a
 cxpm
+.vscode
+.claude
+.cache

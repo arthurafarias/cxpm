@@ -1,6 +1,8 @@
 #include <CXPM/Project.hpp>
 #include <CXPM/Target.hpp>
 
+using namespace CXPM;
+
 auto example = Target()
                    .name_set("example-executable-with-gstreamer-1.0")
                    .version_set("1.0.0")

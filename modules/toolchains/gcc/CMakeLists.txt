@@ -9,3 +9,5 @@ file(GLOB_RECURSE ${PROJECT_NAME}_SOURCES src/*.cpp)
 add_library(${PROJECT_NAME} SHARED ${${PROJECT_NAME}_SOURCES})
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
 target_link_libraries(${PROJECT_NAME} PUBLIC cxpm-interface)
+
+install(TARGETS ${PROJECT_NAME} LIBRARY DESTINATION share/cxpm/toolchains)

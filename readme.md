@@ -19,8 +19,8 @@ If you're interested in discussing or contributing to this idea, feel free to fo
 would have a package.cpp as following
 
 ```cpp
-#include "Models/TargetDescriptor.hpp"
-#include <Models/ProjectDescriptor.hpp>
+#include "CXPM/TargetDescriptor.hpp"
+#include <CXPM/ProjectDescriptor.hpp>
 
  auto example = TargetDescriptor()
                        .name_set("example-executable")

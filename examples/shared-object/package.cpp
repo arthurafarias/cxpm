@@ -1,6 +1,8 @@
 #include <CXPM/Project.hpp>
 #include <CXPM/Target.hpp>
 
+using namespace CXPM;
+
 auto target0 = Target()
                    .name_set("example-shared-object")
                    .version_set("1.0.0")

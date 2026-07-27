@@ -1,6 +1,8 @@
 #include <CXPM/Target.hpp>
 #include <CXPM/Project.hpp>
 
+using namespace CXPM;
+
 auto example = Target()
                    .name_set("example-executable")
                    .version_set("1.0.0")

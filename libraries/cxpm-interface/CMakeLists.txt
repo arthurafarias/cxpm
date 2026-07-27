@@ -1,11 +1,24 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.23)
 project(cxpm-interface)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED YES)
 
+file(GLOB_RECURSE ${PROJECT_NAME}_HEADERS CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/*.hpp)
+
 add_library(${PROJECT_NAME} INTERFACE)
 
-target_include_directories(${PROJECT_NAME} INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/src)
+target_sources(${PROJECT_NAME}
+  INTERFACE
+    FILE_SET HEADERS
+    BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/src
+    FILES ${${PROJECT_NAME}_HEADERS}
+)
+
 target_compile_definitions(${PROJECT_NAME} INTERFACE cxpm_BASE_SOURCE_PREFIX="${CMAKE_CURRENT_SOURCE_DIR}")
 target_compile_options(${PROJECT_NAME} INTERFACE -Wall -Wextra)
+
+include(GNUInstallDirs)
+install(TARGETS ${PROJECT_NAME}
+  FILE_SET HEADERS DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+)
