@@ -287,7 +287,7 @@ StaticClass(ProjectManager)
 
       // install pc file
       {
-        using namespace CXPM::Models;
+        using namespace CXPM;
 
         auto rendered = std::format(
             "Name: {}\n"
@@ -354,10 +354,10 @@ StaticClass(ProjectManager)
     return {BuildManifestResultStatus::Success, loader_compile_commands};
   }
 
-  static inline Models::ProjectDescriptor
+  static inline ProjectDescriptor
   load_from_manifest(const String &manifest_path) {
 
-    typedef Models::Project *(*getter_type)();
+    typedef Project *(*getter_type)();
 
     void *handle = dlopen(manifest_path.c_str(), RTLD_NOW | RTLD_DEEPBIND);
 
@@ -410,11 +410,11 @@ StaticClass(ProjectManager)
     return 0;
   }
 
-  BasicCollection<Models::ProjectDescriptor> projects;
+  BasicCollection<ProjectDescriptor> projects;
 
 private:
-  static inline const Models::Target ManifestPackage =
-      Models::Target()
+  static inline const Target ManifestPackage =
+      Target()
           .name_set("project-manifest")
           .type_set("shared-library")
           .include_directories_append({
@@ -441,7 +441,7 @@ private:
 
   static inline const std::string BasicProjectLoaderSource = R"(
     #include <CXPM/ProjectDescriptor.hpp>
-    using namespace CXPM::Models;
+    using namespace CXPM;
     extern ProjectDescriptor project;
     // should be a weak reference that can be overriten by a custom get_project // more versatile but unsafe.
     extern "C" const ProjectDescriptor* get_project()  { return &project; }

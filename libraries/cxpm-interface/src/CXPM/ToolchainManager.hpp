@@ -11,7 +11,7 @@
 #include <dlfcn.h>
 #include <filesystem>
 
-using namespace CXPM::Models;
+using namespace CXPM;
 
 namespace CXPM::Controllers {
 class ToolchainManager final {

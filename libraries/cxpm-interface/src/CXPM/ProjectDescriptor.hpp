@@ -8,10 +8,10 @@
 
 #include <deque>
 
-namespace CXPM::Models {
+namespace CXPM {
 struct ProjectDescriptor {
   std::deque<ToolchainDescriptor> toolchains;
   std::deque<TargetDescriptor> targets;
   BasicCollection<CompileCommandDescriptor> compile_comands;
 };
-} // namespace CXPM::Models
+} // namespace CXPM

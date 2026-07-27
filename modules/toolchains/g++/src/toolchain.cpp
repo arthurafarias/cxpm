@@ -1,6 +1,6 @@
 #include <CXPM/Toolchain.hpp>
 
-auto toolchain = CXPM::Models::Toolchain()
+auto toolchain = CXPM::Toolchain()
                      .name_set("g++")
                      .version_set("generic")
                      .include_directory_prefix_set("-I")

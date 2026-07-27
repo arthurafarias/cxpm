@@ -9,7 +9,7 @@
 using namespace CXPM::Core::Containers;
 using namespace CXPM::Modules::Serialization;
 
-namespace CXPM::Models {
+namespace CXPM {
 struct CompileCommandDescriptor {
   String directory;
   String command;
@@ -19,13 +19,13 @@ struct CompileCommandDescriptor {
   String stdout;
   String stderr;
 };
-} // namespace CXPM::Models
+} // namespace CXPM
 
 namespace CXPM::Modules::Serialization {
 template <typename Archiver>
 inline Archiver &
 operator%(Archiver &ar,
-          const ValueToken<const Models::CompileCommandDescriptor> &token) {
+          const ValueToken<const CompileCommandDescriptor> &token) {
   auto &descriptor = token.value_get();
 
   ar % ObjectStartToken{"CompilerCommandDescriptor"};

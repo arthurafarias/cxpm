@@ -8,7 +8,7 @@
 #include <CXPM/Utils/Unix/ShellManager.hpp>
 
 using namespace CXPM::Core::Containers;
-using namespace CXPM::Models;
+using namespace CXPM;
 
 namespace Controllers {
 

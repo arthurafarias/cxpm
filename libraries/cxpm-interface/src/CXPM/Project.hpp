@@ -2,7 +2,7 @@
 
 #include <CXPM/ProjectDescriptor.hpp>
 
-namespace CXPM::Models {
+namespace CXPM {
 
 class Project : public ProjectDescriptor {
 public:
@@ -18,4 +18,4 @@ public:
 
   Project &create() { return *this; }
 };
-} // namespace CXPM::Models
+} // namespace CXPM

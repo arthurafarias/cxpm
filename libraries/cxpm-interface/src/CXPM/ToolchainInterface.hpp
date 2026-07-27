@@ -4,9 +4,9 @@
 #include "CXPM/ToolchainDescriptorInterface.hpp"
 #include "CXPM/ToolchainInstallInterface.hpp"
 
-namespace CXPM::Models {
+namespace CXPM {
 template <typename DerivedType>
 struct ToolchainInterface : public ToolchainBuildInterface,
                             public ToolchainInstallInterface,
                             ToolchainDescriptorInterface<DerivedType> {};
-} // namespace CXPM::Models
+} // namespace CXPM

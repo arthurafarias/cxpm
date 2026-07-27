@@ -5,7 +5,7 @@
 #include <CXPM/Core/Containers/String.hpp>
 
 using namespace CXPM::Core::Containers;
-namespace CXPM::Models {
+namespace CXPM {
 struct ToolchainDescriptor {
   String name;
   String version;
@@ -46,4 +46,4 @@ struct ToolchainDescriptor {
   String object_suffix = ".o";
 
 };
-} // namespace CXPM::Models
+} // namespace CXPM

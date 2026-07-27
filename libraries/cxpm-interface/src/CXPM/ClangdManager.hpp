@@ -12,7 +12,7 @@
 #include <sstream>
 
 using namespace CXPM::Core::Containers;
-using namespace CXPM::Models;
+using namespace CXPM;
 
 namespace Controllers {
 

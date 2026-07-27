@@ -5,7 +5,7 @@
 
 using namespace CXPM::Core::Containers;
 
-namespace CXPM::Models {
+namespace CXPM {
 struct PackageDescriptor {
   String name;
   String version;
@@ -16,4 +16,4 @@ struct PackageDescriptor {
   BasicCollection<String> options;
   String project_path = "";
 };
-} // namespace CXPM::Models
+} // namespace CXPM

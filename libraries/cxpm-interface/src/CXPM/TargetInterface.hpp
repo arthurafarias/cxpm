@@ -9,7 +9,7 @@
 using namespace CXPM::Core::Containers;
 using namespace CXPM::Modules::Serialization;
 
-namespace CXPM::Models {
+namespace CXPM {
 
 template <typename DerivedType>
 struct TargetInterface : public PackageInterface<DerivedType> {
@@ -88,4 +88,4 @@ struct TargetInterface : public PackageInterface<DerivedType> {
 //   return ar;
 // }
 
-} // namespace CXPM::Models
+} // namespace CXPM

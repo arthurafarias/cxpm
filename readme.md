@@ -22,7 +22,7 @@ would have a package.cpp as following
 #include "Models/TargetDescriptor.hpp"
 #include <Models/ProjectDescriptor.hpp>
 
- auto example = Models::TargetDescriptor()
+ auto example = TargetDescriptor()
                        .name_set("example-executable")
                        .version_set("1.0.0")
                        .type_set("executable")
@@ -31,7 +31,7 @@ would have a package.cpp as following
                        .link_libraries_append({"m"})
                        .create();
 
-auto project = Models::ProjectDescriptor()
+auto project = ProjectDescriptor()
                         .add(example)
                         .create();
 ```
@@ -72,7 +72,7 @@ cxpm now supports custom toolchain definitions, enabling cross-compilation or in
 ```c++
 #include <CXPM/Toolchain.hpp>
 
-auto toolchain = Models::Toolchain()
+auto toolchain = Toolchain()
                      .name_set("g++")
                      .version_set("generic")
                      .include_directory_prefix_set("-I")
@@ -104,7 +104,7 @@ Pkg-config dependencies are now resolved automatically when specified in the pac
 #include <CXPM/Target.hpp>
 #include <CXPM/Project.hpp>
 
-auto example = Models::Target()
+auto example = Target()
                    .name_set("example-executable")
                    .version_set("1.0.0")
                    .type_set("executable")
@@ -116,7 +116,7 @@ auto example = Models::Target()
                    .include_directories_append({"src"})
                    .create();
 
-auto project = Models::Project().add(example).create();
+auto project = Project().add(example).create();
 ```
 
 ## Installation Support

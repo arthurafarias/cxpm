@@ -3,10 +3,10 @@
 #include "CXPM/ProjectDescriptor.hpp"
 #include "CXPM/TargetDescriptor.hpp"
 
-namespace CXPM::Models {
+namespace CXPM {
 class ToolchainInstallInterface {
 public:
-  virtual int install(const Models::ProjectDescriptor &target) = 0;
-  virtual int install(const Models::TargetDescriptor &target) = 0;
+  virtual int install(const ProjectDescriptor &target) = 0;
+  virtual int install(const TargetDescriptor &target) = 0;
 };
-} // namespace CXPM::Models
+} // namespace CXPM

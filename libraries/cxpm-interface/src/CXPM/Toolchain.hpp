@@ -21,7 +21,7 @@
 
 using namespace CXPM::Core::Containers;
 
-namespace CXPM::Models {
+namespace CXPM {
 
 struct Toolchain : public ToolchainDescriptor,
                    public ToolchainInterface<Toolchain> {
@@ -659,17 +659,17 @@ struct Toolchain : public ToolchainDescriptor,
     return BuildOutputResult{Status::Failure, {}};
   }
 
-  virtual int install(const Models::ProjectDescriptor &target) override {
+  virtual int install(const ProjectDescriptor &target) override {
     Utils::Unused{target};
     throw Core::Exceptions::NotImplementedException();
     return 0;
   }
 
-  virtual int install(const Models::TargetDescriptor &target) override {
+  virtual int install(const TargetDescriptor &target) override {
     Utils::Unused{target};
     throw Core::Exceptions::NotImplementedException();
     return 0;
   }
 };
 
-} // namespace CXPM::Models
+} // namespace CXPM
