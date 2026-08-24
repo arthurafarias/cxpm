@@ -1,0 +1,5 @@
+{{ with .Site.Params.editRepo }}
+{{ if not $.IsHome }}
+<p class="edit-link"><a href="{{ . }}/{{ $.File.Filename | path.Base }}" target="_blank" rel="noopener">Edit this page on GitHub</a></p>
+{{ end }}
+{{ end }}

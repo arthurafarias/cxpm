@@ -198,6 +198,15 @@ private:
     auto [result, project, toolchain] = build(directory);
 
     for (auto target : project.targets) {
+      // ProjectManager::build_project's own target loop iterates by value, so the
+      // project_path it stamps onto each target for the build never makes it back onto
+      // project.targets here -- every target below would otherwise have an empty
+      // project_path, making ProjectManager::install_target unable to resolve any of the
+      // target's relative include directories or its own built artifact (a real bug found
+      // via the cli_install_example_executable integration test, see
+      // docs/SRS-architecture.md).
+      target.project_path = directory;
+
       auto [result, target_result, target_toolchain] =
           install_target(target, prefix);
 

@@ -1,0 +1,10 @@
+[
+{{ range $i, $p := where .Site.Pages "Kind" "in" (slice "page" "home") }}
+  {{ if $i }},{{ end }}
+  {
+    "title": {{ $p.Title | jsonify }},
+    "href": {{ $p.RelPermalink | jsonify }},
+    "content": {{ $p.Plain | htmlUnescape | truncate 400 | jsonify }}
+  }
+{{ end }}
+]

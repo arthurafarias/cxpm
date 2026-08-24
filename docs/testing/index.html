@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Testing · cxpm</title>
+<meta name="description" content="An experimental C&#43;&#43;-native package manager and build tool for C&#43;&#43;.">
+<link rel="icon" href="data:,">
+<script>
+  (function () {
+    try {
+      var saved = localStorage.getItem("cxpm-docs-theme");
+      var theme = saved || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.setAttribute("data-theme", theme);
+    } catch (e) {}
+  })();
+</script>
+
+  
+  <link rel="stylesheet" href="../cxpm/css/main.min.705c6b10a27719bb861d20380e003ddc3bcfb26a9d5969863974a958f0604544.css" integrity="sha256-cFxrEKJ3GbuGHSA4DgA93DvPsmqdWWmGOXSpWPBgRUQ=">
+
+
+</head>
+<body>
+<a class="skip-link" href="#main-content">Skip to content</a>
+<header class="topbar">
+  <div class="topbar-inner">
+    <button class="menu-toggle" id="menu-toggle" aria-label="Toggle navigation" aria-controls="sidebar" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <a class="brand" href="../cxpm/">
+      <span class="brand-mark">cxpm</span>
+      <span class="brand-sub">docs</span>
+    </a>
+    <div class="search" role="search">
+      <input type="search" id="search-input" placeholder="Search docs…" aria-label="Search documentation" autocomplete="off">
+      <kbd class="search-kbd">/</kbd>
+      <div id="search-results" class="search-results" hidden></div>
+    </div>
+    <div class="topbar-actions">
+      
+      <a class="icon-link" href="https://github.com/arthurafarias/cpkg" target="_blank" rel="noopener" aria-label="View source on GitHub">
+        <svg viewBox="0 0 16 16" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+      </a>
+      
+      <button class="icon-link theme-toggle" id="theme-toggle" aria-label="Toggle color theme">
+        <svg class="icon-sun" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="shell">
+  <nav class="sidebar" id="sidebar" aria-label="Sections">
+    
+<div class="sidebar-inner">
+  
+<ul class="menu">
+  
+  
+  <li class="menu-item">
+    
+    <a href="../cxpm/">Overview</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="../cxpm/quickstart/">Quickstart</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="../cxpm/architecture/">Architecture</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="../cxpm/tooling/">CLI Tooling</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item is-active">
+    
+    <a href="../cxpm/testing/" aria-current="page">Testing</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="../cxpm/roadmap/">Roadmap</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item has-children">
+    
+    <span class="menu-group-label">Software Requirements Specs</span>
+    
+    
+      
+<ul class="menu">
+  
+  
+  <li class="menu-item">
+    
+    <a href="../cxpm/srs-architecture/">Architecture &amp; Flaws</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="../cxpm/srs-unit-testing/">Unit Testing the API</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="../cxpm/srs-ctest-tooling/">CMake/CTest Tooling</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="../cxpm/srs-json-manifests/">JSON Manifests</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="../cxpm/srs-generate/">cxpm --generate</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="../cxpm/srs-sandbox/">Descriptor Sandbox</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="../cxpm/srs-parallel-build/">Parallel Build (proposed)</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+</ul>
+
+</div>
+
+
+
+  </nav>
+  <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+  <main class="content" id="main-content">
+    <div class="content-inner">
+      
+<nav class="breadcrumbs" aria-label="Breadcrumb">
+  <a href="../cxpm/">cxpm</a>
+  <span class="sep">/</span><span>Testing</span>
+</nav>
+<article class="prose">
+  <h1 id="testing">Testing</h1>
+<p>cxpm&rsquo;s test suite has two tiers: an in-process <strong>unit</strong> binary (<code>cxpm_tests</code>) and a set of
+<strong>CLI</strong> tests that run the real <code>cxpm</code> executable (and the <code>cxpm-descriptor-sandbox</code> helper) as
+subprocesses through CTest. See <a href="../cxpm/srs-unit-testing/">srs-unit-testing.md</a>
+ for the requirements
+this suite satisfies and <a href="../cxpm/srs-ctest-tooling/">srs-ctest-tooling.md</a>
+ for the CMake tooling that
+registers the CLI tier.</p>
+<h2 id="running-the-suite">Running the suite</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cmake -S . -B build -DCXPM_BUILD_TESTS<span style="color:#f92672">=</span>ON
+</span></span><span style="display:flex;"><span>cmake --build build -j
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>ctest --test-dir build --output-on-failure
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>Test project build
+</span></span><span style="display:flex;"><span> 1/13 Test  #1: cxpm_tests .......................................   Passed
+</span></span><span style="display:flex;"><span> 2/13 Test  #2: cli_help .........................................   Passed
+</span></span><span style="display:flex;"><span> 3/13 Test  #3: cli_help_short ...................................   Passed
+</span></span><span style="display:flex;"><span> 4/13 Test  #4: cli_no_arguments_prints_usage_and_fails ..........   Passed
+</span></span><span style="display:flex;"><span> 5/13 Test  #5: cli_build_without_directory_fails_cleanly ........   Passed
+</span></span><span style="display:flex;"><span> 6/13 Test  #6: cli_build_nonexistent_directory_fails_cleanly ....   Passed
+</span></span><span style="display:flex;"><span> 7/13 Test  #7: cli_install_without_directory_fails_cleanly ......   Passed
+</span></span><span style="display:flex;"><span> 8/13 Test  #8: cli_directory_without_package_cpp_fails_cleanly ..   Passed
+</span></span><span style="display:flex;"><span> 9/13 Test  #9: fixture:generate:clean ...........................   Passed
+</span></span><span style="display:flex;"><span>10/13 Test #10: cli_generate_package_json_writes_file ............   Passed
+</span></span><span style="display:flex;"><span>11/13 Test #11: cli_generate_refuses_to_overwrite_without_force ..   Passed
+</span></span><span style="display:flex;"><span>12/13 Test #12: cli_generate_overwrites_with_force ................  Passed
+</span></span><span style="display:flex;"><span>13/13 Test #13: cli_generate_unknown_kind_fails_cleanly ...........  Passed
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>100% tests passed out of 13 (with -DCXPM_BUILD_CLI_INTEGRATION_TESTS=OFF, the default)
+</span></span></code></pre></div><p><code>cxpm_tests</code> itself reports 70 passing unit-test cases across 16 self-registering groups.</p>
+<p>Enable the slower, real-compiler-dependent integration tests too — this additionally covers
+building <code>examples/executable</code> (<code>package.cpp</code>) and <code>examples/executable-json</code> (<code>package.json</code>,
+see <a href="../cxpm/srs-json-manifests/">srs-json-manifests.md</a>
+) end to end, plus the
+<code>cxpm-descriptor-sandbox</code> helper directly (see <a href="../cxpm/srs-sandbox/">srs-sandbox.md</a>
+):</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cmake -S . -B build -DCXPM_BUILD_CLI_INTEGRATION_TESTS<span style="color:#f92672">=</span>ON
+</span></span><span style="display:flex;"><span>cmake --build build -j
+</span></span><span style="display:flex;"><span>ctest --test-dir build --output-on-failure
+</span></span></code></pre></div><p>With integration tests enabled, <code>ctest --test-dir build</code> registers 23 tests (1 unit binary + 22
+CLI-tier tests, counting fixture setup/cleanup) and passes in full, repeatably — every test that
+writes output cleans up after itself or is guarded by a <code>FIXTURES_SETUP</code> step, so running <code>ctest</code>
+twice in a row in the same, uncleaned build directory passes both times.</p>
+<h2 id="per-class-self-registering-groups">Per-class self-registering groups</h2>
+<p>Every class or free function with meaningful behavior carries its own test group, colocated with
+the code it covers, under <code>libraries/cxpm-interface/src/CXPM/Testing/</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>libraries/cxpm-interface/src/CXPM/Testing/TestFailure.hpp        # harness
+</span></span><span style="display:flex;"><span>libraries/cxpm-interface/src/CXPM/Testing/TestContext.hpp        # harness: check/equal/throws
+</span></span><span style="display:flex;"><span>libraries/cxpm-interface/src/CXPM/Testing/TestCase.hpp           # harness
+</span></span><span style="display:flex;"><span>libraries/cxpm-interface/src/CXPM/Testing/TestGroup.hpp          # harness: self-registration
+</span></span><span style="display:flex;"><span>libraries/cxpm-interface/src/CXPM/Testing/Registry.hpp           # harness
+</span></span><span style="display:flex;"><span>libraries/cxpm-interface/src/CXPM/Testing/RunAll.hpp             # harness: entry point
+</span></span><span style="display:flex;"><span>libraries/cxpm-interface/src/CXPM/Testing/TemporaryDirectory.hpp # harness: fs fixture helper
+</span></span><span style="display:flex;"><span>libraries/cxpm-interface/src/CXPM/Testing/StringTest.hpp
+</span></span><span style="display:flex;"><span>libraries/cxpm-interface/src/CXPM/Testing/BasicCollectionTest.hpp
+</span></span><span style="display:flex;"><span>libraries/cxpm-interface/src/CXPM/Testing/ValueTest.hpp
+</span></span><span style="display:flex;"><span>libraries/cxpm-interface/src/CXPM/Testing/StatusTest.hpp
+</span></span><span style="display:flex;"><span>libraries/cxpm-interface/src/CXPM/Testing/ExceptionsTest.hpp
+</span></span><span style="display:flex;"><span>libraries/cxpm-interface/src/CXPM/Testing/ParseTest.hpp
+</span></span><span style="display:flex;"><span>libraries/cxpm-interface/src/CXPM/Testing/TargetTest.hpp
+</span></span><span style="display:flex;"><span>libraries/cxpm-interface/src/CXPM/Testing/ProjectTest.hpp
+</span></span><span style="display:flex;"><span>libraries/cxpm-interface/src/CXPM/Testing/ToolchainDescriptorTest.hpp
+</span></span><span style="display:flex;"><span>libraries/cxpm-interface/src/CXPM/Testing/CompilerCommandDescriptorTest.hpp
+</span></span><span style="display:flex;"><span>libraries/cxpm-interface/src/CXPM/Testing/JsonOutputArchiverTest.hpp
+</span></span><span style="display:flex;"><span>libraries/cxpm-interface/src/CXPM/Testing/PkgConfigManagerTest.hpp
+</span></span><span style="display:flex;"><span>libraries/cxpm-interface/src/CXPM/Testing/JsonValueCodecTest.hpp     # srs-json-manifests.md
+</span></span><span style="display:flex;"><span>libraries/cxpm-interface/src/CXPM/Testing/JsonManifestTest.hpp      # srs-json-manifests.md
+</span></span><span style="display:flex;"><span>libraries/cxpm-interface/src/CXPM/Testing/ManifestGeneratorTest.hpp # srs-generate.md
+</span></span></code></pre></div><p>Each test header declares a <code>CXPM::Testing</code> struct named after the class it covers, deriving from
+<code>TestGroup</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span><span style="color:#75715e">// libraries/cxpm-interface/src/CXPM/Testing/StatusTest.hpp
+</span></span></span><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span> CXPM<span style="color:#f92672">::</span>Testing {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">StatusTest</span> <span style="color:#f92672">:</span> <span style="color:#66d9ef">public</span> TestGroup {
+</span></span><span style="display:flex;"><span>  StatusTest() <span style="color:#f92672">:</span> TestGroup(<span style="color:#e6db74">&#34;Status&#34;</span>, {
+</span></span><span style="display:flex;"><span>    {<span style="color:#e6db74">&#34;Success formats as Status::Success&#34;</span>, [](TestContext<span style="color:#f92672">&amp;</span> ctx) {
+</span></span><span style="display:flex;"><span>      ctx.equal(std<span style="color:#f92672">::</span>to_string(CXPM<span style="color:#f92672">::</span>Status<span style="color:#f92672">::</span>Success), std<span style="color:#f92672">::</span>string(<span style="color:#e6db74">&#34;Status::Success&#34;</span>));
+</span></span><span style="display:flex;"><span>    }},
+</span></span><span style="display:flex;"><span>  }) {}
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">inline</span> <span style="color:#66d9ef">static</span> StatusTest status_test_instance;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>} <span style="color:#75715e">// namespace CXPM::Testing
+</span></span></span></code></pre></div><p>Constructing <code>status_test_instance</code> at static-init time runs <code>TestGroup</code>&rsquo;s constructor, which
+self-registers the group into <code>CXPM::Testing::registry()</code>. <code>tests/CMakeLists.txt</code> globs every
+<code>CXPM/Testing/*Test.hpp</code> header and generates one source file that includes all of them, so every
+test suite coexists in one translation unit — exactly the property that surfaces accidental
+helper-name collisions and ODR problems at compile time, mirrored from how <code>opheap</code>&rsquo;s newer test
+architecture works.</p>
+<p>Because tests live under <code>CXPM/Testing/</code>, <code>cxpm-interface</code>&rsquo;s
+<code>install(TARGETS ... FILE_SET HEADERS ...)</code> excludes that subdirectory (see
+<code>libraries/cxpm-interface/CMakeLists.txt</code>), so installed packages ship production headers only.</p>
+<h2 id="testability-tiers">Testability tiers</h2>
+<p>Not every component can be unit-tested the same way; the suite&rsquo;s structure follows directly from
+this classification (see <a href="../cxpm/srs-unit-testing/">srs-unit-testing.md §2.2/§8</a>
+ for the requirements
+this implies):</p>
+<p><strong>Easy — pure/deterministic, no I/O:</strong> <code>String</code>, <code>BasicCollection&lt;T&gt;::transform</code>, <code>Value</code>/<code>Variant</code>,
+<code>ProgramOptions::Parse</code>, <code>Status</code>, <code>RuntimeException</code>/<code>NotImplementedException</code>,
+<code>Target</code>/<code>Project</code>/<code>ToolchainDescriptor</code> builder chains, <code>JsonOutputArchiver</code> + tokens,
+<code>CompileCommandDescriptor</code>&rsquo;s <code>operator%</code>, <code>PackageConfigManager::emit_configuration</code>, the
+<code>Value</code>↔JSON codec and descriptor-level <code>to_json</code>/<code>*_from_json</code> conversions (see
+<a href="../cxpm/srs-json-manifests/">srs-json-manifests.md</a>
+), and the <code>--generate</code> template functions (see
+<a href="../cxpm/srs-generate/">srs-generate.md</a>
+) — all pure <code>String</code>-in/<code>String</code>-out functions.</p>
+<p><strong>Medium — a subprocess but no compiler/filesystem-heavy setup:</strong> the <code>cxpm</code> executable&rsquo;s
+argument-parsing and early-validation exit codes (the CLI <em>smoke</em> tier), including <code>--generate</code>&rsquo;s
+overwrite-protection behavior.</p>
+<p><strong>Hard — real compiler, <code>dlopen</code>, populated filesystem:</strong> <code>ToolchainManager</code> (discovery, JIT
+compilation, loading), <code>ProjectManager::build_project</code>/<code>install_target</code>, <code>Toolchain</code>&rsquo;s real
+<code>object_build</code>/<code>executable_link</code>/<code>shared_object_link</code>/<code>archive_link</code> exec paths,
+<code>EnvironmentManager::which</code>, <code>PackageConfigManager::find_package</code>, and the
+<code>cxpm-descriptor-sandbox</code> helper (see <a href="../cxpm/srs-sandbox/">srs-sandbox.md</a>
+), which needs a real
+compiled shared object to load. These are covered only by the opt-in CLI <em>integration</em> tier
+(<code>CXPM_BUILD_CLI_INTEGRATION_TESTS=ON</code>), which runs a real <code>cxpm --build</code> against fixture copies
+of <code>examples/executable</code> and <code>examples/executable-json</code>, and the sandbox helper directly against
+a freshly compiled toolchain-plugin fixture.</p>
+<h2 id="correctness-classes-currently-exercised">Correctness classes currently exercised</h2>
+<ul>
+<li>string <code>join</code>/<code>trim</code>/<code>trim_left</code>/<code>trim_right</code>/<code>split</code>, including empty-input and
+all-whitespace edge cases;</li>
+<li><code>BasicCollection&lt;T&gt;::transform</code> over empty and non-empty collections;</li>
+<li>every <code>Value</code>/<code>Variant</code> alternative, including the wrong-alternative <code>std::get</code> failure mode;</li>
+<li><code>Status</code>&rsquo;s <code>std::to_string</code> specialization;</li>
+<li><code>RuntimeException</code>&rsquo;s <code>std::format</code>-based message construction and its exception hierarchy;</li>
+<li><code>ProgramOptions::Parse</code>&rsquo;s long/short-flag, positional, and trailing/valueless-flag handling;</li>
+<li>the full fluent builder surface of <code>Target</code> and <code>Toolchain</code>/<code>ToolchainDescriptor</code>, and
+<code>Project</code>&rsquo;s target/toolchain composition;</li>
+<li><code>JsonOutputArchiver</code>&rsquo;s token-by-token rendering, including empty-collection array serialization;</li>
+<li><code>CompileCommandDescriptor</code>&rsquo;s JSON <code>operator%</code>;</li>
+<li><code>PackageConfigManager::emit_configuration</code>&rsquo;s <code>.pc</code>-template substitution;</li>
+<li>the generic <code>Value</code> ↔ JSON text codec: every alternative, string escapes including <code>\u</code> BMP
+codepoints, nested structures, pretty-printing, and malformed-input rejection;</li>
+<li><code>TargetDescriptor</code>/<code>ToolchainDescriptor</code>/<code>ProjectDescriptor</code> ↔ JSON round trips, including
+default-field fallback for a partial JSON object and rejection of a wrong-typed field;</li>
+<li>all four <code>cxpm --generate</code> template kinds, including that the generated <code>package.json</code> parses
+back into the exact <code>ProjectDescriptor</code> shape <code>ProjectManager::load_project</code> expects;</li>
+<li>the <code>cxpm</code> executable&rsquo;s <code>--help</code>/no-argument/missing-directory/nonexistent-directory/
+missing-manifest/<code>--generate</code> exit-code contract, including overwrite protection and <code>--force</code>;</li>
+<li>the <code>cxpm-descriptor-sandbox</code> helper&rsquo;s success and every documented failure path (missing file,
+symbol/kind mismatch, unknown kind argument) run directly, independent of a full build;</li>
+<li>(opt-in) a full <code>cxpm --build</code> against real example projects in both manifest formats, through
+real toolchain discovery, JIT compilation, the sandboxed descriptor-loading path, and compiler
+invocation.</li>
+</ul>
+<h2 id="sanitizers">Sanitizers</h2>
+<p><code>-DCXPM_ENABLE_SANITIZERS=ON</code> (the default) builds <code>cxpm_tests</code> with
+<code>-fsanitize=address,undefined</code> on non-MSVC compilers. The full suite passes clean under both.</p>
+<h2 id="coverage-instrumentation">Coverage instrumentation</h2>
+<p><code>-DCXPM_ENABLE_COVERAGE=ON</code> builds <code>cxpm_tests</code> with <code>--coverage</code> and, if <code>gcovr</code> is on <code>PATH</code>,
+adds a <code>coverage</code> target that runs the unit suite and regenerates an HTML report under
+<code>docs/coverage</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>cmake -S . -B build-coverage -DCXPM_BUILD_TESTS<span style="color:#f92672">=</span>ON -DCXPM_ENABLE_COVERAGE<span style="color:#f92672">=</span>ON
+</span></span><span style="display:flex;"><span>cmake --build build-coverage --target coverage
+</span></span></code></pre></div><p>The report counts only <code>libraries/cxpm-interface/src/</code>, excluding <code>CXPM/Testing/</code> itself, since
+the goal is coverage of the code under test, not of the test harness.</p>
+<h2 id="known-gaps">Known gaps</h2>
+<p>See <a href="../cxpm/srs-unit-testing/#8-deferred-coverage--future-work">srs-unit-testing.md §8</a>
+ for the
+itemized list of components not yet unit-tested (<code>ToolchainManager</code>, <code>ProjectManager</code>&rsquo;s
+orchestration logic, <code>ShellManager</code> fault injection, <code>EnvironmentManager::which</code>/<code>get</code>) and why.
+<code>CXPM_SANDBOX_DISABLE=1</code>&rsquo;s fallback path (see <a href="../cxpm/srs-sandbox/#5-testing">srs-sandbox.md §5</a>
+) is
+verified manually but not yet an automated CTest case.</p>
+
+</article>
+
+
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+
+
+
+
+<p class="edit-link"><a href="https://github.com/arthurafarias/cpkg/edit/master/hugosite/content/testing.md" target="_blank" rel="noopener">Edit this page on GitHub</a></p>
+
+
+
+
+    </div>
+  </main>
+  <aside class="toc-pane" aria-label="On this page">
+    
+
+<div class="toc-inner">
+  <p class="toc-title">On this page</p>
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#running-the-suite">Running the suite</a></li>
+    <li><a href="#per-class-self-registering-groups">Per-class self-registering groups</a></li>
+    <li><a href="#testability-tiers">Testability tiers</a></li>
+    <li><a href="#correctness-classes-currently-exercised">Correctness classes currently exercised</a></li>
+    <li><a href="#sanitizers">Sanitizers</a></li>
+    <li><a href="#coverage-instrumentation">Coverage instrumentation</a></li>
+    <li><a href="#known-gaps">Known gaps</a></li>
+  </ul>
+</nav>
+</div>
+
+
+  </aside>
+</div>
+<footer class="site-footer">
+  <p>cxpm docs · built with Hugo · <a href="https://github.com/arthurafarias/cpkg" target="_blank" rel="noopener">source on GitHub</a></p>
+</footer>
+
+<script>
+  window.CXPM_DOCS = {
+    searchIndexURL: "\/cxpm\/search-index.json"
+  };
+</script>
+
+  
+  <script src="../cxpm/js/main.min.e798f0576266bcbe7ecb6e7d2fed1ee409601c191998058910a32ec41ba2c455.js" integrity="sha256-55jwV2JmvL5&#43;y259L&#43;0e5AlgHBkZmAWJEKMuxBuixFU=" defer></script>
+
+
+</body>
+</html>

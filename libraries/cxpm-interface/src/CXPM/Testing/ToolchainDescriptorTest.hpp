@@ -51,6 +51,68 @@ struct ToolchainDescriptorTest : public TestGroup {
                    ctx.equal(toolchain.archiver_executable_get(),
                              String("/usr/bin/ar"));
                  }},
+                {"every remaining fluent setter/getter pair round-trips too",
+                 [](TestContext &ctx) {
+                   auto toolchain =
+                       CXPM::Toolchain()
+                           .install_prefix_set("/opt/cxpm")
+                           .include_directory_prefix_set("-isystem")
+                           .include_directories_set({"/opt/cxpm/include"})
+                           .object_build_options_set({"-fPIC"})
+                           .compiler_options_set({"-pthread"})
+                           .archiver_options_set({"rcs"})
+                           .linker_options_set({"-shared"})
+                           .link_directory_prefix_set("-L")
+                           .link_library_prefix_set("-l")
+                           .source_specifier_prefix_set("-c")
+                           .object_specifier_prefix_set("-o")
+                           .link_directories_set({"/opt/cxpm/lib"})
+                           .shared_object_prefix_set("cxpm-")
+                           .shared_object_suffix_set(".dylib")
+                           .archive_prefix_set("cxpm-")
+                           .archive_suffix_set(".lib")
+                           .executable_prefix_set("run-")
+                           .executable_suffix_set(".exe")
+                           .object_prefix_set("obj-")
+                           .object_suffix_set(".obj");
+
+                   ctx.equal(toolchain.install_prefix_get(),
+                             String("/opt/cxpm"));
+                   ctx.equal(toolchain.include_directory_prefix_get(),
+                             String("-isystem"));
+                   ctx.equal(toolchain.include_directories_get()[0],
+                             String("/opt/cxpm/include"));
+                   ctx.equal(toolchain.object_build_options_get()[0],
+                             String("-fPIC"));
+                   ctx.equal(toolchain.compiler_options_get()[0],
+                             String("-pthread"));
+                   ctx.equal(toolchain.archiver_options_get()[0],
+                             String("rcs"));
+                   ctx.equal(toolchain.linker_options_get()[0],
+                             String("-shared"));
+                   ctx.equal(toolchain.link_directory_prefix_get(),
+                             String("-L"));
+                   ctx.equal(toolchain.link_library_prefix_get(),
+                             String("-l"));
+                   ctx.equal(toolchain.source_specifier_prefix_get(),
+                             String("-c"));
+                   ctx.equal(toolchain.object_specifier_prefix_get(),
+                             String("-o"));
+                   ctx.equal(toolchain.link_directories_get()[0],
+                             String("/opt/cxpm/lib"));
+                   ctx.equal(toolchain.shared_object_prefix_get(),
+                             String("cxpm-"));
+                   ctx.equal(toolchain.shared_object_suffix_get(),
+                             String(".dylib"));
+                   ctx.equal(toolchain.archive_prefix_get(), String("cxpm-"));
+                   ctx.equal(toolchain.archive_suffix_get(), String(".lib"));
+                   ctx.equal(toolchain.executable_prefix_get(),
+                             String("run-"));
+                   ctx.equal(toolchain.executable_suffix_get(),
+                             String(".exe"));
+                   ctx.equal(toolchain.object_prefix_get(), String("obj-"));
+                   ctx.equal(toolchain.object_suffix_get(), String(".obj"));
+                 }},
             }) {}
 };
 

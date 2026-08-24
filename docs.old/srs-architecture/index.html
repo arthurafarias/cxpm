@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SRS: Architecture &amp; Flaws · cxpm</title>
+<meta name="description" content="An experimental C&#43;&#43;-native package manager and build tool for C&#43;&#43;.">
+<link rel="icon" href="data:,">
+<script>
+  (function () {
+    try {
+      var saved = localStorage.getItem("cxpm-docs-theme");
+      var theme = saved || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.setAttribute("data-theme", theme);
+    } catch (e) {}
+  })();
+</script>
+
+  
+  <link rel="stylesheet" href="cpkg/css/main.min.705c6b10a27719bb861d20380e003ddc3bcfb26a9d5969863974a958f0604544.css" >
+
+
+</head>
+<body>
+<a class="skip-link" href="#main-content">Skip to content</a>
+<header class="topbar">
+  <div class="topbar-inner">
+    <button class="menu-toggle" id="menu-toggle" aria-label="Toggle navigation" aria-controls="sidebar" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <a class="brand" href="cpkg/">
+      <span class="brand-mark">cxpm</span>
+      <span class="brand-sub">docs</span>
+    </a>
+    <div class="search" role="search">
+      <input type="search" id="search-input" placeholder="Search docs…" aria-label="Search documentation" autocomplete="off">
+      <kbd class="search-kbd">/</kbd>
+      <div id="search-results" class="search-results" hidden></div>
+    </div>
+    <div class="topbar-actions">
+      
+      <a class="icon-link" href="https://github.com/arthurafarias/cpkg" target="_blank" rel="noopener" aria-label="View source on GitHub">
+        <svg viewBox="0 0 16 16" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+      </a>
+      
+      <button class="icon-link theme-toggle" id="theme-toggle" aria-label="Toggle color theme">
+        <svg class="icon-sun" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="shell">
+  <nav class="sidebar" id="sidebar" aria-label="Sections">
+    
+<div class="sidebar-inner">
+  
+<ul class="menu">
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/">Overview</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/quickstart/">Quickstart</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/architecture/">Architecture</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/tooling/">CLI Tooling</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/testing/">Testing</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/roadmap/">Roadmap</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item has-children">
+    
+    <span class="menu-group-label">Software Requirements Specs</span>
+    
+    
+      
+<ul class="menu">
+  
+  
+  <li class="menu-item is-active">
+    
+    <a href="cpkg/srs-architecture/" aria-current="page">Architecture &amp; Flaws</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/srs-unit-testing/">Unit Testing the API</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/srs-ctest-tooling/">CMake/CTest Tooling</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/srs-json-manifests/">JSON Manifests</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/srs-generate/">cxpm --generate</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/srs-sandbox/">Descriptor Sandbox</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/srs-parallel-build/">Parallel Build (proposed)</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+</ul>
+
+</div>
+
+
+
+  </nav>
+  <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+  <main class="content" id="main-content">
+    <div class="content-inner">
+      
+<nav class="breadcrumbs" aria-label="Breadcrumb">
+  <a href="cpkg/">cxpm</a>
+  <span class="sep">/</span><span>SRS: Architecture &amp; Flaws</span>
+</nav>
+<article class="prose">
+  <h1 id="software-requirements-specification">Software Requirements Specification</h1>
+<h2 id="current-architecture-itemized-requirements-and-corrective-flaws">Current Architecture, Itemized Requirements and Corrective Flaws</h2>
+<p><strong>Project:</strong> cxpm
+<strong>Method:</strong> this SRS was produced by reading the entire <code>cxpm-interface</code> public API
+(every header under <code>libraries/cxpm-interface/src/CXPM/</code>), <code>applications/cxpm/src/cxpm.cpp</code>, and
+all three toolchain plugins, then itemizing the architecture as it actually behaves today —
+not as aspirational design.
+<strong>Companion documents:</strong> <a href="cpkg/architecture/">architecture.md</a>
+ (component diagram),
+<a href="cpkg/srs-unit-testing/">srs-unit-testing.md</a>
+ (test coverage this SRS&rsquo;s requirements imply)</p>
+<hr>
+<h2 id="1-purpose">1. Purpose</h2>
+<p>cxpm had no written specification of its own current behavior. This document does two things:</p>
+<ol>
+<li>States, as numbered requirements, what the system <strong>actually does today</strong> (§3) — a
+requirements-shaped description of the as-built architecture, so future changes can be
+evaluated against a known baseline instead of tribal knowledge.</li>
+<li>Itemizes every concrete, cited defect found while establishing that baseline (§4), with a
+severity, a suggested correction, and — for the subset fixed as part of this change — the
+regression test that pins the fix.</li>
+</ol>
+<h2 id="2-architecture-overview">2. Architecture overview</h2>
+<p>See <a href="cpkg/architecture/">architecture.md</a>
+ for the full component table and control-flow diagram.
+In one paragraph: <code>cxpm</code> (<code>Views::ApplicationView</code>) parses <code>argv</code> into build/install commands;
+<code>Controllers::ProjectManager</code> compiles the target directory&rsquo;s <code>package.cpp</code> into a shared object
+and <code>dlopen</code>s it back to recover a <code>Project</code>; <code>Controllers::ToolchainManager</code> discovers
+<code>toolchain.cpp</code> plugins on a search path, JIT-compiles each into a shared object, <code>dlopen</code>s it
+once to copy out a <code>ToolchainDescriptor</code>, then immediately <code>dlclose</code>s it; <code>Toolchain</code> (the sole
+<code>ToolchainInterface</code> implementation) turns that descriptor plus a <code>TargetDescriptor</code> into shell
+command lines executed through <code>Utils::Unix::ShellManager::exec</code> (<code>popen</code>-based).</p>
+<h2 id="3-requirements-derived-from-current-as-built-behavior">3. Requirements derived from current (as-built) behavior</h2>
+<p>These are descriptive, not aspirational — each is cited against the code that implements it.</p>
+<ul>
+<li><strong>AR-1.</strong> The system SHALL accept a project description as a compiled C++ translation unit
+(<code>package.cpp</code>) rather than a parsed configuration format (<code>Controllers::ProjectManager</code>,
+<code>ProjectManager.hpp</code>).</li>
+<li><strong>AR-2.</strong> The system SHALL derive toolchain identity from a <code>toolchain.cpp</code> plugin that defines
+a global <code>CXPM::ToolchainDescriptor toolchain</code> object and exports it through a generated
+<code>extern &quot;C&quot; const ToolchainDescriptor* get_toolchain()</code> loader stub
+(<code>ToolchainManager.hpp:180-185</code>, <code>233-262</code>).</li>
+<li><strong>AR-3.</strong> Toolchain and project manifests SHALL be recompiled from source and <code>dlopen</code>&rsquo;d on
+every invocation; no persistent artifact cache SHALL be consulted
+(<code>ToolchainManager::autoscan</code>, <code>ToolchainManager.hpp:122-177</code>).</li>
+<li><strong>AR-4.</strong> Compiler/linker/archiver invocation SHALL be constructed as a shell command line and
+executed via <code>popen</code> (<code>Utils::Unix::ShellManager::exec</code>, <code>ShellManager.hpp</code>), not via a
+structured process-spawn API.</li>
+<li><strong>AR-5.</strong> The public builder types (<code>Target</code>, <code>Project</code>, <code>Toolchain</code>) SHALL expose a fluent,
+chainable interface returning <code>DerivedType&amp;</code> from every setter, matching the CRTP interfaces in
+<code>TargetInterface.hpp</code>/<code>ToolchainDescriptorInterface.hpp</code>.</li>
+<li><strong>AR-6.</strong> Discovery of toolchain plugins SHALL search, in order: a <code>cxpm_BUILD_EXTRA_MODULES_PATH</code>
+environment variable, then a fixed list of system/user install-prefix-relative directories
+(<code>ProjectManager::initialize</code>, <code>ProjectManager.hpp:50-62</code>).</li>
+<li><strong>AR-7.</strong> Failure to discover, compile, or load a resource (compiler missing, compile error,
+<code>dlopen</code>/<code>dlsym</code> failure, missing <code>package.cpp</code>) SHALL raise
+<code>CXPM::Core::Exceptions::RuntimeException</code> with a descriptive message, not an error code.</li>
+<li><strong>AR-8.</strong> Installation SHALL copy already-built artifacts into a POSIX-aligned prefix layout
+(<code>lib</code>, <code>bin</code>, <code>include/&lt;project&gt;</code>, <code>lib/pkgconfig</code>) via <code>ProjectManager::install_target</code>
+(<code>ProjectManager.hpp:193-311</code>); it SHALL NOT invoke <code>Toolchain::install</code>.</li>
+</ul>
+<h2 id="4-itemized-flaws">4. Itemized flaws</h2>
+<p>Severity: <strong>Critical</strong> (UB/crash/silently wrong result reachable from normal CLI use), <strong>High</strong>
+(incorrect behavior or dead API surface with no workaround), <strong>Medium</strong> (maintainability/latent
+risk, not user-visible today), <strong>Low</strong> (cosmetic/naming).</p>
+<p>Status: <strong>Fixed</strong> = corrected and regression-tested as part of this change (see
+<a href="cpkg/srs-unit-testing/#6-regression-test-requirement">srs-unit-testing.md §6</a>
+). <strong>Deferred</strong> =
+itemized here with a suggested correction but intentionally not changed in this pass, either
+because the fix is a larger design decision (see <a href="cpkg/roadmap/">roadmap.md</a>
+) or because it touches
+code with no current test coverage that would catch a regression.</p>
+<h3 id="41-fixed-in-this-change">4.1 Fixed in this change</h3>
+<table>
+	<thead>
+			<tr>
+					<th>ID</th>
+					<th>Area</th>
+					<th>Description</th>
+					<th>Evidence</th>
+					<th>Correction applied</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td><strong>A1</strong></td>
+					<td><code>String</code></td>
+					<td><code>join</code> called <code>.front()</code> on a possibly-empty <code>BasicCollection&lt;String&gt;</code> — UB on an empty list</td>
+					<td><code>String.hpp:27</code> (pre-fix)</td>
+					<td>Added an <code>empty()</code> guard returning <code>String()</code></td>
+			</tr>
+			<tr>
+					<td><strong>A2</strong></td>
+					<td><code>BasicCollection</code></td>
+					<td>The JSON array <code>operator%</code> called <code>.front()</code> unconditionally before checking whether the collection was empty — UB on any empty <code>sources</code>/<code>dependencies</code>/<code>toolchains</code> list, i.e. a completely normal state</td>
+					<td><code>BasicCollection.hpp:49</code> (pre-fix)</td>
+					<td>Guarded the <code>front()</code>/loop with <code>if (!collection.empty())</code></td>
+			</tr>
+			<tr>
+					<td><strong>A3</strong></td>
+					<td><code>String</code></td>
+					<td><code>trim</code>/<code>trim_left</code>/<code>trim_right</code> tested <code>std::isprint</code>, which treats space as printable, so they never actually stripped leading/trailing whitespace</td>
+					<td><code>String.hpp:45,58</code> (pre-fix); found by writing <code>StringTest</code></td>
+					<td>Switched to <code>std::isspace(static_cast&lt;unsigned char&gt;(...))</code></td>
+			</tr>
+			<tr>
+					<td><strong>A4</strong></td>
+					<td><code>String</code></td>
+					<td><code>trim_right</code>&rsquo;s <code>if (end == 0) break;</code> safeguard left one leading whitespace character un-trimmed on an all-whitespace string; <code>end</code> is a signed <code>int</code>, so the safeguard was solving a non-existent unsigned-underflow problem</td>
+					<td><code>String.hpp:64-65</code> (pre-fix)</td>
+					<td>Removed the safeguard; the existing <code>end &gt;= 0</code> loop condition already terminates correctly at <code>end == -1</code></td>
+			</tr>
+			<tr>
+					<td><strong>A5</strong></td>
+					<td><code>ProgramOptions::Parse</code></td>
+					<td>A flag token that is the last token, or immediately followed by another flag, is never inserted into the result map (e.g. <code>Parse({&quot;--help&quot;})</code> has no <code>&quot;help&quot;</code> key)</td>
+					<td><code>Parse.hpp:16-24</code> (pre-fix)</td>
+					<td>Insert <code>options[current_argument]</code> eagerly when a flag token is seen, not only when a following value token arrives</td>
+			</tr>
+			<tr>
+					<td><strong>A6</strong></td>
+					<td><code>ApplicationView</code></td>
+					<td><code>--install</code> read <code>values.front()</code> with no emptiness check, unlike the sibling <code>--build</code> path which explicitly checks <code>values.empty()</code> first</td>
+					<td><code>ApplicationView.hpp:81</code> (pre-fix)</td>
+					<td>Added the same <code>values.empty()</code> check and <code>assert_project_directory</code> call <code>--build</code> already had</td>
+			</tr>
+			<tr>
+					<td><strong>A7</strong></td>
+					<td><code>ApplicationView</code></td>
+					<td><code>run()</code>&rsquo;s install path had a <code>switch (status) { case Failure: case Success: break; }</code> — both arms were no-ops, so a failed install still exited <code>0</code></td>
+					<td><code>ApplicationView.hpp:83-87</code> (pre-fix)</td>
+					<td><code>case Status::Failure</code> now <code>return 1;</code></td>
+			</tr>
+			<tr>
+					<td><strong>A8</strong></td>
+					<td><code>PkgConfigManager</code></td>
+					<td><code>emit_configuration</code> substituted <code>package.name</code> into the <code>{{version}}</code> placeholder (copy-paste from the line above) and <code>toolchain.install_prefix</code> into <code>{{description}}</code></td>
+					<td><code>PkgConfigManager.hpp:66-69</code> (pre-fix)</td>
+					<td><code>{{version}}</code> now takes <code>package.version</code>; <code>{{description}}</code> takes an empty string, since <code>PackageDescriptor</code> has no description field to substitute (see A9, deferred)</td>
+			</tr>
+			<tr>
+					<td><strong>A30</strong></td>
+					<td>Documentation</td>
+					<td><code>readme.md</code>&rsquo;s primary example used <code>TargetDescriptor()</code>/<code>ProjectDescriptor()</code> with builder methods (<code>.name_set</code>, <code>.create()</code>, <code>.add()</code>) that only exist on <code>Target</code>/<code>Project</code></td>
+					<td><code>readme.md:22-36</code> (pre-fix)</td>
+					<td>Rewrote the example to use <code>Target</code>/<code>Project</code>, matching every <code>examples/*/package.cpp</code> and the README&rsquo;s own later &ldquo;Custom Toolchain Support&rdquo; section</td>
+			</tr>
+			<tr>
+					<td><strong>A31</strong></td>
+					<td><code>Target</code></td>
+					<td><code>examples/executable-with-gstreamer-1.0/package.cpp</code> called <code>.dependencies_append(...)</code>, which didn&rsquo;t exist on <code>Target</code>/<code>TargetInterface</code> (only <code>dependencies_set</code>/<code>dependencies_get</code>, unlike <code>sources</code>/<code>options</code>/<code>include_directories</code>/<code>link_directories</code>/<code>link_libraries</code>, which all have <code>*_append</code>)</td>
+					<td><code>Target.hpp</code> (pre-fix); example <code>package.cpp</code></td>
+					<td>Added <code>Target::dependencies_append(const String&amp;)</code> for parity with every other collection field, pinned by <code>TargetTest</code>: &ldquo;dependencies_append accumulates across multiple calls&rdquo;</td>
+			</tr>
+			<tr>
+					<td><strong>A34</strong></td>
+					<td><code>ProjectManager</code></td>
+					<td><code>build_project</code>&rsquo;s error message referenced <code>&quot;package.json&quot;</code> (<code>.../package.json</code> as the second <code>{}</code> in <code>&quot;Failed to build manifest {} using {}&quot;</code>) while the only manifest mechanism at the time was a compiled <code>package.cpp</code> — leftover text from an earlier design iteration, and confusing on its own terms even before this session</td>
+					<td><code>ProjectManager.hpp:103</code> (pre-fix)</td>
+					<td>Superseded by <code>ProjectManager::load_project</code> (<a href="cpkg/srs-json-manifests/">srs-json-manifests.md</a>
+), whose own error messages correctly reference <code>package.cpp</code>/<code>package.json</code> as the two <em>real</em> manifest mechanisms — this finding is now moot rather than separately patched</td>
+			</tr>
+			<tr>
+					<td><strong>A37</strong></td>
+					<td><code>ProjectManager</code>/<code>ToolchainManager</code></td>
+					<td>Toolchain discovery (<code>ToolchainManager::autoscan</code>) only ran as a side effect of <code>build_manifest</code> calling <code>ToolchainManager::current</code> to pick a toolchain for compiling <code>package.cpp</code> itself — an entirely incidental trigger. Invisible before this session because there was only one manifest code path; became a real bug the moment <a href="cpkg/srs-json-manifests/">srs-json-manifests.md</a>
+&rsquo;s <code>package.json</code> path was added (confirmed by reproduction: <code>cxpm --build</code> against a <code>package.json</code>-only directory failed with &ldquo;Couldn&rsquo;t find a compatible toolchain&rdquo; because the toolchain registry was never populated)</td>
+					<td><code>ProjectManager.hpp</code> <code>build_project</code>/<code>build_manifest</code> (pre-fix)</td>
+					<td><code>build_project</code> now calls <code>ToolchainManager::current</code> explicitly, exactly once, up front, regardless of manifest format, and threads the result into <code>load_project</code>/<code>build_manifest</code> so <code>autoscan</code>&rsquo;s JIT-compilation is not paid twice on the <code>package.cpp</code> path either</td>
+			</tr>
+			<tr>
+					<td><strong>A17</strong></td>
+					<td>Namespacing</td>
+					<td>Two incompatible <code>Controllers</code> namespaces existed: <code>CXPM::Controllers</code> (<code>ProjectManager</code>, <code>ToolchainManager</code>) and a separate global-scope <code>::Controllers</code> (<code>PkgConfigManager</code>, <code>ClangdManager</code>); <code>Toolchain.hpp:618</code> resolved <code>Controllers::PackageConfigManager</code> via unqualified lookup reaching the global one only by luck of C++ lookup rules. This stopped being latent and became a real, reproduced build failure while implementing <a href="cpkg/srs-sandbox/">srs-sandbox.md</a>
+: adding <code>CXPM::Controllers::DescriptorSandbox</code> shifted which <code>Controllers</code> unqualified lookup found first from inside <code>namespace CXPM</code>, and <code>Toolchain.hpp:618</code> broke outright with &ldquo;<code>CXPM::Controllers::PackageConfigManager</code> has not been declared&rdquo;</td>
+					<td><code>PkgConfigManager.hpp</code>, <code>ClangdManager.hpp</code> (pre-fix)</td>
+					<td>Consolidated <code>PkgConfigManager.hpp</code> and <code>ClangdManager.hpp</code> onto <code>namespace CXPM::Controllers</code>; updated the one call site that had spelled it out as <code>::Controllers::PackageConfigManager</code> (<code>PkgConfigManagerTest.hpp</code>) to <code>CXPM::Controllers::PackageConfigManager</code></td>
+			</tr>
+	</tbody>
+</table>
+<h3 id="42-deferred-itemized-not-changed-in-this-pass">4.2 Deferred (itemized, not changed in this pass)</h3>
+<table>
+	<thead>
+			<tr>
+					<th>ID</th>
+					<th>Area</th>
+					<th>Description</th>
+					<th>Evidence</th>
+					<th>Severity</th>
+					<th>Suggested correction</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td><strong>A9</strong></td>
+					<td><code>PkgConfigManager</code></td>
+					<td><code>emit_configuration</code> takes a <code>PackageDescriptor</code>, which has no <code>description</code> field, so there is structurally no data to fill <code>{{description}}</code> with even after A8</td>
+					<td><code>PkgConfigManager.hpp:52-54</code>, <code>PackageDescriptor.hpp</code></td>
+					<td>Medium</td>
+					<td>Change the signature to accept a <code>TargetDescriptor</code> (which does have <code>description</code>) or add an explicit <code>description</code> parameter</td>
+			</tr>
+			<tr>
+					<td><strong>A10</strong></td>
+					<td><code>Toolchain::install</code></td>
+					<td>Both overloads unconditionally <code>throw NotImplementedException()</code>; nothing calls them because real install logic lives entirely in <code>ProjectManager::install_target</code>&rsquo;s hand-rolled file copying</td>
+					<td><code>Toolchain.hpp:662-672</code></td>
+					<td>High</td>
+					<td>Either implement <code>Toolchain::install</code> and route the CLI through it, unifying the two divergent install code paths, or remove <code>install()</code> from <code>ToolchainInstallInterface</code></td>
+			</tr>
+			<tr>
+					<td><strong>A11</strong></td>
+					<td><code>ProjectManager::install_project</code></td>
+					<td>Always <code>return {Status::Failure}</code>, ignoring its arguments; never called — <code>ApplicationView</code> has its own same-named, different, actually-used private method</td>
+					<td><code>ProjectManager.hpp:184-188</code></td>
+					<td>Medium</td>
+					<td>Delete the dead stub, or make <code>ApplicationView::install_project</code> delegate to it</td>
+			</tr>
+			<tr>
+					<td><strong>A12</strong></td>
+					<td><code>ProjectManager::build_target</code></td>
+					<td>A pass-through stub that always reports <code>Status::Success</code> from a fresh, unresolved, default-constructed <code>Toolchain</code>, without building anything</td>
+					<td><code>ProjectManager.hpp:175-180</code></td>
+					<td>High</td>
+					<td>Implement for real (select toolchain, call <code>toolchain.build(target)</code>) or remove it</td>
+			</tr>
+			<tr>
+					<td><strong>A13</strong></td>
+					<td><code>ApplicationView</code></td>
+					<td><code>--uninstall</code>/<code>-u</code> is documented in <code>print_usage()</code> and has a stub private <code>uninstall()</code> method, but <code>run()</code> never checks for it — the flag is entirely non-functional</td>
+					<td><code>ApplicationView.hpp:106</code>, <code>171-173</code></td>
+					<td>Medium</td>
+					<td>Wire it up, or remove it from the help text until implemented</td>
+			</tr>
+			<tr>
+					<td><strong>A14</strong></td>
+					<td><code>ClangdManager</code>, <code>ShellCommandBuilder</code>, <code>KeyValueMapDescriptor</code></td>
+					<td>Three headers are never <code>#include</code>d anywhere and, if they were, would fail to compile — all three misuse the non-template <code>Collection</code> struct as if it were <code>template&lt;typename T&gt; Collection&lt;T&gt;</code></td>
+					<td><code>ClangdManager.hpp:28</code>, <code>ShellCommandBuilder.hpp:28,36</code>, <code>Modules/Serialization/KeyValueMapDescriptor.hpp:11</code></td>
+					<td>Medium</td>
+					<td>Either make <code>Collection</code> a real alias template (<code>template&lt;typename T&gt; using Collection = BasicCollection&lt;T&gt;;</code>) matching these call sites, or fix the call sites to use <code>BasicCollection&lt;T&gt;</code> directly and finish or delete the three orphan headers</td>
+			</tr>
+			<tr>
+					<td><strong>A15</strong></td>
+					<td><code>Utils/Unix/which.hpp</code></td>
+					<td>Completely empty file; <code>which()</code> is actually implemented inside <code>EnvironmentManager.hpp</code> instead</td>
+					<td><code>Utils/Unix/which.hpp</code></td>
+					<td>Low</td>
+					<td>Move <code>which</code> into this file, or delete it</td>
+			</tr>
+			<tr>
+					<td><strong>A16</strong></td>
+					<td><code>Core::{SharedPointer,UniquePointer,WeakPointer}</code>, <code>Utils/Print.hpp</code>, <code>ProgramOptions::OptionDescriptor</code></td>
+					<td>Thin wrapper/utility headers never used anywhere in the codebase</td>
+					<td>grep-confirmed dead</td>
+					<td>Low</td>
+					<td>Start using them for a stated reason, or remove them to shrink the API surface a test suite has to cover</td>
+			</tr>
+			<tr>
+					<td><strong>A18</strong></td>
+					<td>Namespacing</td>
+					<td><code>Core::Containers::Tuple</code> and <code>Modules::Serialization::KeyValueMapDescriptor</code> are declared without the <code>CXPM::</code> prefix every sibling header uses, making them unreachable under their intended fully-qualified name</td>
+					<td><code>Core/Containers/Tuple.hpp:8</code></td>
+					<td>Low</td>
+					<td>Add the missing <code>CXPM::</code> prefix, or delete if genuinely unused</td>
+			</tr>
+			<tr>
+					<td><strong>A19</strong></td>
+					<td><code>ToolchainManager</code></td>
+					<td><code>by_name</code>/<code>autoselect</code>/<code>current</code> (and several <code>LoggerManager</code> stream setters) are marked <code>constexpr</code> despite throwing exceptions, doing filesystem I/O, or touching mutable static/atomic state at runtime — ill-formed, no diagnostic required, and misleading to readers</td>
+					<td><code>ToolchainManager.hpp:61-93,99-120</code>, <code>LoggerManager.hpp:76,80,89,93,112,116,120</code></td>
+					<td>Low</td>
+					<td>Drop <code>constexpr</code>, keep <code>inline</code>/<code>static</code></td>
+			</tr>
+			<tr>
+					<td><strong>A20</strong></td>
+					<td><code>ToolchainManager::autoselect</code></td>
+					<td>Two unconditional <code>std::cout &lt;&lt;</code> debug lines, inconsistent with the rest of the codebase which routes diagnostics through <code>LoggerManager</code></td>
+					<td><code>ToolchainManager.hpp:80,90</code></td>
+					<td>Low</td>
+					<td>Replace with <code>LoggerManager::debug(...)</code></td>
+			</tr>
+			<tr>
+					<td><strong>A21</strong></td>
+					<td><code>ToolchainManager::autoscan</code></td>
+					<td>Recompiles every discovered <code>toolchain.cpp</code> into a fresh <code>.so</code> on <strong>every</strong> invocation, with no mtime/hash cache — confirmed empirically: a single <code>cxpm --build</code> recompiles all three toolchains (~4s each on this machine) before doing any real work</td>
+					<td><code>ToolchainManager.hpp:122-177</code>, C.2 of the codebase audit</td>
+					<td>High (performance)</td>
+					<td>Cache by source mtime/hash; only recompile when the plugin source changed</td>
+			</tr>
+			<tr>
+					<td><strong>A22</strong></td>
+					<td><code>ToolchainManager</code> plugin naming</td>
+					<td>The generated <code>.so</code>&rsquo;s logical name is derived from the <em>parent directory</em> of <code>toolchain.cpp</code> (<code>source_path.parent_path().filename()</code>), not from the descriptor&rsquo;s own <code>.name_set(...)</code> value; in the source tree this makes all three plugins (<code>gcc/src/</code>, <code>g++/src/</code>, <code>nvcc/src/</code>) resolve to the same directory-derived name <code>&quot;src&quot;</code>, so they overwrite each other&rsquo;s generated <code>.loader.cpp</code>/<code>.so</code> files mid-scan — confirmed working today only because each plugin is fully compiled, loaded and <code>dlclose</code>&rsquo;d before the next one starts</td>
+					<td><code>ToolchainManager.hpp:191</code>; confirmed by running <code>cxpm --build</code> with <code>cxpm_BUILD_EXTRA_MODULES_PATH</code> pointed at <code>modules/toolchains</code></td>
+					<td>Medium</td>
+					<td>Derive the generated filename from the descriptor&rsquo;s <code>.name_get()</code> after a first <code>dlopen</code>, or require plugins to sit directly under <code>&lt;name&gt;/toolchain.cpp</code> (matching the <em>installed</em> layout, which does not have this collision)</td>
+			</tr>
+			<tr>
+					<td><strong>A23</strong></td>
+					<td><code>ToolchainManager</code>/<code>ProjectManager</code> <code>dlopen</code></td>
+					<td>No ABI/schema version check between the <code>ToolchainDescriptor</code>/<code>Project</code> layout a plugin was compiled against and the one <code>cxpm</code> itself uses; <code>ProjectManager</code>&rsquo;s loader <code>reinterpret_cast</code>s a <code>Project*</code> getter from a stub that actually returns <code>const ProjectDescriptor*</code></td>
+					<td><code>ProjectManager.hpp:364-388,454-460</code>, <code>ToolchainManager.hpp:233-262</code></td>
+					<td>Medium</td>
+					<td>Add an explicit format/ABI version field checked before trusting the loaded pointer</td>
+			</tr>
+			<tr>
+					<td><strong>A24</strong></td>
+					<td><code>BasicCollection</code></td>
+					<td>Privately inherits <code>Lockable</code> (dragging in a mutex) but never calls <code>acquire_lock()</code> from any of its own operations — looks thread-aware, provides zero synchronization</td>
+					<td><code>Core/Containers/BasicCollection.hpp:18-19</code></td>
+					<td>Medium</td>
+					<td>Either remove the unused <code>Lockable</code> base, or actually synchronize <code>transform</code>/mutating operations if concurrent access is a real requirement</td>
+			</tr>
+			<tr>
+					<td><strong>A25</strong></td>
+					<td><code>Lockable</code></td>
+					<td>Every copy gets a <strong>new</strong> <code>std::make_shared&lt;std::mutex&gt;()</code> rather than sharing the original — two &ldquo;copies&rdquo; of the same logical collection do not protect each other</td>
+					<td><code>Core/Patterns/Lockable.hpp:8-15</code></td>
+					<td>Medium</td>
+					<td>Decide whether <code>Lockable</code> should have copy-shares-lock or copy-gets-fresh-lock semantics, and document/enforce whichever is intended</td>
+			</tr>
+			<tr>
+					<td><strong>A26</strong></td>
+					<td><code>EnvironmentManager::which</code></td>
+					<td>Uses <code>recursive_directory_iterator</code> over every <code>PATH</code> entry (not direct children), never checks the executable bit, and the dedicated <code>which.hpp</code> file meant to hold it is empty (A15)</td>
+					<td><code>Utils/Unix/EnvironmentManager.hpp:64-71</code></td>
+					<td>Medium</td>
+					<td>Iterate only direct children of each <code>PATH</code> directory and check <code>X_OK</code></td>
+			</tr>
+			<tr>
+					<td><strong>A27</strong></td>
+					<td><code>EnvironmentManager::get</code></td>
+					<td>Uses non-reentrant <code>strtok</code> (the codebase spins up threads via <code>ThreadPool</code>) and splits on both <code>;</code> and <code>:</code> in a <code>CXPM::Utils::Unix</code>-namespaced (POSIX-only) class</td>
+					<td><code>Utils/Unix/EnvironmentManager.hpp:34-43</code></td>
+					<td>Low</td>
+					<td>Use <code>std::string::find</code>/<code>substr</code> splitting instead of <code>strtok</code>; split on <code>:</code> only</td>
+			</tr>
+			<tr>
+					<td><strong>A28</strong></td>
+					<td><code>ShellManager::exec</code></td>
+					<td>Command construction is injection-prone: <code>shell=true</code> wraps as <code>bash -c &quot;&lt;cmd&gt;&quot;</code> with no escaping, and <code>popen</code> itself always runs through <code>/bin/sh -c</code>, producing a double shell-wrap; target names/paths and pkg-config output flow unescaped into these command lines</td>
+					<td><code>Utils/Unix/ShellManager.hpp:38-39,45</code>, <code>Toolchain.hpp:327,419,517,570</code>, <code>PkgConfigManager.hpp:24</code></td>
+					<td>High (security)</td>
+					<td>Prefer <code>posix_spawn</code>/<code>fork</code>+<code>exec</code> with an argv array over <code>popen</code>+string concatenation; if a shell is genuinely needed, quote every interpolated argument</td>
+			</tr>
+			<tr>
+					<td><strong>A29</strong></td>
+					<td>Toolchain deployment</td>
+					<td><code>build.sh</code> compiles the three toolchains to prebuilt <code>.so</code> files and copies them to <code>/usr/share/cxpm/toolchains</code>, but <code>ToolchainManager::autoscan</code> only ever looks for files literally named <code>toolchain.cpp</code> — the two deployment mechanisms are mutually incompatible and <code>build.sh</code>&rsquo;s <code>.so</code> output is silently ignored</td>
+					<td><code>build.sh</code>, <code>ToolchainManager.hpp:157-163</code></td>
+					<td>Medium</td>
+					<td>Pick one deployment mechanism; if prebuilt <code>.so</code> is preferred (recommended given A21&rsquo;s JIT-recompilation cost), rewrite <code>autoscan</code> to discover and version-check <code>.so</code> files directly</td>
+			</tr>
+			<tr>
+					<td><strong>A32</strong></td>
+					<td><code>ProjectDescriptor::compile_comands</code></td>
+					<td>Misspelled field (missing the second &ldquo;m&rdquo;), inconsistent with the correctly-spelled <code>TargetDescriptor::compile_commands</code> and <code>CompileCommandDescriptor</code></td>
+					<td><code>ProjectDescriptor.hpp:15</code></td>
+					<td>Low</td>
+					<td>Rename to <code>compile_commands</code></td>
+			</tr>
+			<tr>
+					<td><strong>A33</strong></td>
+					<td><code>AbstractInputArchiver</code></td>
+					<td>Constructor is <code>private</code> (declared before the <code>protected:</code> label), making the class unconstructible as written; no input archiver (JSON or otherwise) exists anywhere — deserialization is entirely unimplemented</td>
+					<td><code>Modules/Serialization/AbstractInputArchiver.hpp:9-19</code></td>
+					<td>Medium</td>
+					<td>Fix the access specifier; decide whether manifest deserialization is in scope, and if not, remove the interface until it is</td>
+			</tr>
+			<tr>
+					<td><strong>A35</strong></td>
+					<td><code>ApplicationView</code></td>
+					<td><code>OptionsDescriptorCollection</code> is constructed in <code>run()</code> and then never used — <code>print_usage()</code> is a hardcoded string instead of being generated from the schema</td>
+					<td><code>ApplicationView.hpp:30-31</code></td>
+					<td>Low</td>
+					<td>Either use it to generate the usage text, or remove the dead variable</td>
+			</tr>
+			<tr>
+					<td><strong>A36</strong></td>
+					<td>CI</td>
+					<td>No CI configuration exists anywhere in the repository (<code>readme.md</code>&rsquo;s git history references a past &ldquo;github-actions compiler&rdquo; change, but no workflow file survives in the current tree)</td>
+					<td>repo-wide search</td>
+					<td>High (process)</td>
+					<td>Add a CI workflow that runs <code>ctest -L unit</code> (and, on a runner with a compiler, the full suite) on every push/PR — see <a href="cpkg/roadmap/">roadmap.md</a>
+</td>
+			</tr>
+	</tbody>
+</table>
+<h2 id="5-requirements-for-tests-covering-correct-function">5. Requirements for tests covering correct function</h2>
+<p>For every <strong>Fixed</strong> item in §4.1, <a href="cpkg/srs-unit-testing/#6-regression-test-requirement">srs-unit-testing.md §6</a>
+
+names the exact test case pinning it — that table is the traceability link this SRS&rsquo;s &ldquo;cover in
+tests the requirements to function correctly&rdquo; mandate is checked against. For <strong>Deferred</strong> items,
+the correction column above doubles as the acceptance criterion a future fix must satisfy, and
+each deferred item SHOULD gain its own regression test in the same PR that fixes it, following the
+pattern established in §4.1.</p>
+<h2 id="6-acceptance-criteria">6. Acceptance criteria</h2>
+<ul>
+<li>Every item in §4.1 has landed and is pinned by a named test (verified: see
+<a href="cpkg/srs-unit-testing/">srs-unit-testing.md</a>
+).</li>
+<li>Every item in §4.2 is recorded with a severity and a concrete suggested correction, so it can be
+picked up independently without re-deriving the analysis (this document).</li>
+<li>No item in §4.2 is silently contradicted by §3&rsquo;s as-built requirements — where a deferred item
+changes intended behavior (e.g. A21, A29), §3 is written to describe <em>current</em> behavior, not the
+corrected target, so the two sections never conflict about what &ldquo;correct&rdquo; means today.</li>
+</ul>
+
+</article>
+
+
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+
+
+
+
+<p class="edit-link"><a href="https://github.com/arthurafarias/cpkg/edit/master/hugosite/content/srs-architecture.md" target="_blank" rel="noopener">Edit this page on GitHub</a></p>
+
+
+
+
+    </div>
+  </main>
+  <aside class="toc-pane" aria-label="On this page">
+    
+
+<div class="toc-inner">
+  <p class="toc-title">On this page</p>
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#current-architecture-itemized-requirements-and-corrective-flaws">Current Architecture, Itemized Requirements and Corrective Flaws</a></li>
+    <li><a href="#1-purpose">1. Purpose</a></li>
+    <li><a href="#2-architecture-overview">2. Architecture overview</a></li>
+    <li><a href="#3-requirements-derived-from-current-as-built-behavior">3. Requirements derived from current (as-built) behavior</a></li>
+    <li><a href="#4-itemized-flaws">4. Itemized flaws</a>
+      <ul>
+        <li><a href="#41-fixed-in-this-change">4.1 Fixed in this change</a></li>
+        <li><a href="#42-deferred-itemized-not-changed-in-this-pass">4.2 Deferred (itemized, not changed in this pass)</a></li>
+      </ul>
+    </li>
+    <li><a href="#5-requirements-for-tests-covering-correct-function">5. Requirements for tests covering correct function</a></li>
+    <li><a href="#6-acceptance-criteria">6. Acceptance criteria</a></li>
+  </ul>
+</nav>
+</div>
+
+
+  </aside>
+</div>
+<footer class="site-footer">
+  <p>cxpm docs · built with Hugo · <a href="https://github.com/arthurafarias/cpkg" target="_blank" rel="noopener">source on GitHub</a></p>
+</footer>
+
+<script>
+  window.CXPM_DOCS = {
+    searchIndexURL: "\/cpkg\/search-index.json"
+  };
+</script>
+
+  
+  <script src="cpkg/js/main.min.e798f0576266bcbe7ecb6e7d2fed1ee409601c191998058910a32ec41ba2c455.js" defer></script>
+
+
+</body>
+</html>

@@ -1,0 +1,7 @@
+{{ $toc := printf "%v" .TableOfContents }}
+{{ if in $toc "<ul" }}
+<div class="toc-inner">
+  <p class="toc-title">On this page</p>
+  {{ .TableOfContents }}
+</div>
+{{ end }}

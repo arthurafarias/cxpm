@@ -1,0 +1,16 @@
+{{- $dest := .Destination -}}
+{{- $path := $dest -}}
+{{- $frag := "" -}}
+{{- if strings.Contains $dest "#" -}}
+  {{- $parts := split $dest "#" -}}
+  {{- $path = index $parts 0 -}}
+  {{- $frag = index $parts 1 -}}
+{{- end -}}
+{{- $href := $dest -}}
+{{- if strings.HasSuffix $path ".md" -}}
+  {{- with .Page.GetPage $path -}}
+    {{- $href = .RelPermalink -}}
+    {{- if $frag -}}{{- $href = printf "%s#%s" $href $frag -}}{{- end -}}
+  {{- end -}}
+{{- end -}}
+<a href="{{ $href }}"{{ with .Title }} title="{{ . }}"{{ end }}{{ if strings.HasPrefix $dest "http" }} rel="noopener" target="_blank"{{ end }}>{{ .Text | safeHTML }}</a>

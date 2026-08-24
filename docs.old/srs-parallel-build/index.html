@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SRS: Parallel Build · cxpm</title>
+<meta name="description" content="An experimental C&#43;&#43;-native package manager and build tool for C&#43;&#43;.">
+<link rel="icon" href="data:,">
+<script>
+  (function () {
+    try {
+      var saved = localStorage.getItem("cxpm-docs-theme");
+      var theme = saved || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.setAttribute("data-theme", theme);
+    } catch (e) {}
+  })();
+</script>
+
+  
+  <link rel="stylesheet" href="cpkg/css/main.min.705c6b10a27719bb861d20380e003ddc3bcfb26a9d5969863974a958f0604544.css" >
+
+
+</head>
+<body>
+<a class="skip-link" href="#main-content">Skip to content</a>
+<header class="topbar">
+  <div class="topbar-inner">
+    <button class="menu-toggle" id="menu-toggle" aria-label="Toggle navigation" aria-controls="sidebar" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <a class="brand" href="cpkg/">
+      <span class="brand-mark">cxpm</span>
+      <span class="brand-sub">docs</span>
+    </a>
+    <div class="search" role="search">
+      <input type="search" id="search-input" placeholder="Search docs…" aria-label="Search documentation" autocomplete="off">
+      <kbd class="search-kbd">/</kbd>
+      <div id="search-results" class="search-results" hidden></div>
+    </div>
+    <div class="topbar-actions">
+      
+      <a class="icon-link" href="https://github.com/arthurafarias/cpkg" target="_blank" rel="noopener" aria-label="View source on GitHub">
+        <svg viewBox="0 0 16 16" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+      </a>
+      
+      <button class="icon-link theme-toggle" id="theme-toggle" aria-label="Toggle color theme">
+        <svg class="icon-sun" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="shell">
+  <nav class="sidebar" id="sidebar" aria-label="Sections">
+    
+<div class="sidebar-inner">
+  
+<ul class="menu">
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/">Overview</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/quickstart/">Quickstart</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/architecture/">Architecture</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/tooling/">CLI Tooling</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/testing/">Testing</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/roadmap/">Roadmap</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item has-children">
+    
+    <span class="menu-group-label">Software Requirements Specs</span>
+    
+    
+      
+<ul class="menu">
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/srs-architecture/">Architecture &amp; Flaws</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/srs-unit-testing/">Unit Testing the API</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/srs-ctest-tooling/">CMake/CTest Tooling</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/srs-json-manifests/">JSON Manifests</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/srs-generate/">cxpm --generate</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/srs-sandbox/">Descriptor Sandbox</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item is-active">
+    
+    <a href="cpkg/srs-parallel-build/" aria-current="page">Parallel Build (proposed)</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+</ul>
+
+</div>
+
+
+
+  </nav>
+  <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+  <main class="content" id="main-content">
+    <div class="content-inner">
+      
+<nav class="breadcrumbs" aria-label="Breadcrumb">
+  <a href="cpkg/">cxpm</a>
+  <span class="sep">/</span><span>SRS: Parallel Build</span>
+</nav>
+<article class="prose">
+  <h1 id="software-requirements-specification">Software Requirements Specification</h1>
+<h2 id="parallelizing-the-build-pipeline">Parallelizing the Build Pipeline</h2>
+<p><strong>Project:</strong> cxpm
+<strong>Status:</strong> <strong>Proposed — not yet implemented.</strong> Unlike its companion SRS pages, this document
+specifies work that has not landed. It exists to pin down the design <em>before</em> implementation,
+against the codebase as it stands as of this writing, so the eventual change can be reviewed
+against a stated baseline rather than reverse-engineered from a diff.
+<strong>Scope:</strong> <code>CXPM::Toolchain::build</code> (both overloads), <code>Controllers::ProjectManager::build_project</code>
+(<code>libraries/cxpm-interface/src/CXPM/ProjectManager.hpp</code>), <code>Views::ApplicationView</code>&rsquo;s <code>--build</code> flag
+handling, <code>Threading::ThreadPool</code> (<code>Core/Threading/ThreadPool.hpp</code>)
+<strong>Companion documents:</strong> <a href="cpkg/architecture/">architecture.md</a>
+, <a href="cpkg/srs-architecture/">SRS-architecture.md</a>
+
+items A21 (JIT-compilation caching — complementary, not a substitute, for this SRS: caching avoids
+recompiling toolchains that haven&rsquo;t changed, parallelism speeds up the compiles that do still have
+to happen), A22 (toolchain-plugin naming collision — a hard prerequisite for §3.4), A24
+(<code>BasicCollection</code> is not thread-safe), A28 (<code>ShellManager::exec</code>&rsquo;s <code>popen</code>-based process spawn),
+A37 (toolchain-registry population ordering); <a href="cpkg/srs-sandbox/">SRS-sandbox.md</a>
+ (the existing
+<code>ThreadPool</code>/<code>posix_spawn</code> rationale this SRS builds on)</p>
+<hr>
+<h2 id="1-purpose">1. Purpose</h2>
+<p>Object-file compilation for a <em>single</em> target is already parallel: <code>Toolchain::build(const TargetDescriptor&amp;)</code> fires one <code>object_build_async</code> task per source file
+(<code>Toolchain.hpp:629-641</code>) before waiting on any of them. Nothing else in the build pipeline is:</p>
+<ul>
+<li>Every <strong>target</strong> in a project is built strictly sequentially, in two separate places that
+duplicate the same loop shape:
+<ul>
+<li><code>ProjectManager::build_project</code>&rsquo;s <code>for (auto target : project_manifest.targets)</code>
+(<code>ProjectManager.hpp:122-150</code>) — the actual path <code>cxpm --build</code> runs.</li>
+<li><code>Toolchain::build(const ProjectDescriptor&amp;)</code>&rsquo;s <code>for (auto package : project.targets)</code>
+(<code>Toolchain.hpp:600-610</code>) — a library-level convenience entry point, exercised directly by
+<code>ToolchainTest</code>, not currently called from <code>build_project</code>.</li>
+</ul>
+</li>
+<li>Every <strong>toolchain plugin</strong> (<code>toolchain.cpp</code>) discovered by <code>ToolchainManager::autoscan</code> is
+JIT-compiled one at a time (<code>ToolchainManager.hpp:153-198</code>).</li>
+<li>Object-file compilation itself is unbounded: each source file gets its own raw
+<code>std::async(std::launch::async, ...)</code> thread (<code>Toolchain.hpp:356</code>), with no cap. A target with
+200 source files spawns 200 OS threads simultaneously, independent of the machine&rsquo;s actual core
+count, and independent of however many <em>other</em> targets are also compiling at the same time.</li>
+</ul>
+<p>This SRS specifies how to parallelize target builds and bound the total concurrency across the
+whole build — object compiles <em>and</em> target builds together — through the <code>ThreadPool</code> the codebase
+already has, rather than continuing to add more unbounded <code>std::async</code> call sites.</p>
+<h2 id="2-baseline-what-parallelizes-safely-today-and-why">2. Baseline: what parallelizes safely today, and why</h2>
+<p><strong>Targets within a project have no dependency graph.</strong> <code>TargetDescriptor::dependencies</code>
+(<code>TargetDescriptor.hpp:20</code>) is a flat list of <em>external</em> package names — its only consumer is
+<code>Controllers::PackageConfigManager::find_package</code>, called once per target to resolve <code>pkg-config</code>
+flags (<code>Toolchain.hpp:620-627</code>). There is no field anywhere in <code>ProjectDescriptor</code>/
+<code>TargetDescriptor</code> that lets one target in a project declare a build-order dependency on another
+target in the same project. This is the load-bearing fact behind this SRS: <strong>every target in a
+project is, today, an independent build unit</strong>, so parallelizing across targets requires no
+topological sort, no dependency resolution, and no new data on <code>TargetDescriptor</code> — it is safe
+with the schema exactly as it stands. (If a future change adds real target-to-target dependencies —
+see <a href="cpkg/roadmap/">roadmap.md</a>
+ item 13 — this SRS&rsquo;s target-level requirements below would need
+revisiting; §4 flags this explicitly as the one assumption that could later invalidate them.)</p>
+<p><strong>The primitives this SRS needs already exist and are already safe to share across threads:</strong></p>
+<ul>
+<li><code>Threading::ThreadPool::get_instance()</code> — a bounded worker pool (default
+<code>std::thread::hardware_concurrency()</code> threads), already used by <code>ShellManager::exec_async</code>
+(<code>ShellManager.hpp:72-85</code>) and chosen over <code>fork()</code> in <a href="cpkg/srs-sandbox/">SRS-sandbox.md §3.2.3</a>
+
+precisely because it doesn&rsquo;t duplicate a multithreaded process&rsquo;s lock state.</li>
+<li><code>Core::Logging::LoggerManager</code> logs through <code>std::osyncstream</code> (<code>LoggerManager.hpp:32</code>), which
+is safe for concurrent writers out of the box — nothing to change here.</li>
+<li><code>Utils::Unix::ShellManager::exec</code> spawns one <code>popen</code>&rsquo;d child process per call; concurrent calls
+from different threads don&rsquo;t share state (see A28 for <code>exec</code>&rsquo;s own, unrelated, injection-safety
+issues, which this SRS neither introduces nor fixes).</li>
+</ul>
+<p><strong>What is <em>not</em> safe to share across threads without care:</strong></p>
+<ul>
+<li><code>Core::Containers::BasicCollection</code> (A24) — privately inherits a <code>Lockable</code> it never actually
+locks. It looks thread-aware; it provides no synchronization. This SRS&rsquo;s requirements are written
+so that no worker thread ever mutates a <code>BasicCollection</code> another thread can also see live — see
+§3.3.</li>
+<li><code>ToolchainManager::toolchains</code> — a function-local <code>static</code> <code>BasicCollection&lt;ToolchainDescriptor&gt;</code>
+mutated in place by <code>autoscan</code> and read by <code>by_name</code>/<code>autoselect</code>/<code>current</code>
+(<code>ToolchainManager.hpp:53-123</code>). <code>build_project</code> already calls <code>ToolchainManager::current(...)</code>
+— which runs <code>autoscan</code> — exactly once, up front, before any target build starts (this ordering
+is itself the fix for A37, already landed). §3.2 requires that this ordering is preserved: the
+parallel target-build phase begins only <em>after</em> the toolchain registry is fully populated, and no
+worker thread calls anything that re-triggers <code>autoscan</code> while target builds are in flight.</li>
+</ul>
+<h2 id="3-requirements">3. Requirements</h2>
+<h3 id="31-a-shared-bounded-job-budget">3.1 A shared, bounded job budget</h3>
+<ol>
+<li><code>Threading::ThreadPool</code> SHALL remain the single pool of worker threads used for all build
+concurrency — object compiles, links, and target builds alike. No new call site introduced by
+this SRS SHALL spawn an unbounded <code>std::async(std::launch::async, ...)</code> thread the way
+<code>object_build_async</code> does today.</li>
+<li><code>Toolchain::object_build_async</code> (<code>Toolchain.hpp:352-361</code>) SHALL be re-implemented on top of
+<code>Threading::ThreadPool::get_instance()</code> (matching the pattern <code>ShellManager::exec_async</code> already
+uses: submit a lambda, resolve a <code>std::promise</code> from inside it, return the shared future) instead
+of a raw <code>std::async</code> call, so a target with many source files no longer spawns one OS thread per
+source file.</li>
+<li>The pool&rsquo;s size SHALL be configurable as a build job budget, honored by the CLI&rsquo;s <code>--build</code>
+path:
+<ul>
+<li>A new <code>--jobs</code>/<code>-j &lt;N&gt;</code> option on <code>cxpm</code>, following the existing long/short pairing convention
+(<code>--build</code>/<code>-b</code>, <code>--install</code>/<code>-i</code>, <code>--generate</code>/<code>-g</code>) in <code>ApplicationView::run()</code>.</li>
+<li>Falling back to a <code>CXPM_BUILD_JOBS</code> environment variable when the flag is absent.</li>
+<li>Defaulting to <code>std::thread::hardware_concurrency()</code> (the same default <code>ThreadPool</code>&rsquo;s
+constructor already uses) when neither is set.</li>
+<li><code>N = 1</code> SHALL produce build behavior indistinguishable in outcome from today&rsquo;s fully
+sequential code path — this is the escape hatch for anyone who hits a concurrency-related
+regression, in the same spirit as <code>CXPM_SANDBOX_DISABLE=1</code> in
+<a href="cpkg/srs-sandbox/">SRS-sandbox.md §3.2.4</a>
+.</li>
+</ul>
+</li>
+<li>This job budget is <strong>total, not per-level</strong>. Targets building concurrently and the object files
+each of them is concurrently compiling all draw from the same <code>ThreadPool</code>, so a project with 4
+targets of 50 sources each does not attempt 200 simultaneous compiler invocations under a
+<code>--jobs 8</code> budget — it attempts 8, exactly as <code>make -j8</code> would. This falls out for free from
+routing both levels through one pool rather than needing separate accounting.</li>
+</ol>
+<h3 id="32-target-level-parallelism">3.2 Target-level parallelism</h3>
+<ol>
+<li><code>ProjectManager::build_project</code>&rsquo;s per-target loop (<code>ProjectManager.hpp:122-150</code>) SHALL submit
+one build task per target to <code>Threading::ThreadPool</code> and wait for all of them, instead of
+building targets one after another. Per-target toolchain selection
+(<code>ToolchainManager::autoselect</code>/<code>by_name</code>) SHALL still happen — per §2, only <em>after</em> the
+up-front <code>ToolchainManager::current(...)</code> call has finished populating the registry, i.e., the
+existing structural fix for A37 is preserved unchanged; only the loop body&rsquo;s execution model
+changes.</li>
+<li><code>Toolchain::build(const ProjectDescriptor&amp;)</code> (<code>Toolchain.hpp:594-613</code>) SHALL be parallelized the
+same way, for the same reason (§2: no target has a same-project dependency to respect).</li>
+<li>Each submitted target-build task SHALL own its own, independently-copied <code>Toolchain</code> value (the
+type is a small value object — compiler paths, flag strings, no shared mutable state) rather
+than closing over a toolchain variable shared with, or reassigned by, other in-flight tasks.
+This replaces <code>build_project</code>&rsquo;s current pattern of reassigning one loop-scoped <code>Toolchain toolchain;</code> on every iteration (<code>ProjectManager.hpp:86,125,128</code>), which is fine under strict
+sequential execution but would be a data race the moment two iterations run concurrently.</li>
+</ol>
+<h3 id="33-result-aggregation-stays-single-threaded">3.3 Result aggregation stays single-threaded</h3>
+<ol>
+<li>No worker task SHALL mutate a <code>BasicCollection</code> (or any other non-thread-safe shared state)
+directly. Each target-build task SHALL return its own, task-local result (status +
+<code>BasicCollection&lt;CompileCommandDescriptor&gt;</code>); the orchestrating thread SHALL merge these into
+the shared <code>commands</code>/<code>result</code> collection only after joining (<code>.get()</code>), one task&rsquo;s result at a
+time — mirroring the pattern <code>Toolchain::build(const TargetDescriptor&amp;)</code> already uses for its
+per-source futures (<code>Toolchain.hpp:629-641</code>: every future is dispatched first, then drained in a
+second, single-threaded loop).</li>
+<li>The merge order SHALL be <strong>submission order</strong> (i.e., <code>project_manifest.targets</code>&rsquo; declared
+order), not completion order, so that:
+<ul>
+<li><code>compile_commands.json</code>&rsquo;s emitted content (<code>ProjectManager.hpp:152-163</code>) stays deterministic
+across runs regardless of which target&rsquo;s compiler happens to finish first — required for
+reproducible builds and for any test that asserts on its exact contents.</li>
+<li><code>BuildProjectOutputResult</code>&rsquo;s returned <code>ToolchainDescriptor</code> (<code>ProjectManager.hpp:165</code>, third
+tuple element) stays exactly what it is today: the toolchain resolved for the <em>last</em> target in
+manifest order. Today that&rsquo;s an accident of sequential execution (whichever iteration ran
+last); this SRS makes it an explicit, order-based rule so the return value doesn&rsquo;t become
+nondeterministic once targets no longer complete in declaration order.</li>
+</ul>
+</li>
+<li>Failure handling changes from &ldquo;stop at the first target that fails&rdquo; to &ldquo;let every already-
+submitted target finish, then report failure if any did.&rdquo; Neither <code>ThreadPool</code> nor <code>std::async</code>
+offers a cancellation primitive, so a submitted task cannot be un-submitted once dispatched —
+this SRS does not add one. Concretely:
+<ul>
+<li>Overall <code>Status</code> SHALL be <code>Failure</code> if any target&rsquo;s build failed, <code>Success</code> otherwise.</li>
+<li>The aggregated <code>BasicCollection&lt;CompileCommandDescriptor&gt;</code> SHALL still include every target&rsquo;s
+commands (successful or not), in submission order per §3.3.2 — not just the first failure&rsquo;s,
+the way <code>Toolchain::build(const TargetDescriptor&amp;)</code>&rsquo;s existing early-<code>return</code> on the first
+failing <em>source</em> still does today for that inner, per-target loop (which this SRS leaves as
+&ldquo;return on first failing source within a target&rdquo; — see §4, that narrower behavior is
+unchanged).</li>
+<li><code>ProjectManager::build_project</code>&rsquo;s existing per-target <code>try</code>/<code>catch</code> around
+<code>toolchain.build(target)</code> (<code>ProjectManager.hpp:123,146-149</code>, which logs and continues rather
+than aborting the whole build on one target&rsquo;s exception) SHALL be preserved inside each
+parallel task, unchanged.</li>
+</ul>
+</li>
+</ol>
+<h3 id="34-toolchain-plugin-discovery-explicitly-out-of-scope">3.4 Toolchain-plugin discovery: explicitly out of scope</h3>
+<p><code>ToolchainManager::autoscan</code>&rsquo;s own compile loop (<code>ToolchainManager.hpp:153-198</code>) is <strong>not</strong>
+parallelized by this SRS. <code>build_toolchain_plugin</code> derives each generated artifact&rsquo;s filename from
+<code>source_path.parent_path().filename()</code> (<code>ToolchainManager.hpp:213</code>) — a bug already itemized as A22
+— which today produces the <em>same</em> filename (<code>&quot;src&quot;</code>) for all three in-tree toolchains
+(<code>gcc/src/toolchain.cpp</code>, <code>g++/src/toolchain.cpp</code>, <code>nvcc/src/toolchain.cpp</code>). The current code only
+gets away with this because each plugin fully compiles, loads, and <code>dlclose</code>s before the next one
+starts. Parallelizing this specific loop without first landing A22&rsquo;s fix would turn a latent,
+already-documented bug into a real, timing-dependent race: two threads writing the same
+<code>toolchain-src.loader.cpp</code>/<code>libtoolchain-src.so</code> paths concurrently. <strong>A22 SHALL land before this
+loop is parallelized</strong>; that follow-up is tracked as future work (§4), not delivered here.</p>
+<h2 id="4-known-limitations--accepted-for-this-iteration">4. Known limitations / accepted for this iteration</h2>
+<ul>
+<li><strong>No target-to-target dependency support, by design.</strong> §2 establishes that today&rsquo;s schema has
+none, so parallelizing target builds is unconditionally safe. The moment
+<a href="cpkg/roadmap/">roadmap.md</a>
+ item 13 (a real dependency-resolution story) adds one, §3.2&rsquo;s
+&ldquo;build every target concurrently&rdquo; requirement stops being universally correct and this SRS
+needs a follow-up (a real scheduler respecting the new graph, not just &ldquo;submit everything at
+once&rdquo;).</li>
+<li><strong><code>ToolchainManager::autoscan</code>&rsquo;s toolchain-plugin compile loop stays sequential</strong> (§3.4),
+blocked on A22. Once A22 lands, extending this SRS&rsquo;s job-budget model to that loop is a natural,
+small follow-up — tracked here rather than bundled in, since it touches different, currently-
+buggy code.</li>
+<li><strong>Within a single target, a failing source file still short-circuits that target&rsquo;s own link
+step</strong> exactly as it does today (<code>Toolchain.hpp:635-641</code>: the per-source result loop returns as
+soon as it walks to a failing entry, in submission order, without waiting on later entries in
+that same target — though, per §3.1.2, those later entries are still in flight against the
+shared pool and will run to completion regardless, since there is no cancellation). This SRS
+changes that loop&rsquo;s <em>implementation</em> (raw <code>std::async</code> → <code>ThreadPool</code>) but not this
+already-existing &ldquo;first failing source in submission order wins&rdquo; behavior, since no test or
+documented requirement calls for the more aggressive &ldquo;cancel every future&rdquo; semantics.</li>
+<li><strong>No <code>--jobs</code> value validation is specified beyond &ldquo;falls back to <code>hardware_concurrency()</code> when
+unset.&rdquo;</strong> Whether <code>--jobs 0</code> or a negative value should error out or silently clamp is left to
+implementation-time judgment; it is not a design question this SRS needs to settle.</li>
+<li><strong>This SRS does not address A28</strong> (unescaped <code>popen</code>+shell-string command construction). Running
+more compiler invocations concurrently does not change that finding&rsquo;s severity or scope; it is
+listed here only because §2 leans on <code>ShellManager::exec</code> being safe to call concurrently, which
+is a distinct property from the injection issue A28 describes.</li>
+</ul>
+<h2 id="5-testing-requirements">5. Testing requirements</h2>
+<table>
+	<thead>
+			<tr>
+					<th>Requirement</th>
+					<th>How it should be verified</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>§3.1.2/§3.1.3: object-file compilation is bounded by the configured job budget, not one thread per source file</td>
+					<td>A dry-run (<code>dry=true</code>) unit test building a target with more sources than <code>hardware_concurrency()</code> returns the same per-source results as today, exercised through <code>ThreadPoolTest</code>-style instrumentation (e.g., a counting/blocking stub task) rather than timing, matching this project&rsquo;s existing preference (see <a href="cpkg/srs-sandbox/#4-known-limitations-accepted-for-this-iteration">SRS-sandbox.md §4</a>
+) for behavioral assertions over wall-clock ones in CI</td>
+			</tr>
+			<tr>
+					<td>§3.1.3: <code>--jobs</code>/<code>-j</code> and <code>CXPM_BUILD_JOBS</code> are honored, <code>--jobs 1</code> matches pre-parallelization sequential output</td>
+					<td>A <code>ProgramOptions::Parse</code>-level unit test for the new flag/short-flag pair (mirroring <code>ApplicationView</code>&rsquo;s existing <code>--build</code>/<code>-b</code> handling), plus one CLI integration test building a small multi-target fixture with <code>--jobs 1</code> and diffing its <code>compile_commands.json</code> against the pre-parallelization baseline</td>
+			</tr>
+			<tr>
+					<td>§3.2.1/§3.2.2: all targets in a project build even though none of them block on another</td>
+					<td>Replace <code>ToolchainTest</code>&rsquo;s current &ldquo;build(ProjectDescriptor, dry=true) stops at the first target that fails&rdquo; case (<code>ToolchainTest.hpp</code>) — &ldquo;first&rdquo; is not a well-defined concept once targets build concurrently — with an assertion that the aggregated result is <code>Status::Failure</code> and still contains every target&rsquo;s command, per §3.3.3</td>
+			</tr>
+			<tr>
+					<td>§3.2.3: each task uses its own <code>Toolchain</code> copy, not a shared/reassigned one</td>
+					<td>A unit test building ≥2 targets that resolve to <em>different</em> toolchains (e.g., different <code>target.toolchain</code> names) concurrently, asserting each target&rsquo;s recorded <code>CompileCommandDescriptor.command</code> used the correct compiler executable for <em>its own</em> target, not whichever toolchain another in-flight task happened to select</td>
+			</tr>
+			<tr>
+					<td>§3.3.2: <code>compile_commands.json</code> content and the returned <code>ToolchainDescriptor</code> are deterministic across runs</td>
+					<td>Run the same multi-target fixture&rsquo;s <code>cxpm --build</code> several times (or dry-run build several times with artificially staggered per-target delays via a test toolchain), asserting byte-identical <code>compile_commands.json</code> output and an unchanged third tuple element from <code>build_project</code> every time</td>
+			</tr>
+			<tr>
+					<td>§3.4: the toolchain-discovery loop is untouched by this change</td>
+					<td>The existing <code>sandbox_extracts_toolchain_descriptor_as_json</code> / <code>cli_build_example_executable*</code> CTest cases (<a href="cpkg/srs-sandbox/#5-testing">SRS-sandbox.md §5</a>
+) continue to pass unmodified — no new test needed here, only confirmation nothing in this SRS touches <code>ToolchainManager::autoscan</code></td>
+			</tr>
+	</tbody>
+</table>
+<p>A CLI-level, multi-target fixture project does not exist under <code>examples/</code> or <code>tests/cli/</code> today
+(every example directory — <code>archive-object</code>, <code>executable</code>, <code>executable-json</code>,
+<code>executable-with-gstreamer-1.0</code>, <code>shared-object</code> — declares exactly one target). Implementing the
+integration-level rows above requires adding one (or extending <code>tests/cli</code>&rsquo;s own fixtures, which
+<code>ToolchainTest.hpp</code>&rsquo;s unit-level tests already do not need, since they construct <code>ProjectDescriptor</code>
+values directly in C++ rather than through a real <code>package.cpp</code>/<code>package.json</code>).</p>
+<h2 id="6-acceptance-criteria">6. Acceptance criteria</h2>
+<ul>
+<li><code>Toolchain::object_build_async</code> and all target-build submissions route through
+<code>Threading::ThreadPool::get_instance()</code>; no new unbounded <code>std::async(std::launch::async, ...)</code>
+call site is introduced.</li>
+<li><code>cxpm --build</code> accepts <code>--jobs</code>/<code>-j &lt;N&gt;</code> and <code>CXPM_BUILD_JOBS</code>, defaults to
+<code>hardware_concurrency()</code>, and <code>--jobs 1</code> reproduces today&rsquo;s sequential build&rsquo;s observable output
+(<code>compile_commands.json</code> content, exit status, returned toolchain) exactly.</li>
+<li>Building a multi-target project succeeds with all targets built, <code>compile_commands.json</code> content
+deterministic across repeated runs, and overall status correctly reflecting <code>Failure</code> if any
+target failed — without stopping early at whichever target happens to fail first under
+concurrent scheduling.</li>
+<li><code>ToolchainManager::autoscan</code>&rsquo;s toolchain-plugin discovery loop is unmodified by this change (its
+own parallelization is out of scope per §3.4, pending A22).</li>
+<li>Every row in §5 has a corresponding passing test.</li>
+</ul>
+
+</article>
+
+
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+
+
+
+
+<p class="edit-link"><a href="https://github.com/arthurafarias/cpkg/edit/master/hugosite/content/srs-parallel-build.md" target="_blank" rel="noopener">Edit this page on GitHub</a></p>
+
+
+
+
+    </div>
+  </main>
+  <aside class="toc-pane" aria-label="On this page">
+    
+
+<div class="toc-inner">
+  <p class="toc-title">On this page</p>
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#parallelizing-the-build-pipeline">Parallelizing the Build Pipeline</a></li>
+    <li><a href="#1-purpose">1. Purpose</a></li>
+    <li><a href="#2-baseline-what-parallelizes-safely-today-and-why">2. Baseline: what parallelizes safely today, and why</a></li>
+    <li><a href="#3-requirements">3. Requirements</a>
+      <ul>
+        <li><a href="#31-a-shared-bounded-job-budget">3.1 A shared, bounded job budget</a></li>
+        <li><a href="#32-target-level-parallelism">3.2 Target-level parallelism</a></li>
+        <li><a href="#33-result-aggregation-stays-single-threaded">3.3 Result aggregation stays single-threaded</a></li>
+        <li><a href="#34-toolchain-plugin-discovery-explicitly-out-of-scope">3.4 Toolchain-plugin discovery: explicitly out of scope</a></li>
+      </ul>
+    </li>
+    <li><a href="#4-known-limitations--accepted-for-this-iteration">4. Known limitations / accepted for this iteration</a></li>
+    <li><a href="#5-testing-requirements">5. Testing requirements</a></li>
+    <li><a href="#6-acceptance-criteria">6. Acceptance criteria</a></li>
+  </ul>
+</nav>
+</div>
+
+
+  </aside>
+</div>
+<footer class="site-footer">
+  <p>cxpm docs · built with Hugo · <a href="https://github.com/arthurafarias/cpkg" target="_blank" rel="noopener">source on GitHub</a></p>
+</footer>
+
+<script>
+  window.CXPM_DOCS = {
+    searchIndexURL: "\/cpkg\/search-index.json"
+  };
+</script>
+
+  
+  <script src="cpkg/js/main.min.e798f0576266bcbe7ecb6e7d2fed1ee409601c191998058910a32ec41ba2c455.js" defer></script>
+
+
+</body>
+</html>

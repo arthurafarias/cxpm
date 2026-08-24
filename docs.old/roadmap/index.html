@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Roadmap · cxpm</title>
+<meta name="description" content="An experimental C&#43;&#43;-native package manager and build tool for C&#43;&#43;.">
+<link rel="icon" href="data:,">
+<script>
+  (function () {
+    try {
+      var saved = localStorage.getItem("cxpm-docs-theme");
+      var theme = saved || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.setAttribute("data-theme", theme);
+    } catch (e) {}
+  })();
+</script>
+
+  
+  <link rel="stylesheet" href="cpkg/css/main.min.705c6b10a27719bb861d20380e003ddc3bcfb26a9d5969863974a958f0604544.css" >
+
+
+</head>
+<body>
+<a class="skip-link" href="#main-content">Skip to content</a>
+<header class="topbar">
+  <div class="topbar-inner">
+    <button class="menu-toggle" id="menu-toggle" aria-label="Toggle navigation" aria-controls="sidebar" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <a class="brand" href="cpkg/">
+      <span class="brand-mark">cxpm</span>
+      <span class="brand-sub">docs</span>
+    </a>
+    <div class="search" role="search">
+      <input type="search" id="search-input" placeholder="Search docs…" aria-label="Search documentation" autocomplete="off">
+      <kbd class="search-kbd">/</kbd>
+      <div id="search-results" class="search-results" hidden></div>
+    </div>
+    <div class="topbar-actions">
+      
+      <a class="icon-link" href="https://github.com/arthurafarias/cpkg" target="_blank" rel="noopener" aria-label="View source on GitHub">
+        <svg viewBox="0 0 16 16" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+      </a>
+      
+      <button class="icon-link theme-toggle" id="theme-toggle" aria-label="Toggle color theme">
+        <svg class="icon-sun" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="shell">
+  <nav class="sidebar" id="sidebar" aria-label="Sections">
+    
+<div class="sidebar-inner">
+  
+<ul class="menu">
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/">Overview</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/quickstart/">Quickstart</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/architecture/">Architecture</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/tooling/">CLI Tooling</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/testing/">Testing</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item is-active">
+    
+    <a href="cpkg/roadmap/" aria-current="page">Roadmap</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item has-children">
+    
+    <span class="menu-group-label">Software Requirements Specs</span>
+    
+    
+      
+<ul class="menu">
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/srs-architecture/">Architecture &amp; Flaws</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/srs-unit-testing/">Unit Testing the API</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/srs-ctest-tooling/">CMake/CTest Tooling</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/srs-json-manifests/">JSON Manifests</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/srs-generate/">cxpm --generate</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/srs-sandbox/">Descriptor Sandbox</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/srs-parallel-build/">Parallel Build (proposed)</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+</ul>
+
+</div>
+
+
+
+  </nav>
+  <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+  <main class="content" id="main-content">
+    <div class="content-inner">
+      
+<nav class="breadcrumbs" aria-label="Breadcrumb">
+  <a href="cpkg/">cxpm</a>
+  <span class="sep">/</span><span>Roadmap</span>
+</nav>
+<article class="prose">
+  <h1 id="roadmap--suggested-improvements">Roadmap &amp; suggested improvements</h1>
+<p>This page collects concrete next steps, roughly ordered by leverage: cheap/safe fixes first,
+then correctness-affecting design decisions, then longer-range architecture work. Every item
+with an &ldquo;A#&rdquo; reference is itemized in detail, with file:line citations, in
+<a href="cpkg/srs-architecture/">srs-architecture.md</a>
+.</p>
+<h2 id="recently-shipped">Recently shipped</h2>
+<p>Three capabilities landed together and are documented as their own SRS pages rather than roadmap
+items: <a href="cpkg/srs-json-manifests/">package.json/toolchain.json as manifest alternatives</a>
+,
+<a href="cpkg/srs-generate/"><code>cxpm --generate</code></a>
+, and <a href="cpkg/srs-sandbox/">sandboxed descriptor extraction</a>
+. The
+JSON manifest path also directly mitigates part of item 6 below (no JIT-compilation cost at all
+on that path) and the sandbox directly mitigates the highest-severity concern that would otherwise
+apply to item 8 below (prebuilt/cached plugin artifacts would otherwise be <code>dlopen</code>&rsquo;d with no
+isolation).</p>
+<h2 id="near-term-cheap-safe-high-value">Near-term (cheap, safe, high value)</h2>
+<ol>
+<li><strong>Add CI</strong> (A36). No workflow file exists in the repository today. At minimum, run
+<code>ctest -L unit</code> (no compiler dependency beyond the build itself) on every push/PR; a second,
+slower job with a real compiler on <code>PATH</code> can additionally run
+<code>ctest -L integration -DCXPM_BUILD_CLI_INTEGRATION_TESTS=ON</code>. This is the single highest-leverage
+item on this list: it turns every other item below from &ldquo;fixed once&rdquo; into &ldquo;stays fixed.&rdquo;</li>
+<li><strong>Wire up or remove <code>--uninstall</code></strong> (A13). It&rsquo;s advertised in <code>--help</code> today but does nothing.
+Either implement it (the reverse of <code>install_target</code>&rsquo;s file copying) or drop it from the usage
+text until it exists — a documented flag that silently no-ops is worse than no flag.</li>
+<li><del>Fix the README/example inconsistencies (A30, A31)</del> — <strong>done</strong>: the flagship README example
+now uses <code>Target</code>/<code>Project</code>, and <code>Target::dependencies_append</code> was added for parity with every
+other collection field.</li>
+<li><strong>Rename <code>ProjectDescriptor::compile_comands</code></strong> (A32) — a one-line fix with no behavioral risk.
+(The misleading <code>&quot;package.json&quot;</code> error message this item used to also list, A34, is now moot:
+<code>ProjectManager::build_project</code>&rsquo;s old error-handling code was superseded wholesale by
+<code>load_project</code> when <a href="cpkg/srs-json-manifests/">package.json support</a>
+ was added, and that
+reference is correct now that <code>package.json</code> is a real manifest format.)</li>
+<li><strong>Delete or finish the dead orphan headers</strong>: <code>ClangdManager.hpp</code>, <code>ShellCommandBuilder.hpp</code>,
+<code>Modules/Serialization/KeyValueMapDescriptor.hpp</code> (A14), <code>Utils/Unix/which.hpp</code> (A15),
+<code>Core::{SharedPointer,UniquePointer,WeakPointer}</code> and <code>Utils/Print.hpp</code> (A16). None of these
+are reachable from any compiling code path today; keeping them either working or gone is
+strictly better than keeping them broken-and-included-in-nobody&rsquo;s-mental-model-of-the-API.</li>
+</ol>
+<h2 id="medium-term-design-decisions-each-independently-shippable">Medium-term (design decisions, each independently shippable)</h2>
+<ol start="6">
+<li><strong>Cache toolchain/manifest JIT compilation</strong> (A21). Every <code>cxpm --build</code>/<code>--install</code> currently
+recompiles all discovered toolchain plugins <em>and</em> the project manifest from source, with no
+mtime/hash check. On this machine, a single <code>cxpm --build</code> against <code>examples/executable</code> spent
+roughly 12 of its ~13 total seconds recompiling three toolchain <code>.so</code> files it didn&rsquo;t need to
+recompile. A source-mtime (or content-hash) cache keyed by the generated <code>.so</code> path would cut
+the common case to milliseconds without changing the plugin model.</li>
+<li><strong>Resolve the toolchain-plugin naming collision</strong> (A22). In the current source-tree layout,
+<code>gcc/src/toolchain.cpp</code>, <code>g++/src/toolchain.cpp</code> and <code>nvcc/src/toolchain.cpp</code> all derive the
+same directory-based plugin name (<code>&quot;src&quot;</code>), so they overwrite each other&rsquo;s generated
+<code>.loader.cpp</code>/<code>.so</code> mid-scan. It works today only because each plugin fully compiles, loads and
+unloads before the next one starts — fixing the naming (derive it from <code>.name_get()</code> instead
+of the parent directory) removes a foot-gun that a future contributor could trip on by
+restructuring the module layout in a way that seems harmless.</li>
+<li><strong>Pick one toolchain deployment mechanism</strong> (A29). <code>build.sh</code> deploys prebuilt <code>.so</code> files;
+<code>ToolchainManager::autoscan</code> only ever looks for <code>toolchain.cpp</code> source files. Given item 6
+above, a prebuilt-<code>.so</code>-with-cache-invalidation model is probably the right end state — decide
+and delete the other path.</li>
+<li><del>Consolidate the two <code>Controllers</code> namespaces (A17)</del> — <strong>done</strong>, and not a moment too soon:
+adding <code>CXPM::Controllers::DescriptorSandbox</code> (see <a href="cpkg/srs-sandbox/">srs-sandbox.md</a>
+) flipped
+which <code>Controllers</code> namespace unqualified lookup found first and turned this from a latent
+footgun into an actual build failure. <code>PkgConfigManager</code>/<code>ClangdManager</code> now live in
+<code>CXPM::Controllers</code> too. The still-open half of this item is adding the missing <code>CXPM::</code>
+prefix on <code>Tuple</code>/<code>KeyValueMapDescriptor</code> (A18) — a latent footgun, not an active bug, so it
+remains independently schedulable.</li>
+<li><strong>Decide <code>Toolchain::install</code>&rsquo;s fate</strong> (A10). Either implement it and route the CLI through it
+(unifying it with <code>ProjectManager::install_target</code>&rsquo;s separate, hand-rolled copying logic), or
+remove <code>install()</code> from <code>ToolchainInstallInterface</code> entirely. Leaving a pure-virtual interface
+method that every toolchain plugin must nominally satisfy, but that always throws and is never
+called, is confusing for anyone implementing a new toolchain.</li>
+<li><strong>Replace <code>popen</code>+string-concatenation with <code>posix_spawn</code>/argv-array execution</strong> (A28). This is
+the most consequential correctness item on this list from a security standpoint: target names,
+source paths and <code>pkg-config</code> output currently flow unescaped into shell command lines built
+via string concatenation, and <code>ShellManager::exec(cmd, dry, shell=true)</code> double-wraps through
+<code>bash -c</code> <em>and</em> <code>popen</code>&rsquo;s own implicit <code>/bin/sh -c</code>. This is worth fixing before cxpm is used
+against untrusted or generated <code>package.cpp</code>/dependency data.</li>
+<li><strong>Fix <code>Lockable</code>&rsquo;s copy semantics or remove it</strong> (A24, A25). Every copy currently gets a fresh
+mutex, and no <code>BasicCollection</code> operation actually acquires the lock it drags in — so it
+provides the appearance of thread-safety without the substance. Decide whether
+<code>BasicCollection</code>/<code>Object</code>/CLI-level concurrent access is an actual requirement; if not, delete
+<code>Lockable</code> from the inheritance chain rather than leave it as a half-finished primitive.</li>
+</ol>
+<h2 id="longer-range">Longer-range</h2>
+<ol start="13">
+<li><strong>A real dependency-resolution story.</strong> The README already flags this as unexplored
+(&ldquo;many advanced features, such as full dependency graph resolution, are still under
+exploration&rdquo;). <code>Target::dependencies_get/set</code> exists as a flat string list today with no
+resolution, version constraints, or lock file. A minimal version-pinned resolver against
+pkg-config-discoverable packages (building on <code>PackageConfigManager::find_package</code>) would be a
+natural first increment.</li>
+<li><del>An input archiver / manifest introspection story.</del> — <strong>done</strong>: <code>AbstractInputArchiver</code>&rsquo;s
+constructor access-specifier bug (A33) is fixed, and <code>JsonInputArchiver</code> plus the full
+<code>package.json</code>/<code>toolchain.json</code> manifest path (see <a href="cpkg/srs-json-manifests/">srs-json-manifests.md</a>
+)
+now let tooling introspect or author a project with no compiler in the loop.</li>
+<li><strong>ABI/version-checked plugin loading</strong> (A23). Both <code>ProjectManager</code> and <code>ToolchainManager</code>
+<code>dlopen</code> a freshly-compiled <code>.so</code> and trust its layout matches the headers <code>cxpm</code> itself was
+built against, with no explicit version check. The sandbox (<a href="cpkg/srs-sandbox/">srs-sandbox.md</a>
+)
+confines a layout mismatch&rsquo;s blast radius to the disposable child process, but does not add
+the version check itself — that&rsquo;s still open, and worth landing <em>before</em> or <em>alongside</em> item 6
+or item 8&rsquo;s caching work, since a mismatch becomes much more likely once a cached/prebuilt
+artifact can outlive the header tree it was compiled against.</li>
+<li><strong>A <code>find_package(cxpm-interface)</code>-consumable install.</strong> <code>cxpm-interface</code>&rsquo;s CMake target
+installs headers but exports nothing (no <code>install(EXPORT ...)</code>, no
+<code>CxpmInterfaceConfig.cmake</code>), so downstream CMake projects can only consume it via raw
+include-path wiring, the same way <code>build.sh</code> and the JIT-compiled plugins already do in-tree.
+A proper CMake package export would let external toolchain-plugin authors depend on
+<code>cxpm-interface</code> the normal CMake way instead of guessing include paths.</li>
+<li><strong>Stronger sandbox isolation.</strong> <a href="cpkg/srs-sandbox/#4-known-limitations-accepted-for-this-iteration">srs-sandbox.md §4</a>
+
+bounds CPU/memory/wall-clock time and removes direct memory access to the parent process, but
+does not restrict filesystem or network access from within the sandboxed child. Linux
+<code>seccomp-bpf</code> and/or a mount/user namespace would meaningfully narrow that further, at the cost
+of platform-specific code the current implementation deliberately avoided for portability.</li>
+<li><strong>Automate the <code>CXPM_SANDBOX_DISABLE=1</code> fallback path as a CTest case.</strong> Currently verified
+manually only (see <a href="cpkg/srs-sandbox/#5-testing">srs-sandbox.md §5</a>
+); promoting it to an
+integration test would close the one deliberately-manual gap in that SRS&rsquo;s test coverage.</li>
+<li><strong>Unit-test <code>ToolchainManager</code>/<code>ProjectManager</code> orchestration against a fake toolchain.</strong>
+<code>ToolchainInterface</code> was already pure-virtual and mockable before this session; the sandbox
+work adds another natural seam (<code>DescriptorSandbox</code> could be made injectable rather than
+called directly) that would let <code>build_project</code>&rsquo;s toolchain-selection and error-handling logic
+be unit-tested without a real compiler — see <a href="cpkg/srs-unit-testing/#8-deferred-coverage--future-work">srs-unit-testing.md §8</a>
+,
+which this item would close.</li>
+</ol>
+<h2 id="what-was-intentionally-not-changed-in-this-pass">What was intentionally <em>not</em> changed in this pass</h2>
+<p>The remaining open items above are design decisions with real trade-offs (performance vs.
+plugin-model simplicity, security hardening vs. implementation effort, concurrency guarantees vs.
+API surface). They are documented here and in <a href="cpkg/srs-architecture/">srs-architecture.md</a>
+ with
+enough detail (file:line citations, concrete correction sketches) to be picked up independently,
+rather than bundled into this change — see <a href="cpkg/srs-architecture/#42-deferred-itemized-not-changed-in-this-pass">srs-architecture.md §4.2</a>
+
+for the full itemized list of still-deferred findings with severities, and
+<a href="cpkg/srs-sandbox/#4-known-limitations-accepted-for-this-iteration">srs-sandbox.md §4</a>
+ for the
+sandbox&rsquo;s own explicitly accepted limitations.</p>
+
+</article>
+
+
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+
+
+
+
+<p class="edit-link"><a href="https://github.com/arthurafarias/cpkg/edit/master/hugosite/content/roadmap.md" target="_blank" rel="noopener">Edit this page on GitHub</a></p>
+
+
+
+
+    </div>
+  </main>
+  <aside class="toc-pane" aria-label="On this page">
+    
+
+<div class="toc-inner">
+  <p class="toc-title">On this page</p>
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#recently-shipped">Recently shipped</a></li>
+    <li><a href="#near-term-cheap-safe-high-value">Near-term (cheap, safe, high value)</a></li>
+    <li><a href="#medium-term-design-decisions-each-independently-shippable">Medium-term (design decisions, each independently shippable)</a></li>
+    <li><a href="#longer-range">Longer-range</a></li>
+    <li><a href="#what-was-intentionally-not-changed-in-this-pass">What was intentionally <em>not</em> changed in this pass</a></li>
+  </ul>
+</nav>
+</div>
+
+
+  </aside>
+</div>
+<footer class="site-footer">
+  <p>cxpm docs · built with Hugo · <a href="https://github.com/arthurafarias/cpkg" target="_blank" rel="noopener">source on GitHub</a></p>
+</footer>
+
+<script>
+  window.CXPM_DOCS = {
+    searchIndexURL: "\/cpkg\/search-index.json"
+  };
+</script>
+
+  
+  <script src="cpkg/js/main.min.e798f0576266bcbe7ecb6e7d2fed1ee409601c191998058910a32ec41ba2c455.js" defer></script>
+
+
+</body>
+</html>

@@ -1,0 +1,118 @@
+baseURL: "/cxpm"
+locale: "en-US"
+title: "cxpm"
+theme: "hextra-lite"
+relativeURLs: true
+enableRobotsTXT: true
+enableGitInfo: false
+disableKinds: ["taxonomy", "term"]
+
+outputs:
+  home: ["HTML", "SEARCHINDEX"]
+
+outputFormats:
+  SEARCHINDEX:
+    mediaType: "application/json"
+    baseName: "search-index"
+    isPlainText: true
+    notAlternative: true
+
+markup:
+  goldmark:
+    renderer:
+      unsafe: true
+    parser:
+      attribute:
+        block: true
+  tableOfContents:
+    startLevel: 2
+    endLevel: 4
+    ordered: false
+
+params:
+  description: "An experimental C++-native package manager and build tool for C++."
+  github: "https://github.com/arthurafarias/cpkg"
+  editRepo: "https://github.com/arthurafarias/cpkg/edit/master/hugosite/content"
+  navOrder:
+    - "/"
+    - "/quickstart"
+    - "/architecture"
+    - "/tooling"
+    - "/testing"
+    - "/roadmap"
+    - "/srs-architecture"
+    - "/srs-unit-testing"
+    - "/srs-ctest-tooling"
+    - "/srs-json-manifests"
+    - "/srs-generate"
+    - "/srs-sandbox"
+    - "/srs-parallel-build"
+
+menu:
+  main:
+    - identifier: overview
+      name: "Overview"
+      pageRef: "/"
+      weight: 1
+    - identifier: quickstart
+      name: "Quickstart"
+      pageRef: "/quickstart"
+      weight: 2
+    - identifier: architecture
+      name: "Architecture"
+      pageRef: "/architecture"
+      weight: 3
+    - identifier: tooling
+      name: "CLI Tooling"
+      pageRef: "/tooling"
+      weight: 4
+    - identifier: testing
+      name: "Testing"
+      pageRef: "/testing"
+      weight: 5
+    - identifier: roadmap
+      name: "Roadmap"
+      pageRef: "/roadmap"
+      weight: 6
+    - identifier: srs
+      name: "Software Requirements Specs"
+      weight: 7
+    - identifier: srs-architecture
+      name: "Architecture & Flaws"
+      pageRef: "/srs-architecture"
+      parent: srs
+      weight: 1
+    - identifier: srs-unit-testing
+      name: "Unit Testing the API"
+      pageRef: "/srs-unit-testing"
+      parent: srs
+      weight: 2
+    - identifier: srs-ctest-tooling
+      name: "CMake/CTest Tooling"
+      pageRef: "/srs-ctest-tooling"
+      parent: srs
+      weight: 3
+    - identifier: srs-json-manifests
+      name: "JSON Manifests"
+      pageRef: "/srs-json-manifests"
+      parent: srs
+      weight: 4
+    - identifier: srs-generate
+      name: "cxpm --generate"
+      pageRef: "/srs-generate"
+      parent: srs
+      weight: 5
+    - identifier: srs-sandbox
+      name: "Descriptor Sandbox"
+      pageRef: "/srs-sandbox"
+      parent: srs
+      weight: 6
+    - identifier: srs-parallel-build
+      name: "Parallel Build (proposed)"
+      pageRef: "/srs-parallel-build"
+      parent: srs
+      weight: 7
+
+caches:
+  images:
+    dir: :cacheDir/images

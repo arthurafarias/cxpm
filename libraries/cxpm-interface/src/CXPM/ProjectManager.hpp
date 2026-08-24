@@ -254,49 +254,73 @@ StaticClass(ProjectManager)
       prefix = prefix_override;
     }
 
-    // install include directories
+    // Resolves a path that may be relative to target.project_path -- exactly the convention
+    // Toolchain::object_build() already uses for include directories (Toolchain.hpp). Every
+    // artifact path below (the built binary/library itself, and each include directory) is
+    // ordinarily relative (e.g. "src", the target's bare name) once a real `cxpm --build` has
+    // already run in a different working directory than install_target() runs in; resolving
+    // against project_path instead of relying on the process's current directory is a fix for a
+    // real bug: install_target() previously used every such path completely unresolved, working
+    // only by accident when the caller's current working directory happened to already be the
+    // project directory (which ApplicationView::install_project never arranges).
+    auto resolve_project_path = [&target](const String &relative) {
+      auto path = std::filesystem::path(relative.c_str());
+      if (path.is_absolute()) {
+        return path;
+      }
+      return std::filesystem::path(target.project_path.c_str()) / relative.c_str();
+    };
+
+    // Directory setup, artifact install (executable/shared-library/static-library/
+    // object-library) and .pc generation used to be nested inside the "for each include
+    // directory" loop below, which meant a target with an *empty* include_directories list
+    // (a legal, otherwise-unremarkable configuration) silently installed nothing at all --
+    // not even its own binary. They now run exactly once regardless of how many include
+    // directories (zero, one, or many) the target has; only header copying is inherently
+    // per-directory.
+    auto header_install_path = std::filesystem::path()
+                                   .append(prefix.c_str())
+                                   .append("include")
+                                   .append(target.name.c_str());
+
+    auto binnaries_install_path =
+        std::filesystem::path().append(prefix.c_str()).append("bin");
+
+    auto archive_install_path =
+        std::filesystem::path().append(prefix.c_str()).append("lib");
+
+    auto library_install_path =
+        std::filesystem::path().append(prefix.c_str()).append("lib");
+
+    auto pc_install_path = std::filesystem::path()
+                               .append(prefix.c_str())
+                               .append("lib")
+                               .append("pkgconfig");
+
+    if (!std::filesystem::is_directory(header_install_path)) {
+      std::filesystem::create_directories(header_install_path);
+    }
+
+    if (!std::filesystem::is_directory(binnaries_install_path)) {
+      std::filesystem::create_directories(binnaries_install_path);
+    }
+
+    if (!std::filesystem::is_directory(library_install_path)) {
+      std::filesystem::create_directories(library_install_path);
+    }
+
+    if (!std::filesystem::is_directory(archive_install_path)) {
+      std::filesystem::create_directories(archive_install_path);
+    }
+
+    if (!std::filesystem::is_directory(pc_install_path)) {
+      std::filesystem::create_directories(pc_install_path);
+    }
+
+    // install headers from every include directory
     for (auto directory : target.include_directories) {
 
-      auto header_install_path = std::filesystem::path()
-                                     .append(prefix.c_str())
-                                     .append("include")
-                                     .append(target.name.c_str());
-
-      auto binnaries_install_path =
-          std::filesystem::path().append(prefix.c_str()).append("bin");
-
-      auto archive_install_path =
-          std::filesystem::path().append(prefix.c_str()).append("lib");
-
-      auto library_install_path =
-          std::filesystem::path().append(prefix.c_str()).append("lib");
-
-      auto pc_install_path = std::filesystem::path()
-                                 .append(prefix.c_str())
-                                 .append("lib")
-                                 .append("pkgconfig");
-
-      if (!std::filesystem::is_directory(header_install_path)) {
-        std::filesystem::create_directories(header_install_path);
-      }
-
-      if (!std::filesystem::is_directory(binnaries_install_path)) {
-        std::filesystem::create_directories(binnaries_install_path);
-      }
-
-      if (!std::filesystem::is_directory(library_install_path)) {
-        std::filesystem::create_directories(library_install_path);
-      }
-
-      if (!std::filesystem::is_directory(archive_install_path)) {
-        std::filesystem::create_directories(archive_install_path);
-      }
-
-      if (!std::filesystem::is_directory(pc_install_path)) {
-        std::filesystem::create_directories(pc_install_path);
-      }
-
-      for (auto file : directory_iterator(directory.c_str())) {
+      for (auto file : directory_iterator(resolve_project_path(directory))) {
 
         if (!(file.path().extension() == ".h") &&
             !(file.path().extension() == ".hpp") &&
@@ -310,53 +334,55 @@ StaticClass(ProjectManager)
             std::filesystem::copy_options::recursive |
                 std::filesystem::copy_options::overwrite_existing);
       }
+    }
 
-      if (target.type == "executable") {
-        std::filesystem::copy(
-            target.name.c_str(), std::filesystem::path(binnaries_install_path),
-            std::filesystem::copy_options::overwrite_existing);
-      }
+    if (target.type == "executable") {
+      std::filesystem::copy(
+          resolve_project_path(target.name),
+          std::filesystem::path(binnaries_install_path),
+          std::filesystem::copy_options::overwrite_existing);
+    }
 
-      if (target.type == "shared-library") {
-        std::filesystem::copy(
-            "lib" + target.name + ".so",
-            std::filesystem::path(library_install_path),
-            std::filesystem::copy_options::overwrite_existing);
-      }
+    if (target.type == "shared-library") {
+      std::filesystem::copy(
+          resolve_project_path("lib" + target.name + ".so"),
+          std::filesystem::path(library_install_path),
+          std::filesystem::copy_options::overwrite_existing);
+    }
 
-      if (target.type == "static-library") {
-        std::filesystem::copy(
-            "lib" + target.name + ".a",
-            std::filesystem::path(archive_install_path),
-            std::filesystem::copy_options::overwrite_existing);
-      }
+    if (target.type == "static-library") {
+      std::filesystem::copy(
+          resolve_project_path("lib" + target.name + ".a"),
+          std::filesystem::path(archive_install_path),
+          std::filesystem::copy_options::overwrite_existing);
+    }
 
-      if (target.type == "object-library") {
-        std::filesystem::copy(
-            target.name + ".o", std::filesystem::path(library_install_path),
-            std::filesystem::copy_options::overwrite_existing);
-      }
+    if (target.type == "object-library") {
+      std::filesystem::copy(
+          resolve_project_path(target.name + ".o"),
+          std::filesystem::path(library_install_path),
+          std::filesystem::copy_options::overwrite_existing);
+    }
 
-      // install pc file
-      {
-        using namespace CXPM;
+    // install pc file
+    {
+      using namespace CXPM;
 
-        auto rendered = std::format(
-            "Name: {}\n"
-            "Description: {}\n"
-            "Version: {}\n"
-            "URL: {}\n"
-            "Cflags: -I{}/include/{}\n"
-            "Libs: -l{}\n",
-            target.name, target.description, target.version, target.url,
-            target.install_prefix, target.name, target.name);
+      auto rendered = std::format(
+          "Name: {}\n"
+          "Description: {}\n"
+          "Version: {}\n"
+          "URL: {}\n"
+          "Cflags: -I{}/include/{}\n"
+          "Libs: -l{}\n",
+          target.name, target.description, target.version, target.url,
+          target.install_prefix, target.name, target.name);
 
-        auto pc_file_stream =
-            std::ofstream(pc_install_path.append(target.name + ".pc"),
-                          std::ios_base::out | std::ios_base::trunc);
-        auto syncstream = std::osyncstream(pc_file_stream);
-        syncstream << rendered;
-      }
+      auto pc_file_stream =
+          std::ofstream(pc_install_path.append(target.name + ".pc"),
+                        std::ios_base::out | std::ios_base::trunc);
+      auto syncstream = std::osyncstream(pc_file_stream);
+      syncstream << rendered;
     }
 
     return InstallTargetOutputResult{Status::Success, target, toolchain};
@@ -448,12 +474,15 @@ StaticClass(ProjectManager)
   static inline int clean(const String &project_path,
                           const BasicCollection<String> &) {
 
-    // objects
+    // objects. source + ".o" is concatenated into one path component *before* being appended,
+    // since std::filesystem::path::append() inserts a directory separator between components --
+    // appending source.c_str() and ".o" as two separate append() calls (as this used to do)
+    // built "<project_path>/<source>/.o" instead of the intended "<project_path>/<source>.o".
     for (auto source : ManifestPackage.sources) {
-      std::filesystem::remove_all(std::filesystem::path()
-                                      .append(project_path.c_str())
-                                      .append(source.c_str())
-                                      .append(".o"));
+      std::filesystem::remove_all(
+          std::filesystem::path()
+              .append(project_path.c_str())
+              .append(String(source + ".o").c_str()));
     }
 
     // generate packages

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>/cxpm/architecture/</loc>
+  </url><url>
+    <loc>/cxpm/</loc>
+  </url><url>
+    <loc>/cxpm/quickstart/</loc>
+  </url><url>
+    <loc>/cxpm/roadmap/</loc>
+  </url><url>
+    <loc>/cxpm/srs-architecture/</loc>
+  </url><url>
+    <loc>/cxpm/srs-ctest-tooling/</loc>
+  </url><url>
+    <loc>/cxpm/srs-generate/</loc>
+  </url><url>
+    <loc>/cxpm/srs-sandbox/</loc>
+  </url><url>
+    <loc>/cxpm/srs-json-manifests/</loc>
+  </url><url>
+    <loc>/cxpm/srs-parallel-build/</loc>
+  </url><url>
+    <loc>/cxpm/srs-unit-testing/</loc>
+  </url><url>
+    <loc>/cxpm/testing/</loc>
+  </url><url>
+    <loc>/cxpm/tooling/</loc>
+  </url>
+</urlset>

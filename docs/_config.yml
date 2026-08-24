@@ -1,6 +1,0 @@
-title: cxpm
-description: An experimental C++-native package manager and build tool for C++.
-markdown: kramdown
-theme: null
-exclude:
-  - CMakeLists.txt

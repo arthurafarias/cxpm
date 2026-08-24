@@ -1,0 +1,22 @@
+{{ $page := . }}
+<div class="sidebar-inner">
+  {{ template "menu-list" (dict "entries" .Site.Menus.main "page" $page) }}
+</div>
+
+{{ define "menu-list" }}
+<ul class="menu">
+  {{ range .entries }}
+  {{ $isActive := and .Page (eq .Page $.page) }}
+  <li class="menu-item{{ if $isActive }} is-active{{ end }}{{ if .HasChildren }} has-children{{ end }}">
+    {{ if .URL }}
+    <a href="{{ .URL | relLangURL }}"{{ if $isActive }} aria-current="page"{{ end }}>{{ .Name }}</a>
+    {{ else }}
+    <span class="menu-group-label">{{ .Name }}</span>
+    {{ end }}
+    {{ if .HasChildren }}
+      {{ template "menu-list" (dict "entries" .Children "page" $.page) }}
+    {{ end }}
+  </li>
+  {{ end }}
+</ul>
+{{ end }}

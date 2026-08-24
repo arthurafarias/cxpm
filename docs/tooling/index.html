@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tooling · cxpm</title>
+<meta name="description" content="An experimental C&#43;&#43;-native package manager and build tool for C&#43;&#43;.">
+<link rel="icon" href="data:,">
+<script>
+  (function () {
+    try {
+      var saved = localStorage.getItem("cxpm-docs-theme");
+      var theme = saved || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.setAttribute("data-theme", theme);
+    } catch (e) {}
+  })();
+</script>
+
+  
+  <link rel="stylesheet" href="../cxpm/css/main.min.705c6b10a27719bb861d20380e003ddc3bcfb26a9d5969863974a958f0604544.css" integrity="sha256-cFxrEKJ3GbuGHSA4DgA93DvPsmqdWWmGOXSpWPBgRUQ=">
+
+
+</head>
+<body>
+<a class="skip-link" href="#main-content">Skip to content</a>
+<header class="topbar">
+  <div class="topbar-inner">
+    <button class="menu-toggle" id="menu-toggle" aria-label="Toggle navigation" aria-controls="sidebar" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <a class="brand" href="../cxpm/">
+      <span class="brand-mark">cxpm</span>
+      <span class="brand-sub">docs</span>
+    </a>
+    <div class="search" role="search">
+      <input type="search" id="search-input" placeholder="Search docs…" aria-label="Search documentation" autocomplete="off">
+      <kbd class="search-kbd">/</kbd>
+      <div id="search-results" class="search-results" hidden></div>
+    </div>
+    <div class="topbar-actions">
+      
+      <a class="icon-link" href="https://github.com/arthurafarias/cpkg" target="_blank" rel="noopener" aria-label="View source on GitHub">
+        <svg viewBox="0 0 16 16" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+      </a>
+      
+      <button class="icon-link theme-toggle" id="theme-toggle" aria-label="Toggle color theme">
+        <svg class="icon-sun" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="shell">
+  <nav class="sidebar" id="sidebar" aria-label="Sections">
+    
+<div class="sidebar-inner">
+  
+<ul class="menu">
+  
+  
+  <li class="menu-item">
+    
+    <a href="../cxpm/">Overview</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="../cxpm/quickstart/">Quickstart</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="../cxpm/architecture/">Architecture</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item is-active">
+    
+    <a href="../cxpm/tooling/" aria-current="page">CLI Tooling</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="../cxpm/testing/">Testing</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="../cxpm/roadmap/">Roadmap</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item has-children">
+    
+    <span class="menu-group-label">Software Requirements Specs</span>
+    
+    
+      
+<ul class="menu">
+  
+  
+  <li class="menu-item">
+    
+    <a href="../cxpm/srs-architecture/">Architecture &amp; Flaws</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="../cxpm/srs-unit-testing/">Unit Testing the API</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="../cxpm/srs-ctest-tooling/">CMake/CTest Tooling</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="../cxpm/srs-json-manifests/">JSON Manifests</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="../cxpm/srs-generate/">cxpm --generate</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="../cxpm/srs-sandbox/">Descriptor Sandbox</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="../cxpm/srs-parallel-build/">Parallel Build (proposed)</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+</ul>
+
+</div>
+
+
+
+  </nav>
+  <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+  <main class="content" id="main-content">
+    <div class="content-inner">
+      
+<nav class="breadcrumbs" aria-label="Breadcrumb">
+  <a href="../cxpm/">cxpm</a>
+  <span class="sep">/</span><span>Tooling</span>
+</nav>
+<article class="prose">
+  <h1 id="the-cxpm-command-line-tool">The <code>cxpm</code> command-line tool</h1>
+<p><code>cxpm</code> (<code>applications/cxpm</code>) is a thin process front end: <code>applications/cxpm/src/cxpm.cpp</code>
+constructs a <code>CXPM::Views::ApplicationView</code> and delegates everything to it. Argument parsing,
+build orchestration, install logic and manifest generation all live in the header-only
+<code>cxpm-interface</code> library. A second, small executable, <code>cxpm-descriptor-sandbox</code>, is described
+separately under <a href="#sandboxed-descriptor-extraction">Sandboxed descriptor extraction</a>
+ below. See
+<a href="../cxpm/quickstart/">quickstart.md</a>
+ for a recorded, end-to-end terminal walkthrough of the commands
+below.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>usage: cxpm [option] [arguments]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>options:
+</span></span><span style="display:flex;"><span>    -b|--build &lt;directory&gt;:     build the project whose package.cpp/package.json lives in &lt;directory&gt;
+</span></span><span style="display:flex;"><span>    -i|--install &lt;directory&gt;:   install the project whose package.cpp/package.json lives in &lt;directory&gt;
+</span></span><span style="display:flex;"><span>        --prefix &lt;path&gt;:        install prefix (default: /usr/local)
+</span></span><span style="display:flex;"><span>    -u|--uninstall &lt;directory&gt;: documented, not yet implemented — see srs-architecture.md item A13
+</span></span><span style="display:flex;"><span>    -g|--generate &lt;kind&gt; [directory]: generate a starter manifest; kind is one of
+</span></span><span style="display:flex;"><span>                                        package-cpp, package-json, toolchain-cpp, toolchain-json
+</span></span><span style="display:flex;"><span>                                        (directory defaults to &#39;.&#39;; add --force to overwrite)
+</span></span><span style="display:flex;"><span>    -h|--help:                  print this usage text
+</span></span></code></pre></div><h2 id="building-a-project">Building a project</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cxpm --build .
+</span></span></code></pre></div><p><code>--build</code>/<code>-b</code> requires exactly one directory argument containing a <code>package.cpp</code> <strong>or</strong>
+<code>package.json</code> (<code>Views::ApplicationView::assert_project_directory</code> validates this, and that the
+directory exists, before doing anything else — see
+<a href="../cxpm/srs-json-manifests/">srs-json-manifests.md</a>
+). If both are present, <code>package.cpp</code> takes
+precedence. <code>cxpm</code> loads the manifest into a <code>Project</code>, resolves a toolchain for each target&rsquo;s
+<code>.language</code>, and shells out to that toolchain&rsquo;s compiler, linker and archiver.</p>
+<h2 id="installing-a-project">Installing a project</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cxpm --install . --prefix /usr/local
+</span></span></code></pre></div><p><code>--install</code>/<code>-i</code> builds the project first, then copies already-built artifacts into a
+POSIX-aligned prefix layout:</p>
+<ul>
+<li>Shared libraries → <code>&lt;prefix&gt;/lib</code></li>
+<li>Static libraries → <code>&lt;prefix&gt;/lib</code></li>
+<li>Executables → <code>&lt;prefix&gt;/bin</code></li>
+<li>Headers → <code>&lt;prefix&gt;/include/&lt;project-name&gt;</code></li>
+<li>pkg-config files → <code>&lt;prefix&gt;/lib/pkgconfig/&lt;project-name&gt;.pc</code></li>
+</ul>
+<p><code>--prefix</code> defaults to <code>/usr/local</code> when omitted.</p>
+<h2 id="generating-a-starter-manifest">Generating a starter manifest</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cxpm --generate package-json .        <span style="color:#75715e"># or package-cpp, toolchain-cpp, toolchain-json</span>
+</span></span><span style="display:flex;"><span>cxpm --generate toolchain-json ./my-toolchain --force
+</span></span></code></pre></div><p><code>--generate</code>/<code>-g</code> writes a starter <code>package.cpp</code>/<code>package.json</code>/<code>toolchain.cpp</code>/<code>toolchain.json</code>
+into <code>directory</code> (default <code>.</code>, created if missing), refusing to overwrite an existing file unless
+<code>--force</code> is also given. See <a href="../cxpm/srs-generate/">srs-generate.md</a>
+.</p>
+<h2 id="describing-a-project-packagecpp-or-packagejson">Describing a project: <code>package.cpp</code> or <code>package.json</code></h2>
+<p>The <code>.cpp</code> and <code>.json</code> forms describe the exact same <code>ProjectDescriptor</code>; pick whichever fits —
+see <a href="../cxpm/srs-json-manifests/">srs-json-manifests.md</a>
+ for the full requirements, and
+<code>cxpm --generate package-cpp</code>/<code>cxpm --generate package-json</code> to produce a starting point for
+either.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;CXPM/Target.hpp&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;CXPM/Project.hpp&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">using</span> <span style="color:#66d9ef">namespace</span> CXPM;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">auto</span> example <span style="color:#f92672">=</span> Target()
+</span></span><span style="display:flex;"><span>                   .name_set(<span style="color:#e6db74">&#34;example-executable&#34;</span>)
+</span></span><span style="display:flex;"><span>                   .version_set(<span style="color:#e6db74">&#34;1.0.0&#34;</span>)
+</span></span><span style="display:flex;"><span>                   .type_set(<span style="color:#e6db74">&#34;executable&#34;</span>)
+</span></span><span style="display:flex;"><span>                   .sources_append({<span style="color:#e6db74">&#34;src/main.cpp&#34;</span>})
+</span></span><span style="display:flex;"><span>                   .options_append({<span style="color:#e6db74">&#34;-fPIE&#34;</span>, <span style="color:#e6db74">&#34;-fstack-protector-all&#34;</span>})
+</span></span><span style="display:flex;"><span>                   .link_libraries_append({<span style="color:#e6db74">&#34;m&#34;</span>})
+</span></span><span style="display:flex;"><span>                   .include_directories_append({<span style="color:#e6db74">&#34;src&#34;</span>})
+</span></span><span style="display:flex;"><span>                   .create();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">auto</span> project <span style="color:#f92672">=</span> Project().add(example).create();
+</span></span></code></pre></div><p>Use <code>Target</code>/<code>Project</code> (not the bare <code>TargetDescriptor</code>/<code>ProjectDescriptor</code> structs, which have no
+builder methods) — see <a href="../cxpm/srs-architecture/#41-fixed-in-this-change">srs-architecture.md item A30</a>
+
+for a past README example that got this wrong.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;targets&#34;</span>: [
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;example-executable&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;version&#34;</span>: <span style="color:#e6db74">&#34;1.0.0&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;executable&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;sources&#34;</span>: [<span style="color:#e6db74">&#34;src/main.cpp&#34;</span>],
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;options&#34;</span>: [<span style="color:#e6db74">&#34;-fPIE&#34;</span>, <span style="color:#e6db74">&#34;-fstack-protector-all&#34;</span>],
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;link_libraries&#34;</span>: [<span style="color:#e6db74">&#34;m&#34;</span>],
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;include_directories&#34;</span>: [<span style="color:#e6db74">&#34;src&#34;</span>]
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>  ],
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;toolchains&#34;</span>: []
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>A field omitted from the JSON falls back to <code>TargetDescriptor</code>&rsquo;s own documented default (e.g. a
+target with no <code>&quot;type&quot;</code> still defaults to <code>&quot;executable&quot;</code>) — see
+<a href="https://github.com/arthurafarias/cxpm/tree/master/examples/executable-json" rel="noopener" target="_blank">examples/executable-json</a>
+
+for a complete, buildable example.</p>
+<h2 id="describing-a-toolchain-toolchaincpp-or-toolchainjson">Describing a toolchain: <code>toolchain.cpp</code> or <code>toolchain.json</code></h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;CXPM/Toolchain.hpp&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>CXPM<span style="color:#f92672">::</span>ToolchainDescriptor toolchain <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    CXPM<span style="color:#f92672">::</span>Toolchain()
+</span></span><span style="display:flex;"><span>        .name_set(<span style="color:#e6db74">&#34;g++&#34;</span>)
+</span></span><span style="display:flex;"><span>        .version_set(<span style="color:#e6db74">&#34;generic&#34;</span>)
+</span></span><span style="display:flex;"><span>        .compiler_executable_set(<span style="color:#e6db74">&#34;/usr/bin/g++&#34;</span>)
+</span></span><span style="display:flex;"><span>        .linker_executable_set(<span style="color:#e6db74">&#34;/usr/bin/g++&#34;</span>)
+</span></span><span style="display:flex;"><span>        .archiver_executable_set(<span style="color:#e6db74">&#34;/usr/bin/ar&#34;</span>)
+</span></span><span style="display:flex;"><span>        .language_set(<span style="color:#e6db74">&#34;c++&#34;</span>);
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;g++&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;version&#34;</span>: <span style="color:#e6db74">&#34;generic&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;language&#34;</span>: <span style="color:#e6db74">&#34;c++&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;compiler_executable&#34;</span>: <span style="color:#e6db74">&#34;/usr/bin/g++&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;linker_executable&#34;</span>: <span style="color:#e6db74">&#34;/usr/bin/g++&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;archiver_executable&#34;</span>: <span style="color:#e6db74">&#34;/usr/bin/ar&#34;</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><code>cxpm</code> discovers <code>toolchain.cpp</code>/<code>toolchain.json</code> files on a search path seeded from the
+<code>cxpm_BUILD_EXTRA_MODULES_PATH</code> environment variable plus a fixed list of install-prefix-relative
+directories (see <a href="../cxpm/architecture/">architecture.md</a>
+). A <code>toolchain.cpp</code> is compiled on demand and
+its descriptor extracted through the sandbox described below; a <code>toolchain.json</code> is parsed
+directly, with no compilation step at all. <code>modules/toolchains/{gcc,g++,nvcc}</code> are the three
+toolchains shipped with cxpm itself, installed as source under
+<code>share/cxpm/toolchains/&lt;name&gt;/toolchain.cpp</code>.</p>
+<h2 id="sandboxed-descriptor-extraction">Sandboxed descriptor extraction</h2>
+<p>Loading a compiled <code>package.cpp</code>/<code>toolchain.cpp</code> requires running whatever static-initializer code
+that <code>.cpp</code> file contains. <code>cxpm</code> does this in a separate, resource-limited child process
+(<code>cxpm-descriptor-sandbox</code>) rather than inside the main <code>cxpm</code> process — see
+<a href="../cxpm/srs-sandbox/">srs-sandbox.md</a>
+ for the full design. This is transparent to normal use; it can be
+disabled (falling back to the pre-sandbox direct-load behavior) with:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>CXPM_SANDBOX_DISABLE<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span> cxpm --build .
+</span></span></code></pre></div><p><code>package.json</code>/<code>toolchain.json</code> never need this at all, since parsing them never executes code.</p>
+<h2 id="testing-cxpm-itself">Testing <code>cxpm</code> itself</h2>
+<p>The tooling described on this page is <em>what <code>cxpm</code> does for its users</em>. A separate CMake/CTest
+facility exists for <em>testing</em> <code>cxpm</code> — registering <code>cxpm --build</code>/<code>--install</code>/<code>--generate</code>
+invocations (and direct <code>cxpm-descriptor-sandbox</code> calls) as CTest tests with fixtures, labels and
+exit-code assertions. See <a href="../cxpm/srs-ctest-tooling/">srs-ctest-tooling.md</a>
+ and
+<a href="../cxpm/testing/">testing.md</a>
+ for that.</p>
+
+</article>
+
+
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+
+
+
+
+<p class="edit-link"><a href="https://github.com/arthurafarias/cpkg/edit/master/hugosite/content/tooling.md" target="_blank" rel="noopener">Edit this page on GitHub</a></p>
+
+
+
+
+    </div>
+  </main>
+  <aside class="toc-pane" aria-label="On this page">
+    
+
+<div class="toc-inner">
+  <p class="toc-title">On this page</p>
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#building-a-project">Building a project</a></li>
+    <li><a href="#installing-a-project">Installing a project</a></li>
+    <li><a href="#generating-a-starter-manifest">Generating a starter manifest</a></li>
+    <li><a href="#describing-a-project-packagecpp-or-packagejson">Describing a project: <code>package.cpp</code> or <code>package.json</code></a></li>
+    <li><a href="#describing-a-toolchain-toolchaincpp-or-toolchainjson">Describing a toolchain: <code>toolchain.cpp</code> or <code>toolchain.json</code></a></li>
+    <li><a href="#sandboxed-descriptor-extraction">Sandboxed descriptor extraction</a></li>
+    <li><a href="#testing-cxpm-itself">Testing <code>cxpm</code> itself</a></li>
+  </ul>
+</nav>
+</div>
+
+
+  </aside>
+</div>
+<footer class="site-footer">
+  <p>cxpm docs · built with Hugo · <a href="https://github.com/arthurafarias/cpkg" target="_blank" rel="noopener">source on GitHub</a></p>
+</footer>
+
+<script>
+  window.CXPM_DOCS = {
+    searchIndexURL: "\/cxpm\/search-index.json"
+  };
+</script>
+
+  
+  <script src="../cxpm/js/main.min.e798f0576266bcbe7ecb6e7d2fed1ee409601c191998058910a32ec41ba2c455.js" integrity="sha256-55jwV2JmvL5&#43;y259L&#43;0e5AlgHBkZmAWJEKMuxBuixFU=" defer></script>
+
+
+</body>
+</html>

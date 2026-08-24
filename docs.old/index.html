@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta name="generator" content="Hugo 0.165.0">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>cxpm</title>
+<meta name="description" content="An experimental C&#43;&#43;-native package manager and build tool for C&#43;&#43;.">
+<link rel="icon" href="data:,">
+<script>
+  (function () {
+    try {
+      var saved = localStorage.getItem("cxpm-docs-theme");
+      var theme = saved || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.setAttribute("data-theme", theme);
+    } catch (e) {}
+  })();
+</script>
+
+  
+  <link rel="stylesheet" href="cpkg/css/main.min.705c6b10a27719bb861d20380e003ddc3bcfb26a9d5969863974a958f0604544.css" >
+
+
+</head>
+<body>
+<a class="skip-link" href="#main-content">Skip to content</a>
+<header class="topbar">
+  <div class="topbar-inner">
+    <button class="menu-toggle" id="menu-toggle" aria-label="Toggle navigation" aria-controls="sidebar" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <a class="brand" href="cpkg/">
+      <span class="brand-mark">cxpm</span>
+      <span class="brand-sub">docs</span>
+    </a>
+    <div class="search" role="search">
+      <input type="search" id="search-input" placeholder="Search docs…" aria-label="Search documentation" autocomplete="off">
+      <kbd class="search-kbd">/</kbd>
+      <div id="search-results" class="search-results" hidden></div>
+    </div>
+    <div class="topbar-actions">
+      
+      <a class="icon-link" href="https://github.com/arthurafarias/cpkg" target="_blank" rel="noopener" aria-label="View source on GitHub">
+        <svg viewBox="0 0 16 16" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+      </a>
+      
+      <button class="icon-link theme-toggle" id="theme-toggle" aria-label="Toggle color theme">
+        <svg class="icon-sun" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="shell">
+  <nav class="sidebar" id="sidebar" aria-label="Sections">
+    
+<div class="sidebar-inner">
+  
+<ul class="menu">
+  
+  
+  <li class="menu-item is-active">
+    
+    <a href="cpkg/" aria-current="page">Overview</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/quickstart/">Quickstart</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/architecture/">Architecture</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/tooling/">CLI Tooling</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/testing/">Testing</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/roadmap/">Roadmap</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item has-children">
+    
+    <span class="menu-group-label">Software Requirements Specs</span>
+    
+    
+      
+<ul class="menu">
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/srs-architecture/">Architecture &amp; Flaws</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/srs-unit-testing/">Unit Testing the API</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/srs-ctest-tooling/">CMake/CTest Tooling</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/srs-json-manifests/">JSON Manifests</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/srs-generate/">cxpm --generate</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/srs-sandbox/">Descriptor Sandbox</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/srs-parallel-build/">Parallel Build (proposed)</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+</ul>
+
+</div>
+
+
+
+  </nav>
+  <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+  <main class="content" id="main-content">
+    <div class="content-inner">
+      
+<article class="prose prose-home">
+  <div class="hero">
+<h1>Describe your C++ project in C++.</h1>
+<p><strong>cxpm</strong> is an experimental package manager and build tool for C++ that uses C++ itself, compiled and executed at build time, as the project-description language, instead of a separate configuration format.</p>
+</div>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;CXPM/Target.hpp&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;CXPM/Project.hpp&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">using</span> <span style="color:#66d9ef">namespace</span> CXPM;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">auto</span> example <span style="color:#f92672">=</span> Target()
+</span></span><span style="display:flex;"><span>                   .name_set(<span style="color:#e6db74">&#34;example-executable&#34;</span>)
+</span></span><span style="display:flex;"><span>                   .version_set(<span style="color:#e6db74">&#34;1.0.0&#34;</span>)
+</span></span><span style="display:flex;"><span>                   .type_set(<span style="color:#e6db74">&#34;executable&#34;</span>)
+</span></span><span style="display:flex;"><span>                   .sources_append({<span style="color:#e6db74">&#34;src/main.cpp&#34;</span>})
+</span></span><span style="display:flex;"><span>                   .options_append({<span style="color:#e6db74">&#34;-fPIE&#34;</span>, <span style="color:#e6db74">&#34;-fstack-protector-all&#34;</span>})
+</span></span><span style="display:flex;"><span>                   .link_libraries_append({<span style="color:#e6db74">&#34;m&#34;</span>})
+</span></span><span style="display:flex;"><span>                   .create();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">auto</span> project <span style="color:#f92672">=</span> Project().add(example).create();
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cxpm --generate package-json .   <span style="color:#75715e"># or: cxpm --generate package-cpp .</span>
+</span></span><span style="display:flex;"><span>cxpm --build .
+</span></span><span style="display:flex;"><span>cxpm --install . --prefix /usr/local
+</span></span></code></pre></div><div class="cards">
+<div class="card"><h3>Two ways to describe a project</h3><p><code>package.cpp</code> is compiled into a shared object and loaded back through a generated loader stub — a real C++ translation unit, not a parsed format. <code>package.json</code> describes the same <code>ProjectDescriptor</code> declaratively: no compilation, no code execution at all.</p></div>
+<div class="card"><h3>Pluggable toolchains</h3><p>Compiler/linker/archiver conventions are themselves described as a <code>ToolchainDescriptor</code>, either JIT-compiled from a <code>toolchain.cpp</code> plugin or read directly from a <code>toolchain.json</code>.</p></div>
+<div class="card"><h3>Sandboxed by default</h3><p>Loading a compiled <code>package.cpp</code>/<code>toolchain.cpp</code> now happens in a resource-limited child process, not the main <code>cxpm</code> process — see the sandbox SRS below.</p></div>
+<div class="card"><h3>POSIX-aligned install layout</h3><p>Shared/static libraries → <code>lib</code>, executables → <code>bin</code>, headers → <code>include/&lt;project&gt;</code>, pkg-config files → <code>lib/pkgconfig</code>.</p></div>
+<div class="card"><h3>Early stage, audited honestly</h3><p>cxpm is an early conceptual prototype. The architecture SRS below itemizes real, cited flaws in the current implementation rather than glossing over them.</p></div>
+</div>
+<h2 id="project-status">Project status</h2>
+<p>cxpm is at an early conceptual stage. This documentation set was written together with the
+project&rsquo;s first test suite, so it doubles as an honest audit of what currently works, what is
+stubbed or dead code, and what a contributor should fix first — see the
+<a href="cpkg/srs-architecture/">architecture SRS</a>
+ for the itemized list.</p>
+<h2 id="start-here">Start here</h2>
+<ul>
+<li><a href="cpkg/quickstart/">Quickstart (with a recorded terminal walkthrough)</a>
+</li>
+<li><a href="cpkg/architecture/">Architecture</a>
+</li>
+<li><a href="cpkg/tooling/">Command-line tool (<code>cxpm</code>)</a>
+</li>
+<li><a href="cpkg/testing/">Testing strategy</a>
+</li>
+<li><a href="cpkg/srs-unit-testing/">Software Requirements Specification: Unit Testing the API</a>
+</li>
+<li><a href="cpkg/srs-architecture/">Software Requirements Specification: Current Architecture &amp; Flaws</a>
+</li>
+<li><a href="cpkg/srs-ctest-tooling/">Software Requirements Specification: CMake/CTest Tooling Facility</a>
+</li>
+<li><a href="cpkg/srs-json-manifests/">Software Requirements Specification: JSON Manifests</a>
+</li>
+<li><a href="cpkg/srs-generate/">Software Requirements Specification: <code>cxpm --generate</code></a>
+</li>
+<li><a href="cpkg/srs-sandbox/">Software Requirements Specification: Descriptor Sandbox</a>
+</li>
+<li><a href="cpkg/srs-parallel-build/">Software Requirements Specification: Parallel Build (proposed)</a>
+</li>
+<li><a href="cpkg/roadmap/">Roadmap &amp; suggested improvements</a>
+</li>
+</ul>
+
+</article>
+
+    </div>
+  </main>
+  <aside class="toc-pane" aria-label="On this page">
+    
+
+<div class="toc-inner">
+  <p class="toc-title">On this page</p>
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#project-status">Project status</a></li>
+    <li><a href="#start-here">Start here</a></li>
+  </ul>
+</nav>
+</div>
+
+
+  </aside>
+</div>
+<footer class="site-footer">
+  <p>cxpm docs · built with Hugo · <a href="https://github.com/arthurafarias/cpkg" target="_blank" rel="noopener">source on GitHub</a></p>
+</footer>
+
+<script>
+  window.CXPM_DOCS = {
+    searchIndexURL: "\/cpkg\/search-index.json"
+  };
+</script>
+
+  
+  <script src="cpkg/js/main.min.e798f0576266bcbe7ecb6e7d2fed1ee409601c191998058910a32ec41ba2c455.js" defer></script>
+
+
+</body>
+</html>

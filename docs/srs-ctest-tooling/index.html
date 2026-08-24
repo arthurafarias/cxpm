@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SRS: CMake/CTest Tooling · cxpm</title>
+<meta name="description" content="An experimental C&#43;&#43;-native package manager and build tool for C&#43;&#43;.">
+<link rel="icon" href="data:,">
+<script>
+  (function () {
+    try {
+      var saved = localStorage.getItem("cxpm-docs-theme");
+      var theme = saved || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.setAttribute("data-theme", theme);
+    } catch (e) {}
+  })();
+</script>
+
+  
+  <link rel="stylesheet" href="../cxpm/css/main.min.705c6b10a27719bb861d20380e003ddc3bcfb26a9d5969863974a958f0604544.css" integrity="sha256-cFxrEKJ3GbuGHSA4DgA93DvPsmqdWWmGOXSpWPBgRUQ=">
+
+
+</head>
+<body>
+<a class="skip-link" href="#main-content">Skip to content</a>
+<header class="topbar">
+  <div class="topbar-inner">
+    <button class="menu-toggle" id="menu-toggle" aria-label="Toggle navigation" aria-controls="sidebar" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <a class="brand" href="../cxpm/">
+      <span class="brand-mark">cxpm</span>
+      <span class="brand-sub">docs</span>
+    </a>
+    <div class="search" role="search">
+      <input type="search" id="search-input" placeholder="Search docs…" aria-label="Search documentation" autocomplete="off">
+      <kbd class="search-kbd">/</kbd>
+      <div id="search-results" class="search-results" hidden></div>
+    </div>
+    <div class="topbar-actions">
+      
+      <a class="icon-link" href="https://github.com/arthurafarias/cpkg" target="_blank" rel="noopener" aria-label="View source on GitHub">
+        <svg viewBox="0 0 16 16" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+      </a>
+      
+      <button class="icon-link theme-toggle" id="theme-toggle" aria-label="Toggle color theme">
+        <svg class="icon-sun" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="shell">
+  <nav class="sidebar" id="sidebar" aria-label="Sections">
+    
+<div class="sidebar-inner">
+  
+<ul class="menu">
+  
+  
+  <li class="menu-item">
+    
+    <a href="../cxpm/">Overview</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="../cxpm/quickstart/">Quickstart</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="../cxpm/architecture/">Architecture</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="../cxpm/tooling/">CLI Tooling</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="../cxpm/testing/">Testing</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="../cxpm/roadmap/">Roadmap</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item has-children">
+    
+    <span class="menu-group-label">Software Requirements Specs</span>
+    
+    
+      
+<ul class="menu">
+  
+  
+  <li class="menu-item">
+    
+    <a href="../cxpm/srs-architecture/">Architecture &amp; Flaws</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="../cxpm/srs-unit-testing/">Unit Testing the API</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item is-active">
+    
+    <a href="../cxpm/srs-ctest-tooling/" aria-current="page">CMake/CTest Tooling</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="../cxpm/srs-json-manifests/">JSON Manifests</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="../cxpm/srs-generate/">cxpm --generate</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="../cxpm/srs-sandbox/">Descriptor Sandbox</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="../cxpm/srs-parallel-build/">Parallel Build (proposed)</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+</ul>
+
+</div>
+
+
+
+  </nav>
+  <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+  <main class="content" id="main-content">
+    <div class="content-inner">
+      
+<nav class="breadcrumbs" aria-label="Breadcrumb">
+  <a href="../cxpm/">cxpm</a>
+  <span class="sep">/</span><span>SRS: CMake/CTest Tooling</span>
+</nav>
+<article class="prose">
+  <h1 id="software-requirements-specification">Software Requirements Specification</h1>
+<h2 id="cmakectest-command-execution-tooling-facility">CMake/CTest Command-Execution Tooling Facility</h2>
+<p><strong>Project:</strong> cxpm
+<strong>Scope:</strong> <code>tests/CMakeLists.txt</code>, <code>tests/cli/CMakeLists.txt</code>, <code>cmake/CxpmAddCliTest.cmake</code>
+<strong>Companion documents:</strong> <a href="../cxpm/srs-unit-testing/">srs-unit-testing.md</a>
+ (what is tested),
+<a href="../cxpm/testing/">testing.md</a>
+ (how to run it)</p>
+<hr>
+<h2 id="1-purpose">1. Purpose</h2>
+<p>cxpm&rsquo;s own product is a command-line build tool: correctness is largely defined by &ldquo;running
+<code>cxpm &lt;args&gt;</code> against a project directory produces this exit code / these files / this output&rdquo;.
+CTest already is a generic test-execution driver (labels, fixtures, parallelism, timeouts,
+pass/fail regex matching) that happens to be bundled with the CMake this project already requires.
+This SRS specifies a small, reusable <strong>tooling facility</strong> — a set of CMake functions — that turns
+&ldquo;run this cxpm command and assert on the result&rdquo; into a declarative one-call registration, so that
+CLI-level requirements are checked the same way as unit tests: via <code>ctest</code>, with the same
+filtering, parallelism and reporting.</p>
+<h2 id="2-requirements">2. Requirements</h2>
+<h3 id="21-build-integration">2.1 Build integration</h3>
+<ol>
+<li>The top-level <code>CMakeLists.txt</code> SHALL expose <code>CXPM_BUILD_TESTS</code> (default <code>ON</code>) gating
+<code>enable_testing()</code> and <code>add_subdirectory(tests)</code>.</li>
+<li>The top-level <code>CMakeLists.txt</code> SHALL expose <code>CXPM_BUILD_CLI_INTEGRATION_TESTS</code> (default <code>OFF</code>)
+gating registration of any CTest test that requires a real C++ compiler on <code>PATH</code> beyond the
+one used to build <code>cxpm</code> itself, so that <code>ctest</code> remains fast and hermetic by default.</li>
+<li><code>tests/CMakeLists.txt</code> SHALL <code>include(cmake/CxpmAddCliTest.cmake)</code> and <code>add_subdirectory(cli)</code>
+unconditionally (the CLI <em>smoke</em> tests, §2.3, do not need
+<code>CXPM_BUILD_CLI_INTEGRATION_TESTS</code>); only the heavier integration tests inside <code>tests/cli</code>
+SHALL be individually gated by that option.</li>
+</ol>
+<h3 id="22-the-tooling-facility-itself">2.2 The tooling facility itself</h3>
+<p><code>cmake/CxpmAddCliTest.cmake</code> SHALL provide two functions:</p>
+<h4 id="cxpm_add_cli_testtest-name-command-arg-working_directory-dir-fixtures-fixture-labels-label-timeout-seconds-will_fail-pass_regular_expression-regex-fail_regular_expression-regex"><code>cxpm_add_cli_test(&lt;test-name&gt; COMMAND &lt;arg...&gt; [WORKING_DIRECTORY &lt;dir&gt;] [FIXTURES &lt;fixture...&gt;] [LABELS &lt;label...&gt;] [TIMEOUT &lt;seconds&gt;] [WILL_FAIL] [PASS_REGULAR_EXPRESSION &lt;regex&gt;] [FAIL_REGULAR_EXPRESSION &lt;regex&gt;])</code></h4>
+<ul>
+<li>SHALL register <code>&lt;test-name&gt;</code> via <code>add_test</code>, running <code>COMMAND</code> as a child process — <code>COMMAND</code>
+MAY reference generator expressions such as <code>$&lt;TARGET_FILE:cxpm&gt;</code> to resolve the just-built
+executable regardless of the generator&rsquo;s output layout.</li>
+<li>SHALL always apply the label <code>cli</code> in addition to any caller-supplied <code>LABELS</code>.</li>
+<li>SHALL default <code>TIMEOUT</code> to 60 seconds when not specified.</li>
+<li>SHALL set <code>WORKING_DIRECTORY</code>, <code>FIXTURES_REQUIRED</code>, <code>WILL_FAIL</code>,
+<code>PASS_REGULAR_EXPRESSION</code>/<code>FAIL_REGULAR_EXPRESSION</code> test properties when the corresponding
+argument is supplied.</li>
+</ul>
+<h4 id="cxpm_add_cli_fixturefixture-name-source_directory-dir"><code>cxpm_add_cli_fixture(&lt;fixture-name&gt; SOURCE_DIRECTORY &lt;dir&gt;)</code></h4>
+<ul>
+<li>SHALL register a <code>FIXTURES_SETUP</code> test that copies <code>SOURCE_DIRECTORY</code> into an isolated
+per-fixture directory under the build tree (<code>${CMAKE_CURRENT_BINARY_DIR}/cli-fixtures/&lt;name&gt;</code>),
+so a CLI test that mutates its working directory (writing <code>.o</code>/<code>.so</code>/<code>compile_commands.json</code>
+files, as <code>cxpm --build</code> does) never mutates the checked-in <code>examples/</code> tree.</li>
+<li>SHALL register a matching <code>FIXTURES_CLEANUP</code> test that removes the isolated directory.</li>
+<li>SHALL expose the resulting path to the caller as <code>&lt;fixture-name&gt;_DIRECTORY</code> in the parent scope.</li>
+<li>A test requiring the fixture SHALL declare it via <code>cxpm_add_cli_test(... FIXTURES &lt;fixture-name&gt; ...)</code>, which CTest resolves to <code>FIXTURES_REQUIRED</code>, guaranteeing the setup test
+runs first and cleanup runs last regardless of <code>ctest -j</code> parallelism or <code>-R</code> filtering.</li>
+</ul>
+<h3 id="23-required-cli-tests">2.3 Required CLI tests</h3>
+<p>The following SHALL be registered unconditionally (no compiler beyond the one that built <code>cxpm</code>
+is required — they exercise argument parsing and early validation, not the build pipeline):</p>
+<table>
+	<thead>
+			<tr>
+					<th>Test</th>
+					<th>Command</th>
+					<th>Expectation</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td><code>cli_help</code> / <code>cli_help_short</code></td>
+					<td><code>cxpm --help</code> / <code>cxpm -h</code></td>
+					<td>exit 0, output matches <code>Usage:</code></td>
+			</tr>
+			<tr>
+					<td><code>cli_no_arguments_prints_usage_and_fails</code></td>
+					<td><code>cxpm</code></td>
+					<td>non-zero exit</td>
+			</tr>
+			<tr>
+					<td><code>cli_build_without_directory_fails_cleanly</code></td>
+					<td><code>cxpm --build</code></td>
+					<td>non-zero exit (regression for A6/A5, see <a href="../cxpm/srs-architecture/">srs-architecture.md</a>
+)</td>
+			</tr>
+			<tr>
+					<td><code>cli_build_nonexistent_directory_fails_cleanly</code></td>
+					<td><code>cxpm --build /nonexistent-...</code></td>
+					<td>non-zero exit</td>
+			</tr>
+			<tr>
+					<td><code>cli_install_without_directory_fails_cleanly</code></td>
+					<td><code>cxpm --install</code></td>
+					<td>non-zero exit (regression for A6)</td>
+			</tr>
+			<tr>
+					<td><code>cli_directory_without_package_cpp_fails_cleanly</code></td>
+					<td><code>cxpm --build &lt;dir with no package.cpp&gt;</code></td>
+					<td>non-zero exit</td>
+			</tr>
+	</tbody>
+</table>
+<p>The following SHALL be registered only when <code>CXPM_BUILD_CLI_INTEGRATION_TESTS=ON</code>:</p>
+<table>
+	<thead>
+			<tr>
+					<th>Test</th>
+					<th>Command</th>
+					<th>Expectation</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td><code>cli_build_example_executable</code></td>
+					<td><code>cxpm --build &lt;fixture copy of examples/executable&gt;</code>, with <code>cxpm_BUILD_EXTRA_MODULES_PATH</code> pointed at the in-tree <code>modules/toolchains</code> so no prior <code>cmake --install</code> of cxpm is required</td>
+					<td>exit 0; the example&rsquo;s executable is produced</td>
+			</tr>
+	</tbody>
+</table>
+<h3 id="24-labels">2.4 Labels</h3>
+<p>CTest labels SHALL partition the suite along two independent axes so either can be filtered
+without the other:</p>
+<ul>
+<li><strong>What kind of thing is being tested:</strong> <code>unit</code> (the <code>cxpm_tests</code> binary) vs. <code>cli</code> (any test
+invoking the <code>cxpm</code> executable as a subprocess).</li>
+<li><strong>How expensive/hermetic it is:</strong> <code>smoke</code> (fast, no compiler dependency) vs. <code>integration</code>
+(slow, real compiler required) vs. <code>fixture</code> (the setup/cleanup helper tests themselves) vs.
+<code>regression</code> (tests that specifically pin a fixed defect, cross-cutting the other labels).</li>
+</ul>
+<p>This lets a CI job run <code>ctest -L unit -L smoke</code> (or their union) on every push regardless of
+compiler availability, while a nightly/slower job additionally runs <code>ctest -L integration</code>.</p>
+<h3 id="25-diagnostics">2.5 Diagnostics</h3>
+<ol>
+<li><code>ctest --output-on-failure</code> SHALL be the documented default invocation for local development
+(<a href="../cxpm/testing/">testing.md</a>
+), so a failing test&rsquo;s stdout/stderr is visible without a second
+invocation.</li>
+<li>Every registered test SHALL have a name descriptive enough to identify the failing requirement
+from <code>ctest</code>&rsquo;s summary line alone (see the table in §2.3 — no <code>test1</code>/<code>test2</code> placeholders).</li>
+</ol>
+<h2 id="3-usage-examples">3. Usage examples</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Configure with tests (default) and the opt-in integration tier</span>
+</span></span><span style="display:flex;"><span>cmake -S . -B build -DCXPM_BUILD_TESTS<span style="color:#f92672">=</span>ON -DCXPM_BUILD_CLI_INTEGRATION_TESTS<span style="color:#f92672">=</span>ON
+</span></span><span style="display:flex;"><span>cmake --build build -j
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Everything</span>
+</span></span><span style="display:flex;"><span>ctest --test-dir build --output-on-failure
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Only the hermetic unit suite (no compiler dependency beyond the build itself)</span>
+</span></span><span style="display:flex;"><span>ctest --test-dir build -L unit --output-on-failure
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Only fast CLI argument-parsing/error-path checks</span>
+</span></span><span style="display:flex;"><span>ctest --test-dir build -L smoke --output-on-failure
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Only the regression tests that pin fixed defects</span>
+</span></span><span style="display:flex;"><span>ctest --test-dir build -L regression --output-on-failure
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># A single named test</span>
+</span></span><span style="display:flex;"><span>ctest --test-dir build -R cli_build_without_directory_fails_cleanly --output-on-failure
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Parallel run (fixtures still order themselves correctly around it)</span>
+</span></span><span style="display:flex;"><span>ctest --test-dir build -j4 --output-on-failure
+</span></span></code></pre></div><h2 id="4-acceptance-criteria">4. Acceptance criteria</h2>
+<ul>
+<li><code>cmake -S . -B build &amp;&amp; cmake --build build -j</code> succeeds with <code>CXPM_BUILD_TESTS=ON</code> (the
+default) and no other options set.</li>
+<li><code>ctest --test-dir build</code> passes in full, including the CLI smoke tier, with no compiler
+requirement beyond the one used for the build itself.</li>
+<li><code>ctest --test-dir build -L unit</code> and <code>-L smoke</code> each pass standalone.</li>
+<li>With <code>-DCXPM_BUILD_CLI_INTEGRATION_TESTS=ON</code> and a working C++ compiler on <code>PATH</code>,
+<code>ctest --test-dir build -L integration</code> passes and produces a real, runnable
+<code>example-executable</code> under the fixture directory.</li>
+<li><code>cxpm_add_cli_test</code>/<code>cxpm_add_cli_fixture</code> are reusable as-is for any future CLI command (e.g. a
+future <code>--uninstall</code>, once A13 in <a href="../cxpm/srs-architecture/">srs-architecture.md</a>
+ is addressed)
+without modifying <code>cmake/CxpmAddCliTest.cmake</code>.</li>
+</ul>
+<p>All of the above hold as of this writing.</p>
+
+</article>
+
+
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+
+
+
+
+<p class="edit-link"><a href="https://github.com/arthurafarias/cpkg/edit/master/hugosite/content/srs-ctest-tooling.md" target="_blank" rel="noopener">Edit this page on GitHub</a></p>
+
+
+
+
+    </div>
+  </main>
+  <aside class="toc-pane" aria-label="On this page">
+    
+
+<div class="toc-inner">
+  <p class="toc-title">On this page</p>
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#cmakectest-command-execution-tooling-facility">CMake/CTest Command-Execution Tooling Facility</a></li>
+    <li><a href="#1-purpose">1. Purpose</a></li>
+    <li><a href="#2-requirements">2. Requirements</a>
+      <ul>
+        <li><a href="#21-build-integration">2.1 Build integration</a></li>
+        <li><a href="#22-the-tooling-facility-itself">2.2 The tooling facility itself</a>
+          <ul>
+            <li><a href="#cxpm_add_cli_testtest-name-command-arg-working_directory-dir-fixtures-fixture-labels-label-timeout-seconds-will_fail-pass_regular_expression-regex-fail_regular_expression-regex"><code>cxpm_add_cli_test(&lt;test-name&gt; COMMAND &lt;arg...&gt; [WORKING_DIRECTORY &lt;dir&gt;] [FIXTURES &lt;fixture...&gt;] [LABELS &lt;label...&gt;] [TIMEOUT &lt;seconds&gt;] [WILL_FAIL] [PASS_REGULAR_EXPRESSION &lt;regex&gt;] [FAIL_REGULAR_EXPRESSION &lt;regex&gt;])</code></a></li>
+            <li><a href="#cxpm_add_cli_fixturefixture-name-source_directory-dir"><code>cxpm_add_cli_fixture(&lt;fixture-name&gt; SOURCE_DIRECTORY &lt;dir&gt;)</code></a></li>
+          </ul>
+        </li>
+        <li><a href="#23-required-cli-tests">2.3 Required CLI tests</a></li>
+        <li><a href="#24-labels">2.4 Labels</a></li>
+        <li><a href="#25-diagnostics">2.5 Diagnostics</a></li>
+      </ul>
+    </li>
+    <li><a href="#3-usage-examples">3. Usage examples</a></li>
+    <li><a href="#4-acceptance-criteria">4. Acceptance criteria</a></li>
+  </ul>
+</nav>
+</div>
+
+
+  </aside>
+</div>
+<footer class="site-footer">
+  <p>cxpm docs · built with Hugo · <a href="https://github.com/arthurafarias/cpkg" target="_blank" rel="noopener">source on GitHub</a></p>
+</footer>
+
+<script>
+  window.CXPM_DOCS = {
+    searchIndexURL: "\/cxpm\/search-index.json"
+  };
+</script>
+
+  
+  <script src="../cxpm/js/main.min.e798f0576266bcbe7ecb6e7d2fed1ee409601c191998058910a32ec41ba2c455.js" integrity="sha256-55jwV2JmvL5&#43;y259L&#43;0e5AlgHBkZmAWJEKMuxBuixFU=" defer></script>
+
+
+</body>
+</html>

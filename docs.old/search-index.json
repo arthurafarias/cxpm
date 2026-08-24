@@ -1,0 +1,94 @@
+[
+
+  
+  {
+    "title": "Architecture",
+    "href": "/cpkg/architecture/",
+    "content": "Architecture Control flow argv │ ▼ Views::ApplicationView::run() │ parses --help/--build/--install/--generate via Modules::ProgramOptions::Parse │ ├── --build \u0026lt;dir\u0026gt; ──────────────┐ ├── --generate \u0026lt;kind\u0026gt; [dir] ─────┐ ├── --install \u0026lt;dir\u0026gt; [--prefix] ─┤ ▼ ▼ ▼ ▼ Modules::Generators::ManifestGenerator (§ srs-generate.md) Controllers::ProjectManager Controllers::ProjectManager writes package.cpp / …"
+  }
+
+  ,
+  {
+    "title": "cxpm",
+    "href": "/cpkg/",
+    "content": " Describe your C++ project in C++. cxpm is an experimental package manager and build tool for C++ that uses C++ itself, compiled and executed at build time, as the project-description language, instead of a separate configuration format.\n#include \u0026lt;CXPM/Target.hpp\u0026gt; #include \u0026lt;CXPM/Project.hpp\u0026gt; using namespace CXPM; auto example = Target() .name_set(\u0026#34;example-executable\u0026#34;) .version_set(\u0026#34;1.0.0\u0026#34;) …"
+  }
+
+  ,
+  {
+    "title": "Quickstart",
+    "href": "/cpkg/quickstart/",
+    "content": "Quickstart This walks through the whole cxpm lifecycle — scaffold, build, run, install — on a fresh project, recorded end to end as an asciinema cast. It assumes cxpm is already built (see the readme for build instructions) and reachable on PATH.\nFollowing along without the player cxpm --generate package-json hello-cxpm cd hello-cxpm cat package.json --generate package-json (see srs-generate.md ) …"
+  }
+
+  ,
+  {
+    "title": "Roadmap",
+    "href": "/cpkg/roadmap/",
+    "content": "Roadmap \u0026amp; suggested improvements This page collects concrete next steps, roughly ordered by leverage: cheap/safe fixes first, then correctness-affecting design decisions, then longer-range architecture work. Every item with an “A#” reference is itemized in detail, with file:line citations, in srs-architecture.md .\nRecently shipped Three capabilities landed together and are documented as their own …"
+  }
+
+  ,
+  {
+    "title": "SRS: Architecture \u0026 Flaws",
+    "href": "/cpkg/srs-architecture/",
+    "content": "Software Requirements Specification Current Architecture, Itemized Requirements and Corrective Flaws Project: cxpm Method: this SRS was produced by reading the entire cxpm-interface public API (every header under libraries/cxpm-interface/src/CXPM/), applications/cxpm/src/cxpm.cpp, and all three toolchain plugins, then itemizing the architecture as it actually behaves today — not as aspirational …"
+  }
+
+  ,
+  {
+    "title": "SRS: CMake/CTest Tooling",
+    "href": "/cpkg/srs-ctest-tooling/",
+    "content": "Software Requirements Specification CMake/CTest Command-Execution Tooling Facility Project: cxpm Scope: tests/CMakeLists.txt, tests/cli/CMakeLists.txt, cmake/CxpmAddCliTest.cmake Companion documents: srs-unit-testing.md (what is tested), testing.md (how to run it)\n1. Purpose cxpm’s own product is a command-line build tool: correctness is largely defined by “running cxpm \u0026lt;args\u0026gt; against a project …"
+  }
+
+  ,
+  {
+    "title": "SRS: cxpm --generate",
+    "href": "/cpkg/srs-generate/",
+    "content": "Software Requirements Specification cxpm --generate: Scaffolding package.cpp / toolchain.cpp / package.json / toolchain.json Project: cxpm Scope: CXPM::Modules::Generators::* (ManifestGenerator.hpp), ApplicationView::generate Companion documents: srs-json-manifests.md (the format this feature emits), tooling.md (CLI reference)\n1. Purpose Before this feature, starting a new cxpm project meant …"
+  }
+
+  ,
+  {
+    "title": "SRS: Descriptor Sandbox",
+    "href": "/cpkg/srs-sandbox/",
+    "content": "Software Requirements Specification Sandbox Infrastructure for Building C++ Descriptors Project: cxpm Scope: applications/cxpm-descriptor-sandbox, CXPM::Controllers::DescriptorSandbox (libraries/cxpm-interface/src/CXPM/DescriptorSandbox.hpp), the two call sites it replaces: ProjectManager::load_from_manifest, ToolchainManager::load_toolchain_plugin Companion documents: architecture.md , …"
+  }
+
+  ,
+  {
+    "title": "SRS: JSON Manifests",
+    "href": "/cpkg/srs-json-manifests/",
+    "content": "Software Requirements Specification package.json / toolchain.json as Serialization Alternatives Project: cxpm Scope: libraries/cxpm-interface/src/CXPM/Modules/Serialization/{JsonValueParser,JsonValueWriter,JsonManifest,JsonInputArchiver}.hpp, ProjectManager::load_project, ToolchainManager::autoscan, ApplicationView::assert_project_directory Companion documents: architecture.md , srs-generate.md …"
+  }
+
+  ,
+  {
+    "title": "SRS: Parallel Build",
+    "href": "/cpkg/srs-parallel-build/",
+    "content": "Software Requirements Specification Parallelizing the Build Pipeline Project: cxpm Status: Proposed — not yet implemented. Unlike its companion SRS pages, this document specifies work that has not landed. It exists to pin down the design before implementation, against the codebase as it stands as of this writing, so the eventual change can be reviewed against a stated baseline rather than …"
+  }
+
+  ,
+  {
+    "title": "SRS: Unit Testing the API",
+    "href": "/cpkg/srs-unit-testing/",
+    "content": "Software Requirements Specification Unit Testing the cxpm Public API Project: cxpm Language: C++23, header-only interface library (cxpm-interface) Scope of this document: every header under libraries/cxpm-interface/src/CXPM/, the cxpm CLI entry point (applications/cxpm/src/cxpm.cpp + CXPM::Views::ApplicationView), and the three toolchain plugins (modules/toolchains/{gcc,g++,nvcc}) Status at the …"
+  }
+
+  ,
+  {
+    "title": "Testing",
+    "href": "/cpkg/testing/",
+    "content": "Testing cxpm’s test suite has two tiers: an in-process unit binary (cxpm_tests) and a set of CLI tests that run the real cxpm executable (and the cxpm-descriptor-sandbox helper) as subprocesses through CTest. See srs-unit-testing.md for the requirements this suite satisfies and srs-ctest-tooling.md for the CMake tooling that registers the CLI tier.\nRunning the suite cmake -S . -B build …"
+  }
+
+  ,
+  {
+    "title": "Tooling",
+    "href": "/cpkg/tooling/",
+    "content": "The cxpm command-line tool cxpm (applications/cxpm) is a thin process front end: applications/cxpm/src/cxpm.cpp constructs a CXPM::Views::ApplicationView and delegates everything to it. Argument parsing, build orchestration, install logic and manifest generation all live in the header-only cxpm-interface library. A second, small executable, cxpm-descriptor-sandbox, is described separately under …"
+  }
+
+]

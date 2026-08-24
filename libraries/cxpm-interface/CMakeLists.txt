@@ -6,9 +6,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED YES)
 
 file(GLOB_RECURSE ${PROJECT_NAME}_HEADERS CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/*.hpp)
 
-# CXPM/Testing/*.hpp is the self-registering unit-test harness/tests: it ships in the
-# source tree so tests stay colocated with the classes they cover (see docs/testing.md),
-# but it is not part of the installed public API and must not be packaged.
+# Every */Testing/*.hpp header (the harness itself under CXPM/Testing/, plus each *Test.hpp
+# colocated with the class/function it covers, e.g. CXPM/Core/Containers/Testing/StringTest.hpp)
+# ships in the source tree so tests stay next to the code they exercise (see docs/testing.md),
+# but none of it is part of the installed public API and must not be packaged.
 list(FILTER ${PROJECT_NAME}_HEADERS EXCLUDE REGEX "/Testing/")
 
 add_library(${PROJECT_NAME} INTERFACE)

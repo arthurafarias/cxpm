@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://arthurafarias.github.io/cpkg/architecture/</loc>
+  </url><url>
+    <loc>https://arthurafarias.github.io/cpkg/</loc>
+  </url><url>
+    <loc>https://arthurafarias.github.io/cpkg/quickstart/</loc>
+  </url><url>
+    <loc>https://arthurafarias.github.io/cpkg/roadmap/</loc>
+  </url><url>
+    <loc>https://arthurafarias.github.io/cpkg/srs-architecture/</loc>
+  </url><url>
+    <loc>https://arthurafarias.github.io/cpkg/srs-ctest-tooling/</loc>
+  </url><url>
+    <loc>https://arthurafarias.github.io/cpkg/srs-generate/</loc>
+  </url><url>
+    <loc>https://arthurafarias.github.io/cpkg/srs-sandbox/</loc>
+  </url><url>
+    <loc>https://arthurafarias.github.io/cpkg/srs-json-manifests/</loc>
+  </url><url>
+    <loc>https://arthurafarias.github.io/cpkg/srs-parallel-build/</loc>
+  </url><url>
+    <loc>https://arthurafarias.github.io/cpkg/srs-unit-testing/</loc>
+  </url><url>
+    <loc>https://arthurafarias.github.io/cpkg/testing/</loc>
+  </url><url>
+    <loc>https://arthurafarias.github.io/cpkg/tooling/</loc>
+  </url>
+</urlset>

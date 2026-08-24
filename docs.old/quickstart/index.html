@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quickstart · cxpm</title>
+<meta name="description" content="An experimental C&#43;&#43;-native package manager and build tool for C&#43;&#43;.">
+<link rel="icon" href="data:,">
+<script>
+  (function () {
+    try {
+      var saved = localStorage.getItem("cxpm-docs-theme");
+      var theme = saved || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.setAttribute("data-theme", theme);
+    } catch (e) {}
+  })();
+</script>
+
+  
+  <link rel="stylesheet" href="cpkg/css/main.min.705c6b10a27719bb861d20380e003ddc3bcfb26a9d5969863974a958f0604544.css" >
+
+
+</head>
+<body>
+<a class="skip-link" href="#main-content">Skip to content</a>
+<header class="topbar">
+  <div class="topbar-inner">
+    <button class="menu-toggle" id="menu-toggle" aria-label="Toggle navigation" aria-controls="sidebar" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <a class="brand" href="cpkg/">
+      <span class="brand-mark">cxpm</span>
+      <span class="brand-sub">docs</span>
+    </a>
+    <div class="search" role="search">
+      <input type="search" id="search-input" placeholder="Search docs…" aria-label="Search documentation" autocomplete="off">
+      <kbd class="search-kbd">/</kbd>
+      <div id="search-results" class="search-results" hidden></div>
+    </div>
+    <div class="topbar-actions">
+      
+      <a class="icon-link" href="https://github.com/arthurafarias/cpkg" target="_blank" rel="noopener" aria-label="View source on GitHub">
+        <svg viewBox="0 0 16 16" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+      </a>
+      
+      <button class="icon-link theme-toggle" id="theme-toggle" aria-label="Toggle color theme">
+        <svg class="icon-sun" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="shell">
+  <nav class="sidebar" id="sidebar" aria-label="Sections">
+    
+<div class="sidebar-inner">
+  
+<ul class="menu">
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/">Overview</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item is-active">
+    
+    <a href="cpkg/quickstart/" aria-current="page">Quickstart</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/architecture/">Architecture</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/tooling/">CLI Tooling</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/testing/">Testing</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/roadmap/">Roadmap</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item has-children">
+    
+    <span class="menu-group-label">Software Requirements Specs</span>
+    
+    
+      
+<ul class="menu">
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/srs-architecture/">Architecture &amp; Flaws</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/srs-unit-testing/">Unit Testing the API</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/srs-ctest-tooling/">CMake/CTest Tooling</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/srs-json-manifests/">JSON Manifests</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/srs-generate/">cxpm --generate</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/srs-sandbox/">Descriptor Sandbox</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/srs-parallel-build/">Parallel Build (proposed)</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+</ul>
+
+</div>
+
+
+
+  </nav>
+  <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+  <main class="content" id="main-content">
+    <div class="content-inner">
+      
+<nav class="breadcrumbs" aria-label="Breadcrumb">
+  <a href="cpkg/">cxpm</a>
+  <span class="sep">/</span><span>Quickstart</span>
+</nav>
+<article class="prose">
+  <h1 id="quickstart">Quickstart</h1>
+<p>This walks through the whole <code>cxpm</code> lifecycle — scaffold, build, run, install — on a fresh
+project, recorded end to end as an <a href="https://asciinema.org" rel="noopener" target="_blank">asciinema</a>
+ cast. It assumes <code>cxpm</code> is
+already built (see the <a href="https://github.com/arthurafarias/cxpm#building-and-running" rel="noopener" target="_blank">readme</a>
+ for
+build instructions) and reachable on <code>PATH</code>.</p>
+<div id="quickstart-cast"></div>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/asciinema-player@3.6.3/dist/bundle/asciinema-player.css" />
+<script src="https://cdn.jsdelivr.net/npm/asciinema-player@3.6.3/dist/bundle/asciinema-player.min.js"></script>
+<script>
+  AsciinemaPlayer.create('../casts/quickstart.cast', document.getElementById('quickstart-cast'), {
+    theme: 'monokai',
+    fit: 'width',
+    idleTimeLimit: 2,
+  });
+</script>
+<h2 id="following-along-without-the-player">Following along without the player</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cxpm --generate package-json hello-cxpm
+</span></span><span style="display:flex;"><span>cd hello-cxpm
+</span></span><span style="display:flex;"><span>cat package.json
+</span></span></code></pre></div><p><code>--generate package-json</code> (see <a href="cpkg/srs-generate/">srs-generate.md</a>
+) writes a starter
+<code>package.json</code> whose target <code>name</code> comes from the directory argument (<code>hello-cxpm</code> here) and
+whose <code>sources</code> already points at <code>src/main.cpp</code> — that file itself isn&rsquo;t generated, so create it:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span><span style="color:#75715e">// src/main.cpp
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;cstdio&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>  printf(<span style="color:#e6db74">&#34;Hello from cxpm!</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>);
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cxpm --build .
+</span></span><span style="display:flex;"><span>./hello-cxpm
+</span></span></code></pre></div><p><code>--build</code> (see <a href="cpkg/tooling/#building-a-project">tooling.md</a>
+) resolves a toolchain for the target&rsquo;s
+<code>language</code>, JIT-compiles it, then invokes its compiler and linker.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cxpm --install . --prefix ./install
+</span></span><span style="display:flex;"><span>find install -type f | sort
+</span></span><span style="display:flex;"><span>./install/bin/hello-cxpm
+</span></span></code></pre></div><p><code>--install</code> (see <a href="cpkg/tooling/#installing-a-project">tooling.md</a>
+) builds first, then copies the
+result into a POSIX-aligned prefix: the executable under <code>bin/</code>, and a generated
+<code>hello-cxpm.pc</code> under <code>lib/pkgconfig/</code>.</p>
+<h2 id="notes-on-the-recording">Notes on the recording</h2>
+<ul>
+<li>The cast runs against a real, freshly built <code>cxpm</code> — nothing in it is staged or edited output.</li>
+<li><code>cxpm_BUILD_EXTRA_MODULES_PATH</code> (see
+<a href="cpkg/tooling/#describing-a-toolchain-toolchaincpp-or-toolchainjson">tooling.md</a>
+) points <code>cxpm</code> at
+a toolchain search directory outside the normal install-prefix locations, which is how the
+recording finds a <code>g++</code> toolchain without requiring a system-wide <code>cxpm</code> install first. In a
+normal install (<code>cmake --install</code>, which also installs <code>modules/toolchains/{gcc,g++,nvcc}</code>),
+this variable isn&rsquo;t needed.</li>
+<li><code>cxpm --build</code>/<code>--install</code> JIT-compile <strong>every</strong> toolchain plugin visible on the search path
+before selecting one (see <a href="cpkg/srs-architecture/">srs-architecture.md</a>
+ for this and other
+itemized flaws) — the recording&rsquo;s search directory contains only <code>g++</code> so that startup cost
+doesn&rsquo;t dominate the cast.</li>
+</ul>
+<h2 id="re-recording-the-cast">Re-recording the cast</h2>
+<p>The exact script used to produce <a href="../casts/quickstart.cast"><code>casts/quickstart.cast</code></a>
+ — including
+prompt pacing and the scoped toolchain directory above — lives at
+<a href="https://github.com/arthurafarias/cxpm/blob/master/misc/record-quickstart-cast.sh" rel="noopener" target="_blank"><code>misc/record-quickstart-cast.sh</code></a>
+
+in the repository:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>misc/record-quickstart-cast.sh . hugosite/static/casts/quickstart.cast
+</span></span></code></pre></div>
+</article>
+
+
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+
+
+
+
+<p class="edit-link"><a href="https://github.com/arthurafarias/cpkg/edit/master/hugosite/content/quickstart.md" target="_blank" rel="noopener">Edit this page on GitHub</a></p>
+
+
+
+
+    </div>
+  </main>
+  <aside class="toc-pane" aria-label="On this page">
+    
+
+<div class="toc-inner">
+  <p class="toc-title">On this page</p>
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#following-along-without-the-player">Following along without the player</a></li>
+    <li><a href="#notes-on-the-recording">Notes on the recording</a></li>
+    <li><a href="#re-recording-the-cast">Re-recording the cast</a></li>
+  </ul>
+</nav>
+</div>
+
+
+  </aside>
+</div>
+<footer class="site-footer">
+  <p>cxpm docs · built with Hugo · <a href="https://github.com/arthurafarias/cpkg" target="_blank" rel="noopener">source on GitHub</a></p>
+</footer>
+
+<script>
+  window.CXPM_DOCS = {
+    searchIndexURL: "\/cpkg\/search-index.json"
+  };
+</script>
+
+  
+  <script src="cpkg/js/main.min.e798f0576266bcbe7ecb6e7d2fed1ee409601c191998058910a32ec41ba2c455.js" defer></script>
+
+
+</body>
+</html>

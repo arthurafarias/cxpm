@@ -50,7 +50,12 @@ public:
       }
 
       while (fgets(buffer, sizeof(buffer), fp)) {
-        result.append_range(buffer);
+        // append(const char*), not append_range(): buffer is a fixed-size char[1024] that
+        // fgets null-terminates after the bytes it actually read. append_range() previously
+        // treated the whole array as a range and appended all 1024 bytes verbatim every
+        // iteration -- including whatever stale/zeroed bytes followed the null terminator --
+        // corrupting every real (non-dry) command's captured stdout.
+        result.append(buffer);
       }
 
       auto value = pclose(fp);
@@ -72,7 +77,7 @@ public:
     auto promise = std::make_shared<promise_type>();
 
     Threading::ThreadPool::get_instance().submit([command, shell, promise]() {
-      auto retval = exec(command, shell);
+      auto retval = exec(command, false, shell);
       promise->set_value(retval);
     });
 

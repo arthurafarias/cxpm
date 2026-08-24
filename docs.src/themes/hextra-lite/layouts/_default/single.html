@@ -1,0 +1,11 @@
+{{ define "main" }}
+<nav class="breadcrumbs" aria-label="Breadcrumb">
+  <a href="{{ .Site.Home.RelPermalink }}">cxpm</a>
+  {{ if not .IsHome }}<span class="sep">/</span><span>{{ .Title }}</span>{{ end }}
+</nav>
+<article class="prose">
+  {{ .Content }}
+</article>
+{{ partial "pagenav.html" . }}
+{{ partial "edit-link.html" . }}
+{{ end }}

@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SRS: JSON Manifests · cxpm</title>
+<meta name="description" content="An experimental C&#43;&#43;-native package manager and build tool for C&#43;&#43;.">
+<link rel="icon" href="data:,">
+<script>
+  (function () {
+    try {
+      var saved = localStorage.getItem("cxpm-docs-theme");
+      var theme = saved || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.setAttribute("data-theme", theme);
+    } catch (e) {}
+  })();
+</script>
+
+  
+  <link rel="stylesheet" href="cpkg/css/main.min.705c6b10a27719bb861d20380e003ddc3bcfb26a9d5969863974a958f0604544.css" >
+
+
+</head>
+<body>
+<a class="skip-link" href="#main-content">Skip to content</a>
+<header class="topbar">
+  <div class="topbar-inner">
+    <button class="menu-toggle" id="menu-toggle" aria-label="Toggle navigation" aria-controls="sidebar" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <a class="brand" href="cpkg/">
+      <span class="brand-mark">cxpm</span>
+      <span class="brand-sub">docs</span>
+    </a>
+    <div class="search" role="search">
+      <input type="search" id="search-input" placeholder="Search docs…" aria-label="Search documentation" autocomplete="off">
+      <kbd class="search-kbd">/</kbd>
+      <div id="search-results" class="search-results" hidden></div>
+    </div>
+    <div class="topbar-actions">
+      
+      <a class="icon-link" href="https://github.com/arthurafarias/cpkg" target="_blank" rel="noopener" aria-label="View source on GitHub">
+        <svg viewBox="0 0 16 16" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+      </a>
+      
+      <button class="icon-link theme-toggle" id="theme-toggle" aria-label="Toggle color theme">
+        <svg class="icon-sun" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="shell">
+  <nav class="sidebar" id="sidebar" aria-label="Sections">
+    
+<div class="sidebar-inner">
+  
+<ul class="menu">
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/">Overview</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/quickstart/">Quickstart</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/architecture/">Architecture</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/tooling/">CLI Tooling</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/testing/">Testing</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/roadmap/">Roadmap</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item has-children">
+    
+    <span class="menu-group-label">Software Requirements Specs</span>
+    
+    
+      
+<ul class="menu">
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/srs-architecture/">Architecture &amp; Flaws</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/srs-unit-testing/">Unit Testing the API</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/srs-ctest-tooling/">CMake/CTest Tooling</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item is-active">
+    
+    <a href="cpkg/srs-json-manifests/" aria-current="page">JSON Manifests</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/srs-generate/">cxpm --generate</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/srs-sandbox/">Descriptor Sandbox</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="cpkg/srs-parallel-build/">Parallel Build (proposed)</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+</ul>
+
+</div>
+
+
+
+  </nav>
+  <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+  <main class="content" id="main-content">
+    <div class="content-inner">
+      
+<nav class="breadcrumbs" aria-label="Breadcrumb">
+  <a href="cpkg/">cxpm</a>
+  <span class="sep">/</span><span>SRS: JSON Manifests</span>
+</nav>
+<article class="prose">
+  <h1 id="software-requirements-specification">Software Requirements Specification</h1>
+<h2 id="packagejson--toolchainjson-as-serialization-alternatives">package.json / toolchain.json as Serialization Alternatives</h2>
+<p><strong>Project:</strong> cxpm
+<strong>Scope:</strong> <code>libraries/cxpm-interface/src/CXPM/Modules/Serialization/{JsonValueParser,JsonValueWriter,JsonManifest,JsonInputArchiver}.hpp</code>, <code>ProjectManager::load_project</code>, <code>ToolchainManager::autoscan</code>, <code>ApplicationView::assert_project_directory</code>
+<strong>Companion documents:</strong> <a href="cpkg/architecture/">architecture.md</a>
+, <a href="cpkg/srs-generate/">srs-generate.md</a>
+ (produces these files), <a href="cpkg/srs-sandbox/">srs-sandbox.md</a>
+ (uses the same codec as its IPC format)</p>
+<hr>
+<h2 id="1-purpose">1. Purpose</h2>
+<p>cxpm&rsquo;s manifests (<code>package.cpp</code>, <code>toolchain.cpp</code>) are C++ translation units: expressive, but they
+require compiling and <code>dlopen</code>-ing a fresh shared object on every single invocation (see
+<a href="cpkg/srs-architecture/">srs-architecture.md</a>
+ item A21), and they are inherently code — a
+<code>package.cpp</code> can contain arbitrary static-initializer logic, not just declarative configuration.</p>
+<p>This SRS specifies a <strong>declarative, serialization-only alternative</strong>: <code>package.json</code> and
+<code>toolchain.json</code>, parsed directly into the exact same <code>ProjectDescriptor</code>/<code>ToolchainDescriptor</code>
+structs the <code>.cpp</code> path produces, with no compilation and no <code>dlopen</code> involved. Both formats
+describe the same manifest; a project or a toolchain author picks whichever is a better fit, and
+the two are read through the same internal representation, so nothing downstream of &ldquo;the manifest
+has been loaded&rdquo; needs to know or care which format was on disk.</p>
+<h2 id="2-requirements">2. Requirements</h2>
+<h3 id="21-codec-the-serializers-this-srs-is-built-on">2.1 Codec (the serializers this SRS is built on)</h3>
+<ol>
+<li><code>CXPM::Core::Containers::Value</code> (the existing Variant-based JSON-like tree — <code>null</code>, <code>bool</code>,
+<code>int</code>, <code>double</code>, <code>String</code>, <code>BasicCollection&lt;Value&gt;</code>, <code>Map&lt;String, Value&gt;</code>) SHALL be
+round-trippable to and from JSON text.</li>
+<li><code>parse_json(const String&amp;) -&gt; Value</code> (<code>JsonValueParser.hpp</code>) SHALL implement a
+recursive-descent JSON parser supporting all seven <code>Value</code> alternatives, standard string
+escapes (<code>\&quot; \\ \/ \b \f \n \r \t</code>), <code>\uXXXX</code> escapes for Basic-Multilingual-Plane codepoints,
+and both integer and floating-point number literals (an exponent or a decimal point selects
+<code>double</code>; otherwise <code>int</code>). It SHALL throw <code>CXPM::Core::Exceptions::JsonParseException</code> (a
+<code>RuntimeException</code> subclass) with a descriptive message on any malformed input, including
+trailing content after a complete value.</li>
+<li><code>write_json(const Value&amp;) -&gt; String</code> (<code>JsonValueWriter.hpp</code>) SHALL render a <code>Value</code> tree as
+compact JSON text, using <code>std::quoted</code>-style string escaping consistent with the existing
+<code>JsonOutputArchiver</code>.</li>
+<li><code>write_json_pretty(const Value&amp;, indent_width=2) -&gt; String</code> SHALL render the same tree with
+newlines and indentation, for human-authored/human-edited output (used by
+<a href="cpkg/srs-generate/">srs-generate.md</a>
+); it SHALL NOT be required to match <code>write_json</code>&rsquo;s exact
+whitespace, only to parse back to an equal <code>Value</code> tree.</li>
+<li><code>AbstractInputArchiver</code>&rsquo;s constructor SHALL be public (it was previously placed before the
+class&rsquo;s first access specifier, making it unconstructible — see
+<a href="cpkg/srs-architecture/">srs-architecture.md</a>
+ item A33). <code>JsonInputArchiver</code> SHALL wrap an
+<code>std::istream</code>, read it to completion at construction time, and expose the parsed <code>Value</code> via
+<code>.value()</code>.</li>
+</ol>
+<h3 id="22-descriptor-level-conversion">2.2 Descriptor-level conversion</h3>
+<p><code>JsonManifest.hpp</code> SHALL provide, for <code>TargetDescriptor</code>, <code>ToolchainDescriptor</code> and
+<code>ProjectDescriptor</code>:</p>
+<ol>
+<li><code>to_json(const T&amp;) -&gt; Value</code>, covering every field of <code>T</code> (excluding <code>compile_commands</code>/
+<code>compile_comands</code>, which are build <em>output</em>, not manifest input, on both <code>TargetDescriptor</code>
+and <code>ProjectDescriptor</code>).</li>
+<li><code>T_from_json(const Value&amp;) -&gt; T</code> (named <code>target_descriptor_from_json</code>,
+<code>toolchain_descriptor_from_json</code>, <code>project_descriptor_from_json</code>), which SHALL:
+<ul>
+<li>throw <code>JsonParseException</code> if the input <code>Value</code> is not a JSON object;</li>
+<li>throw <code>JsonParseException</code> if a present field has the wrong JSON type;</li>
+<li>fall back to <code>T</code>&rsquo;s own documented default for any field absent from the input (e.g. a
+<code>TargetDescriptor</code> with no <code>&quot;type&quot;</code> key SHALL still default to <code>&quot;executable&quot;</code>, matching
+<code>TargetDescriptor.hpp</code>&rsquo;s in-class default member initializer) — a JSON manifest is never
+required to spell out every field, exactly like a <code>Target()</code> builder chain that only calls
+the setters it needs.</li>
+</ul>
+</li>
+<li><code>ProjectDescriptor</code>&rsquo;s conversion SHALL recurse into <code>to_json</code>/<code>*_from_json</code> for each element of
+its <code>targets</code>/<code>toolchains</code> collections.</li>
+</ol>
+<h3 id="23-manifest-discovery-and-precedence">2.3 Manifest discovery and precedence</h3>
+<ol>
+<li><code>ProjectManager::load_project(project_path, manifest_toolchain, out_compile_commands)</code> SHALL
+replace the previous hardcoded &ldquo;always compile <code>package.cpp</code>&rdquo; logic in <code>build_project</code>, and
+SHALL:
+<ul>
+<li>use the <code>package.cpp</code> path (compile + <code>dlopen</code>, exactly as before) when <code>package.cpp</code> exists
+in <code>project_path</code>;</li>
+<li>otherwise use the <code>package.json</code> path (read + <code>parse_json</code> + <code>project_descriptor_from_json</code>,
+no compilation) when <code>package.json</code> exists;</li>
+<li>otherwise throw <code>RuntimeException</code>.</li>
+</ul>
+</li>
+<li><strong><code>package.cpp</code> takes precedence over <code>package.json</code></strong> when both exist in the same directory,
+so adding a <code>package.json</code> next to an existing <code>package.cpp</code> (e.g. as a generated
+human-readable summary) is never a silent behavior change for an existing project.</li>
+<li><code>ToolchainManager::autoscan</code>&rsquo;s directory walk SHALL match both <code>toolchain.cpp</code> (existing:
+compile + <code>dlopen</code>) and <code>toolchain.json</code> (new: read + parse, no compilation) filenames.
+<strong><code>toolchain.cpp</code> takes precedence over a sibling <code>toolchain.json</code> in the same directory</strong>, for
+the same reason as 2.2 above; a <code>toolchain.json</code> is skipped by <code>autoscan</code> whenever
+<code>toolchain.cpp</code> exists alongside it.</li>
+<li><code>ApplicationView::assert_project_directory</code> SHALL accept a directory containing either
+<code>package.cpp</code> or <code>package.json</code> (previously it required <code>package.cpp</code> specifically, so
+<code>cxpm --build &lt;dir-with-only-package.json&gt;</code> would fail the pre-flight check before ever
+reaching <code>ProjectManager</code>).</li>
+<li>Toolchain discovery (<code>ToolchainManager::autoscan</code>, via <code>ToolchainManager::current</code>) SHALL run
+exactly once per <code>build_project</code> invocation regardless of which manifest format is in use.
+(This requirement exists because of a bug found and fixed while implementing this SRS: toolchain
+discovery previously only happened as a side effect of <code>build_manifest</code> calling
+<code>ToolchainManager::current</code> to pick a toolchain for compiling <code>package.cpp</code> itself — a
+<code>package.json</code> manifest never triggered it at all, leaving the toolchain registry empty for
+<code>autoselect</code>/<code>by_name</code> later in <code>build_project</code>. <code>build_project</code> now calls
+<code>ToolchainManager::current</code> explicitly, once, up front, and threads the result into
+<code>load_project</code>/<code>build_manifest</code> so <code>autoscan</code>&rsquo;s toolchain JIT-compilation is not paid twice on
+the <code>package.cpp</code> path either.)</li>
+</ol>
+<h2 id="3-non-goals">3. Non-goals</h2>
+<ul>
+<li><strong>No fully symmetric token-driven input archiver.</strong> <code>JsonOutputArchiver</code>&rsquo;s
+<code>ObjectStartToken</code>/<code>PairToken</code>/&hellip; DSL is a good fit for <em>writing</em> (the writer controls emission
+order), but mirroring it for <em>reading</em> would require matching a fixed token sequence against
+arbitrary input structure with lookahead — meaningfully more code for no behavioral benefit over
+parsing to a <code>Value</code> tree first and converting. <code>JsonInputArchiver</code> therefore parses eagerly at
+construction rather than exposing a token-by-token pull interface.</li>
+<li><strong>No schema validation beyond field-level type checking.</strong> An unknown key in a <code>package.json</code>
+object is silently ignored (matching how an unrecognized method call would simply fail to
+compile in the <code>.cpp</code> path — there is no equivalent &ldquo;did you typo a field name&rdquo; diagnostic for
+JSON). A future version could warn on unrecognized keys.</li>
+<li><strong>JSON does not, and will not, execute code.</strong> This is a deliberate property, not a gap: a
+<code>package.json</code>/<code>toolchain.json</code> cannot contain arbitrary logic the way a <code>.cpp</code> file can, and
+therefore never needs the isolation <a href="cpkg/srs-sandbox/">srs-sandbox.md</a>
+ provides for the compiled
+path — see that document&rsquo;s §5 for the direct comparison.</li>
+</ul>
+<h2 id="4-testing">4. Testing</h2>
+<table>
+	<thead>
+			<tr>
+					<th>Requirement</th>
+					<th>Verified by</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>§2.1.2–2.1.4 (parse/write round trip, escapes, pretty-printing, malformed input)</td>
+					<td><code>JsonValueCodecTest</code> (<code>CXPM/Testing/JsonValueCodecTest.hpp</code>)</td>
+			</tr>
+			<tr>
+					<td>§2.1.5 (<code>JsonInputArchiver</code>)</td>
+					<td><code>JsonManifestTest</code>: &ldquo;JsonInputArchiver reads an istream into a Value tree&rdquo;</td>
+			</tr>
+			<tr>
+					<td>§2.2 (descriptor conversion, defaults, malformed-field rejection)</td>
+					<td><code>JsonManifestTest</code> (<code>CXPM/Testing/JsonManifestTest.hpp</code>) — round-trips <code>TargetDescriptor</code>, <code>ToolchainDescriptor</code>, a multi-target/multi-toolchain <code>ProjectDescriptor</code>, and asserts <code>JsonParseException</code> on type mismatches</td>
+			</tr>
+			<tr>
+					<td>§2.3 (manifest discovery, precedence, one-time toolchain scan)</td>
+					<td><code>examples/executable-json</code> built end to end by the opt-in <code>cli_build_example_executable_json</code> CTest integration test (see <a href="cpkg/srs-ctest-tooling/">srs-ctest-tooling.md</a>
+), which exercises the real <code>cxpm</code> binary, real toolchain discovery, and produces a runnable executable from a <code>package.json</code> alone — no <code>package.cpp</code>, no manifest compilation, no manifest <code>dlopen</code></td>
+			</tr>
+	</tbody>
+</table>
+<h2 id="5-acceptance-criteria">5. Acceptance criteria</h2>
+<ul>
+<li><code>parse_json(write_json(v)) == v</code> (by field-for-field comparison) for every <code>Value</code> shape
+exercised by <code>JsonValueCodecTest</code>.</li>
+<li>A <code>TargetDescriptor</code>/<code>ToolchainDescriptor</code>/<code>ProjectDescriptor</code> round-trips through
+<code>to_json</code>/<code>*_from_json</code> with no data loss for every field populated by <code>JsonManifestTest</code>.</li>
+<li><code>cxpm --build examples/executable-json</code> (no <code>package.cpp</code> present) builds and produces a
+runnable executable, with no compiler invocation for the manifest itself (verified manually:
+the build log for this example contains no <code>package.cpp</code>/<code>package.loader.cpp</code> compilation step,
+only the toolchain plugin&rsquo;s).</li>
+<li><code>cxpm --build &lt;dir&gt;</code> behaves identically whether <code>&lt;dir&gt;</code> has <code>package.cpp</code> or <code>package.json</code>
+from the caller&rsquo;s perspective (same exit-code contract, same <code>compile_commands.json</code> output for
+the sources actually built), modulo the manifest-compilation step itself not existing on the
+JSON path.</li>
+</ul>
+<p>All of the above hold as of this writing.</p>
+
+</article>
+
+
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+
+
+
+
+<p class="edit-link"><a href="https://github.com/arthurafarias/cpkg/edit/master/hugosite/content/srs-json-manifests.md" target="_blank" rel="noopener">Edit this page on GitHub</a></p>
+
+
+
+
+    </div>
+  </main>
+  <aside class="toc-pane" aria-label="On this page">
+    
+
+<div class="toc-inner">
+  <p class="toc-title">On this page</p>
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#packagejson--toolchainjson-as-serialization-alternatives">package.json / toolchain.json as Serialization Alternatives</a></li>
+    <li><a href="#1-purpose">1. Purpose</a></li>
+    <li><a href="#2-requirements">2. Requirements</a>
+      <ul>
+        <li><a href="#21-codec-the-serializers-this-srs-is-built-on">2.1 Codec (the serializers this SRS is built on)</a></li>
+        <li><a href="#22-descriptor-level-conversion">2.2 Descriptor-level conversion</a></li>
+        <li><a href="#23-manifest-discovery-and-precedence">2.3 Manifest discovery and precedence</a></li>
+      </ul>
+    </li>
+    <li><a href="#3-non-goals">3. Non-goals</a></li>
+    <li><a href="#4-testing">4. Testing</a></li>
+    <li><a href="#5-acceptance-criteria">5. Acceptance criteria</a></li>
+  </ul>
+</nav>
+</div>
+
+
+  </aside>
+</div>
+<footer class="site-footer">
+  <p>cxpm docs · built with Hugo · <a href="https://github.com/arthurafarias/cpkg" target="_blank" rel="noopener">source on GitHub</a></p>
+</footer>
+
+<script>
+  window.CXPM_DOCS = {
+    searchIndexURL: "\/cpkg\/search-index.json"
+  };
+</script>
+
+  
+  <script src="cpkg/js/main.min.e798f0576266bcbe7ecb6e7d2fed1ee409601c191998058910a32ec41ba2c455.js" defer></script>
+
+
+</body>
+</html>

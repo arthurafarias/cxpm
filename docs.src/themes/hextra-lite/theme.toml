@@ -1,0 +1,11 @@
+name = "Hextra Lite"
+license = "MIT"
+licenselink = "https://github.com/arthurafarias/cpkg/blob/master/LICENSE"
+description = "A dependency-free Hugo docs theme for cxpm, inspired by the Hextra theme's layout: a collapsible sidebar tree, an in-page table of contents, client-side search, and light/dark mode."
+homepage = "https://github.com/arthurafarias/cpkg"
+tags = ["docs", "documentation", "responsive", "search", "dark-mode"]
+features = ["sidebar navigation", "in-page table of contents", "client-side search", "dark mode", "responsive"]
+min_version = "0.121.0"
+
+[author]
+  name = "cxpm project"

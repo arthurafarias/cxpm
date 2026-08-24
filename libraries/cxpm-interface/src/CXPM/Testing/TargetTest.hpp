@@ -89,6 +89,33 @@ struct TargetTest : public TestGroup {
                    ctx.equal(target.dependencies_get()[1],
                              String("glib-2.0"));
                  }},
+                {"url/description/compile_commands/project_path round-trip "
+                 "through their setter/getter pairs too",
+                 [](TestContext &ctx) {
+                   BasicCollection<CompileCommandDescriptor> commands{
+                       CompileCommandDescriptor{.directory = "",
+                                                .command = "",
+                                                .file = "main.cpp",
+                                                .output = "",
+                                                .stdout = "",
+                                                .stderr = ""}};
+
+                   auto target = CXPM::Target()
+                                     .url_set("https://example.invalid/pkg")
+                                     .description_set("an example target")
+                                     .compile_commands_set(commands)
+                                     .project_path_set("/tmp/project");
+
+                   ctx.equal(target.url_get(),
+                             String("https://example.invalid/pkg"));
+                   ctx.equal(target.description_get(),
+                             String("an example target"));
+                   ctx.equal(target.compile_commands_get().size(),
+                             std::size_t{1});
+                   ctx.equal(target.compile_commands_get()[0].file,
+                             String("main.cpp"));
+                   ctx.equal(target.project_path_get(), String("/tmp/project"));
+                 }},
             }) {}
 };
 

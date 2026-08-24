@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="{{ or .Site.Language.Lang `en` }}">
+<head>
+{{ partial "head.html" . }}
+</head>
+<body>
+<a class="skip-link" href="#main-content">Skip to content</a>
+{{ partial "header.html" . }}
+<div class="shell">
+  <nav class="sidebar" id="sidebar" aria-label="Sections">
+    {{ partial "sidebar.html" . }}
+  </nav>
+  <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+  <main class="content" id="main-content">
+    <div class="content-inner">
+      {{ block "main" . }}{{ end }}
+    </div>
+  </main>
+  <aside class="toc-pane" aria-label="On this page">
+    {{ partial "toc.html" . }}
+  </aside>
+</div>
+{{ partial "footer.html" . }}
+{{ partial "scripts.html" . }}
+</body>
+</html>

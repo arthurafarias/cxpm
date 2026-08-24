@@ -1,0 +1,10 @@
+{{ define "main" }}
+<article class="prose">
+  {{ .Content }}
+  <ul class="page-list">
+    {{ range .Pages }}
+    <li><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
+    {{ end }}
+  </ul>
+</article>
+{{ end }}

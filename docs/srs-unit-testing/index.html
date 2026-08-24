@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SRS: Unit Testing the API · cxpm</title>
+<meta name="description" content="An experimental C&#43;&#43;-native package manager and build tool for C&#43;&#43;.">
+<link rel="icon" href="data:,">
+<script>
+  (function () {
+    try {
+      var saved = localStorage.getItem("cxpm-docs-theme");
+      var theme = saved || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.setAttribute("data-theme", theme);
+    } catch (e) {}
+  })();
+</script>
+
+  
+  <link rel="stylesheet" href="../cxpm/css/main.min.705c6b10a27719bb861d20380e003ddc3bcfb26a9d5969863974a958f0604544.css" integrity="sha256-cFxrEKJ3GbuGHSA4DgA93DvPsmqdWWmGOXSpWPBgRUQ=">
+
+
+</head>
+<body>
+<a class="skip-link" href="#main-content">Skip to content</a>
+<header class="topbar">
+  <div class="topbar-inner">
+    <button class="menu-toggle" id="menu-toggle" aria-label="Toggle navigation" aria-controls="sidebar" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <a class="brand" href="../cxpm/">
+      <span class="brand-mark">cxpm</span>
+      <span class="brand-sub">docs</span>
+    </a>
+    <div class="search" role="search">
+      <input type="search" id="search-input" placeholder="Search docs…" aria-label="Search documentation" autocomplete="off">
+      <kbd class="search-kbd">/</kbd>
+      <div id="search-results" class="search-results" hidden></div>
+    </div>
+    <div class="topbar-actions">
+      
+      <a class="icon-link" href="https://github.com/arthurafarias/cpkg" target="_blank" rel="noopener" aria-label="View source on GitHub">
+        <svg viewBox="0 0 16 16" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+      </a>
+      
+      <button class="icon-link theme-toggle" id="theme-toggle" aria-label="Toggle color theme">
+        <svg class="icon-sun" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="shell">
+  <nav class="sidebar" id="sidebar" aria-label="Sections">
+    
+<div class="sidebar-inner">
+  
+<ul class="menu">
+  
+  
+  <li class="menu-item">
+    
+    <a href="../cxpm/">Overview</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="../cxpm/quickstart/">Quickstart</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="../cxpm/architecture/">Architecture</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="../cxpm/tooling/">CLI Tooling</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="../cxpm/testing/">Testing</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="../cxpm/roadmap/">Roadmap</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item has-children">
+    
+    <span class="menu-group-label">Software Requirements Specs</span>
+    
+    
+      
+<ul class="menu">
+  
+  
+  <li class="menu-item">
+    
+    <a href="../cxpm/srs-architecture/">Architecture &amp; Flaws</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item is-active">
+    
+    <a href="../cxpm/srs-unit-testing/" aria-current="page">Unit Testing the API</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="../cxpm/srs-ctest-tooling/">CMake/CTest Tooling</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="../cxpm/srs-json-manifests/">JSON Manifests</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="../cxpm/srs-generate/">cxpm --generate</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="../cxpm/srs-sandbox/">Descriptor Sandbox</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="../cxpm/srs-parallel-build/">Parallel Build (proposed)</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+</ul>
+
+</div>
+
+
+
+  </nav>
+  <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+  <main class="content" id="main-content">
+    <div class="content-inner">
+      
+<nav class="breadcrumbs" aria-label="Breadcrumb">
+  <a href="../cxpm/">cxpm</a>
+  <span class="sep">/</span><span>SRS: Unit Testing the API</span>
+</nav>
+<article class="prose">
+  <h1 id="software-requirements-specification">Software Requirements Specification</h1>
+<h2 id="unit-testing-the-cxpm-public-api">Unit Testing the cxpm Public API</h2>
+<p><strong>Project:</strong> cxpm
+<strong>Language:</strong> C++23, header-only interface library (<code>cxpm-interface</code>)
+<strong>Scope of this document:</strong> every header under <code>libraries/cxpm-interface/src/CXPM/</code>, the <code>cxpm</code>
+CLI entry point (<code>applications/cxpm/src/cxpm.cpp</code> + <code>CXPM::Views::ApplicationView</code>), and the
+three toolchain plugins (<code>modules/toolchains/{gcc,g++,nvcc}</code>)
+<strong>Status at the time of writing:</strong> implemented — see <a href="../cxpm/testing/">testing.md</a>
+ for the current
+pass/fail state and how to reproduce it.</p>
+<hr>
+<h2 id="1-purpose">1. Purpose</h2>
+<p>Before this document, cxpm had no test infrastructure of any kind: no <code>tests/</code> directory, no
+<code>enable_testing()</code>, no CI. This SRS defines the requirements for a unit-test suite that covers
+the entire public API surface of <code>cxpm-interface</code> and the argument-parsing/exit-code contract of
+the <code>cxpm</code> executable, and it records the concrete suite that was implemented to satisfy those
+requirements.</p>
+<h2 id="2-scope">2. Scope</h2>
+<h3 id="21-in-scope">2.1 In scope</h3>
+<ul>
+<li>Every class, free function and template documented in <a href="../cxpm/architecture/">architecture.md</a>
+&rsquo;s
+component table.</li>
+<li>The fluent builder contracts of <code>Target</code>, <code>Project</code>, <code>Toolchain</code>/<code>ToolchainDescriptor</code>.</li>
+<li>The pure, deterministic containers under <code>CXPM::Core::Containers</code> (<code>String</code>, <code>BasicCollection</code>,
+<code>Collection</code>, <code>Value</code>, <code>Variant</code>, <code>Map</code>, <code>Object</code>).</li>
+<li>The JSON serialization DSL under <code>CXPM::Modules::Serialization</code> (tokens + <code>JsonOutputArchiver</code>).</li>
+<li><code>CXPM::Modules::ProgramOptions::Parse</code>.</li>
+<li><code>CXPM::Core::Exceptions::{RuntimeException, NotImplementedException}</code>.</li>
+<li><code>CXPM::Status</code> and its <code>std::to_string</code> specialization.</li>
+<li><code>Controllers::PackageConfigManager::emit_configuration</code> (the pure half of <code>PkgConfigManager</code>).</li>
+<li>The <code>cxpm</code> executable&rsquo;s argument-parsing and exit-code contract, exercised as a black box
+through CTest (see <a href="../cxpm/srs-ctest-tooling/">srs-ctest-tooling.md</a>
+).</li>
+</ul>
+<h3 id="22-out-of-scope-for-this-iteration">2.2 Out of scope for this iteration</h3>
+<p>Per the testability assessment below, the following require a real compiler, <code>dlopen</code>, or a
+populated filesystem and are covered only at the CLI/integration tier, not as pure unit tests:</p>
+<ul>
+<li><code>Controllers::ToolchainManager</code> (<code>autoscan</code>, <code>build_toolchain_plugin</code>, <code>load_toolchain_plugin</code>).</li>
+<li><code>Controllers::ProjectManager::build_project</code>/<code>build_manifest</code>/<code>install_target</code>.</li>
+<li><code>Toolchain::object_build</code>/<code>executable_link</code>/<code>shared_object_link</code>/<code>archive_link</code> and their
+<code>_async</code> variants (they shell out via <code>Utils::Unix::ShellManager::exec</code>).</li>
+<li><code>Utils::Unix::EnvironmentManager::which</code>/<code>get</code> (real filesystem/environment).</li>
+<li><code>Controllers::PackageConfigManager::find_package</code> (shells out to <code>pkg-config</code>).</li>
+</ul>
+<p>These are documented as deferred work in <a href="#8-deferred-coverage--future-work">§8</a>
+, not silently
+dropped.</p>
+<h2 id="3-test-tiers">3. Test tiers</h2>
+<table>
+	<thead>
+			<tr>
+					<th>Tier</th>
+					<th>What it exercises</th>
+					<th>Dependencies</th>
+					<th>CTest label</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td><strong>Unit</strong></td>
+					<td>Pure/deterministic classes and functions, in-process</td>
+					<td>none (no filesystem, no subprocess, no compiler)</td>
+					<td><code>unit</code></td>
+			</tr>
+			<tr>
+					<td><strong>CLI smoke</strong></td>
+					<td><code>cxpm</code>&rsquo;s argument parsing and exit codes, as a subprocess</td>
+					<td>the already-built <code>cxpm</code> binary only</td>
+					<td><code>smoke</code>, <code>cli</code></td>
+			</tr>
+			<tr>
+					<td><strong>CLI integration</strong> (opt-in)</td>
+					<td>A full <code>cxpm --build</code> against a real example project</td>
+					<td>a working C++ compiler on <code>PATH</code>; <code>CXPM_BUILD_CLI_INTEGRATION_TESTS=ON</code></td>
+					<td><code>integration</code>, <code>cli</code></td>
+			</tr>
+	</tbody>
+</table>
+<p>This split exists because roughly a third of the public API (toolchain discovery, JIT plugin
+compilation, process execution) is inherently an integration concern — see
+<a href="../cxpm/testing/#testability-tiers">testing.md §Testability tiers</a>
+ for the full component-by-component
+classification this split is derived from.</p>
+<h2 id="4-test-harness-requirements">4. Test-harness requirements</h2>
+<ol>
+<li>Tests SHALL be colocated with the code they cover, under
+<code>libraries/cxpm-interface/src/CXPM/Testing/</code>, following the project&rsquo;s existing convention of
+one class per header (mirrors <code>CXPM/Core/Containers/String.hpp</code> ↔ a would-be
+<code>CXPM/Testing/StringTest.hpp</code>, matching how <code>opheap</code>&rsquo;s per-library <code>testing/*_test.hpp</code> trees
+are organized).</li>
+<li>Each test file SHALL declare exactly one <code>CXPM::Testing::TestGroup</code>-derived struct, named
+<code>&lt;Subject&gt;Test</code>, and instantiate one <code>inline static</code> instance of it so that constructing the
+translation unit&rsquo;s static objects self-registers the group into
+<code>CXPM::Testing::registry()</code> — no test runner needs to enumerate test files by hand.</li>
+<li><code>CXPM::Testing::TestContext</code> SHALL provide at minimum <code>check(bool, message)</code>,
+<code>equal(actual, expected, message)</code>, and <code>throws&lt;ExceptionType&gt;(callable, message)</code>.</li>
+<li>The <code>Testing/</code> subtree SHALL be excluded from <code>cxpm-interface</code>&rsquo;s installed <code>FILE_SET HEADERS</code>
+(<code>libraries/cxpm-interface/CMakeLists.txt</code>), so consumers of the installed package never see
+test-only headers.</li>
+<li>CMake SHALL discover every <code>CXPM/Testing/*Test.hpp</code> header via <code>file(GLOB_RECURSE ... CONFIGURE_DEPENDS ...)</code> and generate one aggregate translation unit that <code>#include</code>s all of
+them, exactly as <code>tests/CMakeLists.txt</code> does — this surfaces ODR violations and name
+collisions across test files at compile time instead of hiding them behind independent binaries.</li>
+<li>The aggregate binary (<code>cxpm_tests</code>) SHALL be registered with <code>add_test(NAME cxpm_tests ...)</code>
+and labeled <code>unit</code>.</li>
+</ol>
+<h2 id="5-coverage-requirements-by-component">5. Coverage requirements by component</h2>
+<p>Each row is a requirement (&ldquo;the suite SHALL exercise …&rdquo;) together with the test group that
+satisfies it today.</p>
+<table>
+	<thead>
+			<tr>
+					<th>Component</th>
+					<th>Header</th>
+					<th>Required coverage</th>
+					<th>Test group</th>
+					<th>Status</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td><code>String</code></td>
+					<td><code>Core/Containers/String.hpp</code></td>
+					<td><code>join</code> (multi/single/<strong>empty</strong>), <code>trim</code>/<code>trim_left</code>/<code>trim_right</code> (including all-whitespace and empty-string edge cases), <code>split</code> (with and without matches)</td>
+					<td><code>StringTest</code></td>
+					<td>Implemented</td>
+			</tr>
+			<tr>
+					<td><code>BasicCollection&lt;T&gt;</code></td>
+					<td><code>Core/Containers/BasicCollection.hpp</code></td>
+					<td><code>transform</code> (non-empty and empty), inherited <code>std::deque</code> operations</td>
+					<td><code>BasicCollectionTest</code></td>
+					<td>Implemented</td>
+			</tr>
+			<tr>
+					<td><code>Value</code>/<code>Variant</code></td>
+					<td><code>Core/Containers/Value.hpp</code>, <code>Variant.hpp</code></td>
+					<td>every alternative constructible and <code>std::get</code>-able; <code>std::get</code> on the wrong alternative throws <code>std::bad_variant_access</code></td>
+					<td><code>ValueTest</code></td>
+					<td>Implemented</td>
+			</tr>
+			<tr>
+					<td><code>Status</code></td>
+					<td><code>Status.hpp</code></td>
+					<td><code>std::to_string</code> for every enumerator</td>
+					<td><code>StatusTest</code></td>
+					<td>Implemented</td>
+			</tr>
+			<tr>
+					<td><code>RuntimeException</code>/<code>NotImplementedException</code></td>
+					<td><code>Core/Exceptions/*.hpp</code></td>
+					<td>message formatting, exception-hierarchy catchability</td>
+					<td><code>ExceptionsTest</code></td>
+					<td>Implemented</td>
+			</tr>
+			<tr>
+					<td><code>ProgramOptions::Parse</code></td>
+					<td><code>Modules/ProgramOptions/Parse.hpp</code></td>
+					<td>long/short flags with values, positional arguments, <strong>trailing/valueless flags</strong></td>
+					<td><code>ParseTest</code></td>
+					<td>Implemented (regression, see <a href="../cxpm/srs-architecture/">srs-architecture.md</a>
+)</td>
+			</tr>
+			<tr>
+					<td><code>Target</code>/<code>TargetDescriptor</code></td>
+					<td><code>Target.hpp</code>, <code>TargetDescriptor.hpp</code></td>
+					<td>every fluent setter/getter pair round-trips, <code>*_append</code> accumulates across calls, <code>create()</code> identity, documented defaults</td>
+					<td><code>TargetTest</code></td>
+					<td>Implemented</td>
+			</tr>
+			<tr>
+					<td><code>Project</code>/<code>ProjectDescriptor</code></td>
+					<td><code>Project.hpp</code>, <code>ProjectDescriptor.hpp</code></td>
+					<td><code>add(TargetDescriptor)</code>, <code>add(ToolchainDescriptor)</code>, multi-add composition, <code>create()</code> identity</td>
+					<td><code>ProjectTest</code></td>
+					<td>Implemented</td>
+			</tr>
+			<tr>
+					<td><code>ToolchainDescriptor</code>/<code>Toolchain</code> (descriptor half)</td>
+					<td><code>ToolchainDescriptor.hpp</code>, <code>Toolchain.hpp</code></td>
+					<td>documented default prefixes/suffixes, fluent setter/getter round trip</td>
+					<td><code>ToolchainDescriptorTest</code></td>
+					<td>Implemented</td>
+			</tr>
+			<tr>
+					<td><code>CompileCommandDescriptor</code></td>
+					<td><code>CompilerCommandDescriptor.hpp</code></td>
+					<td><code>operator%</code> JSON serialization of every field</td>
+					<td><code>CompilerCommandDescriptorTest</code></td>
+					<td>Implemented</td>
+			</tr>
+			<tr>
+					<td><code>JsonOutputArchiver</code> + tokens</td>
+					<td><code>Modules/Serialization/*.hpp</code></td>
+					<td>bool/null/int32/String/const-char-array tokens, <code>PairToken</code>, object/array/separator structural tokens, <strong>empty <code>BasicCollection&lt;String&gt;</code> array serialization</strong></td>
+					<td><code>JsonOutputArchiverTest</code></td>
+					<td>Implemented (regression)</td>
+			</tr>
+			<tr>
+					<td><code>PackageConfigManager::emit_configuration</code></td>
+					<td><code>PkgConfigManager.hpp</code></td>
+					<td>name/prefix/version substitution into the <code>.pc</code> template</td>
+					<td><code>PkgConfigManagerTest</code></td>
+					<td>Implemented (regression)</td>
+			</tr>
+			<tr>
+					<td><code>Value</code> ↔ JSON codec (<code>parse_json</code>/<code>write_json</code>/<code>write_json_pretty</code>)</td>
+					<td><code>Modules/Serialization/JsonValue{Parser,Writer}.hpp</code></td>
+					<td>every alternative, string escapes incl. <code>\u</code> BMP, nested structures, pretty-printing, malformed-input rejection — see <a href="../cxpm/srs-json-manifests/">srs-json-manifests.md</a>
+</td>
+					<td><code>JsonValueCodecTest</code></td>
+					<td>Implemented</td>
+			</tr>
+			<tr>
+					<td><code>to_json</code>/<code>*_descriptor_from_json</code></td>
+					<td><code>Modules/Serialization/JsonManifest.hpp</code></td>
+					<td>round trip for <code>TargetDescriptor</code>/<code>ToolchainDescriptor</code>/<code>ProjectDescriptor</code>, default-field fallback, wrong-type rejection — see <a href="../cxpm/srs-json-manifests/">srs-json-manifests.md</a>
+</td>
+					<td><code>JsonManifestTest</code></td>
+					<td>Implemented</td>
+			</tr>
+			<tr>
+					<td><code>JsonInputArchiver</code></td>
+					<td><code>Modules/Serialization/JsonInputArchiver.hpp</code></td>
+					<td>reads an <code>istream</code> into a <code>Value</code> tree</td>
+					<td><code>JsonManifestTest</code></td>
+					<td>Implemented</td>
+			</tr>
+			<tr>
+					<td><code>ManifestGenerator</code> (<code>--generate</code> templates)</td>
+					<td><code>Modules/Generators/ManifestGenerator.hpp</code></td>
+					<td>all four kinds; JSON kinds round-trip through the real descriptor parser — see <a href="../cxpm/srs-generate/">srs-generate.md</a>
+</td>
+					<td><code>ManifestGeneratorTest</code></td>
+					<td>Implemented</td>
+			</tr>
+			<tr>
+					<td><code>cxpm</code> argument parsing &amp; exit codes</td>
+					<td><code>Views/ApplicationView.hpp</code> (via the built binary)</td>
+					<td><code>--help</code>/<code>-h</code>, no-arguments, <code>--build</code>/<code>--install</code>/<code>--generate</code> with no/invalid arguments, nonexistent directory, directory without a manifest, <code>--generate</code> overwrite protection</td>
+					<td><code>tests/cli/CMakeLists.txt</code> CTest tests</td>
+					<td>Implemented (CLI tier)</td>
+			</tr>
+			<tr>
+					<td><code>cxpm-descriptor-sandbox</code> helper</td>
+					<td><code>applications/cxpm-descriptor-sandbox/src/main.cpp</code></td>
+					<td>success path and every documented failure path, run directly — see <a href="../cxpm/srs-sandbox/">srs-sandbox.md</a>
+</td>
+					<td><code>tests/cli/CMakeLists.txt</code> CTest tests (<code>sandbox_*</code>)</td>
+					<td>Implemented (CLI/integration tier)</td>
+			</tr>
+			<tr>
+					<td><code>ToolchainManager</code> (discovery/JIT/loading)</td>
+					<td><code>ToolchainManager.hpp</code></td>
+					<td>plugin discovery, compilation, sandboxed loading, validation</td>
+					<td>—</td>
+					<td><strong>Deferred</strong> (needs a real compiler; covered indirectly by the opt-in <code>cli_build_example_executable</code>/<code>cli_build_example_executable_json</code> integration tests)</td>
+			</tr>
+			<tr>
+					<td><code>ProjectManager</code> (build/install orchestration)</td>
+					<td><code>ProjectManager.hpp</code></td>
+					<td><code>build_project</code>, <code>install_target</code>, manifest round trip for both formats</td>
+					<td>—</td>
+					<td><strong>Deferred</strong>, same reason</td>
+			</tr>
+			<tr>
+					<td><code>Utils::Unix::{EnvironmentManager,ShellManager}</code></td>
+					<td><code>Utils/Unix/*.hpp</code></td>
+					<td><code>which</code>, <code>get</code>, <code>exec</code>/<code>exec_async</code></td>
+					<td>—</td>
+					<td><strong>Deferred</strong>, needs filesystem/process fixtures — see <a href="#8-deferred-coverage--future-work">§8</a>
+</td>
+			</tr>
+	</tbody>
+</table>
+<p>70 unit-test cases across 16 test groups pass today; see <a href="../cxpm/testing/">testing.md</a>
+ for the live
+count and how to reproduce it locally.</p>
+<h2 id="6-regression-test-requirement">6. Regression-test requirement</h2>
+<p>Every defect fixed as part of implementing this SRS SHALL have a test that fails against the
+pre-fix behavior and passes against the fix, so the defect cannot silently reappear. The following
+regressions are pinned:</p>
+<table>
+	<thead>
+			<tr>
+					<th>Defect</th>
+					<th>Fixed in</th>
+					<th>Pinned by</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td><code>String::join</code> UB on an empty collection</td>
+					<td><code>Core/Containers/String.hpp</code></td>
+					<td><code>StringTest</code>: &ldquo;join of an empty collection returns an empty string instead of invoking undefined behavior&rdquo;</td>
+			</tr>
+			<tr>
+					<td><code>BasicCollection</code> JSON array serialization UB on an empty collection</td>
+					<td><code>Core/Containers/BasicCollection.hpp</code></td>
+					<td><code>JsonOutputArchiverTest</code>: &ldquo;an empty BasicCollection&lt;String&gt; serializes as an empty JSON array …&rdquo;</td>
+			</tr>
+			<tr>
+					<td><code>String::trim*</code> used <code>std::isprint</code> instead of <code>std::isspace</code>, so it never actually stripped spaces</td>
+					<td><code>Core/Containers/String.hpp</code></td>
+					<td><code>StringTest</code>: &ldquo;trim removes leading and trailing non-printable characters&rdquo;, &ldquo;trim_right on an all-whitespace string returns an empty string without underflowing&rdquo;</td>
+			</tr>
+			<tr>
+					<td><code>String::trim_right</code>&rsquo;s <code>if (end == 0) break;</code> safeguard left one leading character un-trimmed on an all-whitespace string</td>
+					<td><code>Core/Containers/String.hpp</code></td>
+					<td>same as above</td>
+			</tr>
+			<tr>
+					<td><code>ProgramOptions::Parse</code> dropped a trailing or immediately-re-flagged valueless flag</td>
+					<td><code>Modules/ProgramOptions/Parse.hpp</code></td>
+					<td><code>ParseTest</code>: &ldquo;a valueless flag that is the last token …&rdquo;, &ldquo;… immediately followed by another flag …&rdquo;</td>
+			</tr>
+			<tr>
+					<td><code>PackageConfigManager::emit_configuration</code> substituted <code>package.name</code> into <code>{{version}}</code> instead of <code>package.version</code></td>
+					<td><code>PkgConfigManager.hpp</code></td>
+					<td><code>PkgConfigManagerTest</code>: &ldquo;substitutes name, prefix and version …&rdquo;</td>
+			</tr>
+			<tr>
+					<td><code>cxpm --install</code> with no directory read <code>values.front()</code> on a possibly-empty collection (UB), unlike the sibling <code>--build</code> path</td>
+					<td><code>Views/ApplicationView.hpp</code></td>
+					<td><code>tests/cli</code>: <code>cli_install_without_directory_fails_cleanly</code></td>
+			</tr>
+			<tr>
+					<td><code>cxpm --install</code>&rsquo;s exit code never reflected <code>Status::Failure</code> (<code>switch</code> with two no-op <code>break</code>s)</td>
+					<td><code>Views/ApplicationView.hpp</code></td>
+					<td>exercised by the CLI tier; see <a href="../cxpm/srs-architecture/#4-itemized-flaws">srs-architecture.md §4</a>
+ item A2</td>
+			</tr>
+	</tbody>
+</table>
+<p>The <code>String::trim*</code> bug (isprint vs. isspace, and the <code>trim_right</code> off-by-one) was <strong>not</strong> in the
+original defect list — it was found by writing the tests this SRS requires and watching them fail
+against the pre-fix implementation. That is the intended value of §5: writing coverage for a
+&ldquo;boring&rdquo;, supposedly-already-correct function is exactly how latent bugs like this surface.</p>
+<h2 id="7-build--ci-requirements">7. Build &amp; CI requirements</h2>
+<ol>
+<li><code>CXPM_BUILD_TESTS</code> (default <code>ON</code>) SHALL gate <code>enable_testing()</code> and <code>add_subdirectory(tests)</code>
+from the top-level <code>CMakeLists.txt</code>.</li>
+<li><code>CXPM_ENABLE_SANITIZERS</code> (default <code>ON</code>) SHALL build <code>cxpm_tests</code> with
+<code>-fsanitize=address,undefined</code> on non-MSVC compilers.</li>
+<li><code>CXPM_ENABLE_COVERAGE</code> (default <code>OFF</code>, opt-in) SHALL build <code>cxpm_tests</code> with <code>--coverage</code> and,
+when <code>gcovr</code> is available, expose a <code>coverage</code> CMake target that regenerates
+<code>docs/coverage/index.html</code>, restricted to <code>libraries/cxpm-interface/src/</code> and excluding
+<code>Testing/</code>.</li>
+<li><code>ctest</code> (no arguments) SHALL run the full suite (unit + CLI smoke + any opt-in integration
+tests) and exit non-zero on any failure.</li>
+<li><code>ctest -L unit</code> SHALL run only the hermetic unit suite, suitable for every CI run regardless of
+whether a C++ compiler is available on <code>PATH</code> beyond the one that built <code>cxpm_tests</code> itself.</li>
+</ol>
+<h2 id="8-deferred-coverage--future-work">8. Deferred coverage &amp; future work</h2>
+<ul>
+<li><strong><code>ToolchainManager</code>/<code>ProjectManager</code> unit-level coverage.</strong> Both are static-only &ldquo;controller&rdquo;
+classes with private mutable static state and no dependency-injection seam (see
+<a href="../cxpm/srs-architecture/">srs-architecture.md</a>
+ item B29). Unit-testing them in isolation would
+require either exposing a <code>reset()</code>/injection hook or refactoring them into instantiable objects
+that accept a <code>ToolchainInterface</code>/filesystem abstraction. Until then they are covered only at
+the CLI/integration tier via <code>cli_build_example_executable</code>.</li>
+<li><strong><code>ShellManager::exec</code>/<code>exec_async</code> fault injection.</strong> Unlike <code>opheap</code>&rsquo;s
+<code>fault_backend</code>/<code>fault_file</code>/<code>fault_plan</code> harness for storage faults, cxpm has no equivalent for
+simulating a failing/partial compiler invocation. A fake <code>ToolchainInterface</code> implementation
+(the interfaces are already pure-virtual and mockable, see
+<a href="../cxpm/architecture/">architecture.md</a>
+) would let <code>ProjectManager</code>&rsquo;s orchestration logic be
+unit-tested without a real compiler.</li>
+<li><strong><code>EnvironmentManager::which</code>/<code>get</code>.</strong> Needs a temp-directory-based <code>PATH</code> fixture
+(<code>CXPM::Testing::temporary_directory</code>, already implemented in
+<code>CXPM/Testing/TemporaryDirectory.hpp</code> for this purpose) plus <code>setenv</code>/<code>unsetenv</code> around each
+test case.</li>
+<li><strong><code>Map&lt;K,V&gt;</code>&rsquo;s JSON <code>operator%</code>.</strong> Calls <code>.front()</code> on a <code>std::map</code>, which has no such member —
+this is a hard compile error if ever instantiated, and is therefore untested and untestable
+until it is redesigned (see <a href="../cxpm/srs-architecture/">srs-architecture.md</a>
+ item B1/Map).</li>
+</ul>
+<h2 id="9-acceptance-criteria">9. Acceptance criteria</h2>
+<p>This SRS is satisfied when:</p>
+<ul>
+<li>every component listed in <a href="#5-coverage-requirements-by-component">§5</a>
+ as &ldquo;Implemented&rdquo; has a
+passing, self-registering <code>TestGroup</code>;</li>
+<li><code>ctest -L unit</code> passes with zero failures on a clean checkout;</li>
+<li><code>cxpm_tests</code> builds and passes under <code>-fsanitize=address,undefined</code>;</li>
+<li>every regression in <a href="#6-regression-test-requirement">§6</a>
+ is pinned by a named test case;</li>
+<li>the CLI smoke tier passes without requiring a working C++ compiler beyond the one used to build
+<code>cxpm</code> itself.</li>
+</ul>
+<p>All of the above hold as of this writing — see <a href="../cxpm/testing/">testing.md</a>
+ for the reproducible
+<code>ctest</code> output.</p>
+
+</article>
+
+
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+
+
+
+
+<p class="edit-link"><a href="https://github.com/arthurafarias/cpkg/edit/master/hugosite/content/srs-unit-testing.md" target="_blank" rel="noopener">Edit this page on GitHub</a></p>
+
+
+
+
+    </div>
+  </main>
+  <aside class="toc-pane" aria-label="On this page">
+    
+
+<div class="toc-inner">
+  <p class="toc-title">On this page</p>
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#unit-testing-the-cxpm-public-api">Unit Testing the cxpm Public API</a></li>
+    <li><a href="#1-purpose">1. Purpose</a></li>
+    <li><a href="#2-scope">2. Scope</a>
+      <ul>
+        <li><a href="#21-in-scope">2.1 In scope</a></li>
+        <li><a href="#22-out-of-scope-for-this-iteration">2.2 Out of scope for this iteration</a></li>
+      </ul>
+    </li>
+    <li><a href="#3-test-tiers">3. Test tiers</a></li>
+    <li><a href="#4-test-harness-requirements">4. Test-harness requirements</a></li>
+    <li><a href="#5-coverage-requirements-by-component">5. Coverage requirements by component</a></li>
+    <li><a href="#6-regression-test-requirement">6. Regression-test requirement</a></li>
+    <li><a href="#7-build--ci-requirements">7. Build &amp; CI requirements</a></li>
+    <li><a href="#8-deferred-coverage--future-work">8. Deferred coverage &amp; future work</a></li>
+    <li><a href="#9-acceptance-criteria">9. Acceptance criteria</a></li>
+  </ul>
+</nav>
+</div>
+
+
+  </aside>
+</div>
+<footer class="site-footer">
+  <p>cxpm docs · built with Hugo · <a href="https://github.com/arthurafarias/cpkg" target="_blank" rel="noopener">source on GitHub</a></p>
+</footer>
+
+<script>
+  window.CXPM_DOCS = {
+    searchIndexURL: "\/cxpm\/search-index.json"
+  };
+</script>
+
+  
+  <script src="../cxpm/js/main.min.e798f0576266bcbe7ecb6e7d2fed1ee409601c191998058910a32ec41ba2c455.js" integrity="sha256-55jwV2JmvL5&#43;y259L&#43;0e5AlgHBkZmAWJEKMuxBuixFU=" defer></script>
+
+
+</body>
+</html>

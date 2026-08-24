@@ -524,21 +524,28 @@ struct Toolchain : public ToolchainDescriptor,
     }
     Core::Logging::LoggerManager::info("building: ended");
 
-    return {Status::Success, CompileCommandDescriptor{
-                                 .directory = std::filesystem::current_path(),
-                                 .command = command_line,
-                                 .file = "",
-                                 .output = library_prefix + target.name + ".so",
-                                 .stdout = out,
-                                 .stderr = err,
-                             }};
+    auto status = result_code != 0 ? Status::Failure : Status::Success;
+
+    return {status, CompileCommandDescriptor{
+                        .directory = std::filesystem::current_path(),
+                        .command = command_line,
+                        .file = "",
+                        .output = library_prefix + target.name + ".so",
+                        .stdout = out,
+                        .stderr = err,
+                    }};
   }
 
   virtual ArchiveLinkResultPromiseType
   archive_link_async(const TargetDescriptor &target,
                      bool dry = false) override {
+    // [&] (by reference) used to capture `target` and `dry` -- both dangle the instant this
+    // function returns, since the lambda runs asynchronously on another thread well after
+    // that (a real stack-use-after-return, caught by AddressSanitizer once a test finally
+    // exercised this method: see ToolchainTest.hpp). Every sibling *_async method already
+    // captures by value; this one now matches them.
     return std::async(std::launch::async,
-                      [&]() { return archive_link(target, dry); })
+                      [this, target, dry]() { return archive_link(target, dry); })
         .share();
   }
 
@@ -577,14 +584,16 @@ struct Toolchain : public ToolchainDescriptor,
     }
     Core::Logging::LoggerManager::info("building: ended");
 
-    return {Status::Success, CompileCommandDescriptor{
-                                 .directory = std::filesystem::current_path(),
-                                 .command = command_line,
-                                 .file = "",
-                                 .output = target.name + ".a",
-                                 .stdout = out,
-                                 .stderr = err,
-                             }};
+    auto status = result_code != 0 ? Status::Failure : Status::Success;
+
+    return {status, CompileCommandDescriptor{
+                        .directory = std::filesystem::current_path(),
+                        .command = command_line,
+                        .file = "",
+                        .output = target.name + ".a",
+                        .stdout = out,
+                        .stderr = err,
+                    }};
   }
 
   virtual BuildOutputResult build(const ProjectDescriptor &project,
@@ -643,7 +652,7 @@ struct Toolchain : public ToolchainDescriptor,
     }
 
     if (package.type == "shared-library") {
-      auto [code, command] = shared_object_link(package);
+      auto [code, command] = shared_object_link(package, dry);
       Core::Logging::LoggerManager::debug("{}", std::to_string(code));
       return BuildOutputResult{code, {command}};
     }

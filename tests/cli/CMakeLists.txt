@@ -111,6 +111,32 @@ if(CXPM_BUILD_CLI_INTEGRATION_TESTS)
     set_tests_properties(cli_build_example_executable_json PROPERTIES
         ENVIRONMENT "cxpm_BUILD_EXTRA_MODULES_PATH=${CMAKE_SOURCE_DIR}/modules/toolchains")
 
+    # `--install` builds first, then installs -- exercises ProjectManager::install_target(),
+    # including the fix for a real bug found while writing ProjectManagerTest's hermetic
+    # fixture-based unit tests (install used to nest its binary/.pc install logic inside the
+    # per-include-directory loop, silently installing nothing for a target with none -- not the
+    # case here, but this end-to-end test is what actually exercises the *real* build-then-copy
+    # pipeline that install_target's unit tests stub out).
+    cxpm_add_cli_fixture(example_executable_install SOURCE_DIRECTORY "${CMAKE_SOURCE_DIR}/examples/executable")
+    set(CXPM_INSTALL_PREFIX_DIR "${CMAKE_CURRENT_BINARY_DIR}/install-prefix")
+
+    cxpm_add_cli_test(cli_install_example_executable
+        COMMAND ${CXPM_EXECUTABLE} --install "${example_executable_install_DIRECTORY}" --prefix "${CXPM_INSTALL_PREFIX_DIR}"
+        FIXTURES "example_executable_install"
+        LABELS "integration"
+        TIMEOUT 180)
+    set_tests_properties(cli_install_example_executable PROPERTIES
+        ENVIRONMENT "cxpm_BUILD_EXTRA_MODULES_PATH=${CMAKE_SOURCE_DIR}/modules/toolchains")
+
+    cxpm_add_cli_test(cli_install_example_executable_produces_binary_and_pc_file
+        COMMAND ${CMAKE_COMMAND}
+                -DCXPM_INSTALL_PREFIX=${CXPM_INSTALL_PREFIX_DIR}
+                -DCXPM_TARGET_NAME=example-executable
+                -P "${CMAKE_CURRENT_SOURCE_DIR}/verify_install.cmake"
+        LABELS "integration")
+    set_tests_properties(cli_install_example_executable_produces_binary_and_pc_file PROPERTIES
+        DEPENDS cli_install_example_executable)
+
     # --- cxpm-descriptor-sandbox (see docs/SRS-sandbox.md) -----------------------------------
     # Compiles a real toolchain plugin .so fixture (the exact same inputs
     # ToolchainManager::build_toolchain_plugin() would compile) so the sandbox helper's own

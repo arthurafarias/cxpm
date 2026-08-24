@@ -4,8 +4,9 @@
 #include "CXPM/Testing/TestGroup.hpp"
 
 using namespace CXPM::Core::Containers;
+using namespace CXPM::Testing;
 
-namespace CXPM::Testing {
+namespace CXPM::Controllers::Testing {
 
 struct PkgConfigManagerTest : public TestGroup {
   PkgConfigManagerTest()
@@ -43,4 +44,4 @@ struct PkgConfigManagerTest : public TestGroup {
 
 inline static PkgConfigManagerTest pkg_config_manager_test_instance;
 
-} // namespace CXPM::Testing
+} // namespace CXPM::Controllers::Testing

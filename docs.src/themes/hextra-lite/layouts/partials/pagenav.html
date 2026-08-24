@@ -1,0 +1,22 @@
+{{ $order := .Site.Params.navOrder }}
+{{ $cur := -1 }}
+{{ range $i, $ref := $order }}
+  {{ if eq $ref $.RelPermalink }}{{ $cur = $i }}{{ end }}
+  {{ if and (eq $ref "/") (eq $.RelPermalink $.Site.Home.RelPermalink) }}{{ $cur = $i }}{{ end }}
+{{ end }}
+{{ if ge $cur 0 }}
+<nav class="pagenav">
+  {{ if gt $cur 0 }}
+    {{ with .Site.GetPage (index $order (sub $cur 1)) }}
+    <a class="pagenav-prev" href="{{ .RelPermalink }}"><span class="pagenav-label">← Previous</span><span class="pagenav-title">{{ .Title }}</span></a>
+    {{ end }}
+  {{ else }}
+  <span></span>
+  {{ end }}
+  {{ if lt $cur (sub (len $order) 1) }}
+    {{ with .Site.GetPage (index $order (add $cur 1)) }}
+    <a class="pagenav-next" href="{{ .RelPermalink }}"><span class="pagenav-label">Next →</span><span class="pagenav-title">{{ .Title }}</span></a>
+    {{ end }}
+  {{ end }}
+</nav>
+{{ end }}
