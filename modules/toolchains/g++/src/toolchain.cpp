@@ -1,6 +1,6 @@
 #include <CXPM/Toolchain.hpp>
 
-auto toolchain = CXPM::Toolchain()
+CXPM::ToolchainDescriptor toolchain = CXPM::Toolchain()
                      .name_set("g++")
                      .version_set("generic")
                      .include_directory_prefix_set("-I")
@@ -22,5 +22,3 @@ auto toolchain = CXPM::Toolchain()
                      .archive_suffix_set(".a")
                      .executable_prefix_set("")
                      .executable_suffix_set("");
-
-extern "C" Toolchain *get_toolchain() { return &toolchain; }

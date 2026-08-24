@@ -5,13 +5,24 @@
 #include "CXPM/ToolchainDescriptor.hpp"
 
 #include "CXPM/Core/Exceptions/RuntimeException.hpp"
-#include "CXPM/Toolchain.hpp"
+#include "CXPM/Utils/Macros/StaticClass.hpp"
 #include "CXPM/Utils/Unix/EnvironmentManager.hpp"
+#include "CXPM/Utils/Unix/ShellManager.hpp"
 
+#include <algorithm>
 #include <dlfcn.h>
 #include <filesystem>
+#include <fstream>
 
 using namespace CXPM;
+
+#ifndef cxpm_BASE_INSTALL_PREFIX
+#define cxpm_BASE_INSTALL_PREFIX "/usr/local"
+#endif
+
+#ifndef cxpm_BASE_SOURCE_PREFIX
+#define cxpm_BASE_SOURCE_PREFIX "/usr/src/cxpm/applications/cxpm"
+#endif
 
 namespace CXPM::Controllers {
 class ToolchainManager final {
@@ -85,24 +96,32 @@ StaticClass(ToolchainManager) public
     toolchains.push_back(toolchain);
   }
 
-  static inline constexpr ToolchainDescriptor
-  current(const BasicCollection<String> &extra_modules_paths) {
+  static inline ToolchainDescriptor
+  current(const String &project_path,
+         const BasicCollection<String> &extra_modules_paths) {
 
-    if (current_toolchain != toolchains.end()) {
-      autoscan(extra_modules_paths);
-      current_toolchain = toolchains.begin();
-    }
+    autoscan(project_path, extra_modules_paths);
 
-    if (current_toolchain == toolchains.end()) {
+    // the project manifest is always a c++ shared library, so it needs a
+    // toolchain that can actually build c++, not just whichever one happened
+    // to be discovered first
+    auto result =
+        std::find_if(toolchains.begin(), toolchains.end(),
+                     [](const auto &toolchain) {
+                       return toolchain.language == "c++";
+                     });
+
+    if (result == toolchains.end()) {
       throw Core::Exceptions::RuntimeException(
-          "Failed to find any toolchain in this system");
+          "Failed to find a c++ toolchain in this system");
     }
 
-    return *current_toolchain;
+    return *result;
   }
 
-  static inline constexpr void
-  autoscan(BasicCollection<String> extra_paths = {}) {
+  static inline void
+  autoscan(const String &project_path,
+          BasicCollection<String> extra_paths = {}) {
 
     auto const HOME = Utils::Unix::EnvironmentManager::get("HOME").front();
 
@@ -135,45 +154,113 @@ StaticClass(ToolchainManager) public
           !std::filesystem::is_directory(path.c_str())) {
         continue;
       }
-      for (auto plugin : recursive_directory_iterator(path.c_str())) {
-        auto filename = std::filesystem::path(plugin).filename();
+      for (auto entry : recursive_directory_iterator(path.c_str())) {
 
-        if (filename.string().ends_with(".so")) {
+        if (!entry.is_regular_file() ||
+            entry.path().filename() != "toolchain.cpp") {
+          continue;
+        }
 
-          typedef Toolchain *(*getter_type)();
+        try {
 
-          void *handle = dlopen(std::filesystem::path(plugin).c_str(),
-                                RTLD_LAZY | RTLD_DEEPBIND);
+          auto descriptor = build_toolchain_plugin(entry.path(), project_path);
 
-          try {
-
-            auto get_toolchain =
-                reinterpret_cast<getter_type>(dlsym(handle, "get_toolchain"));
-
-            if (get_toolchain != nullptr) {
-
-              auto toolchain = *get_toolchain();
-
-              if (ToolchainManager::valid(toolchain)) {
-                toolchains.push_back(toolchain);
-              }
-            }
-
-          } catch (std::exception &ex) {
-            Core::Logging::LoggerManager::error("{}", ex.what());
+          if (ToolchainManager::valid(descriptor)) {
+            toolchains.push_back(descriptor);
           }
 
-          if (handle != nullptr) {
-            dlclose(handle);
-          }
+        } catch (std::exception &ex) {
+          Core::Logging::LoggerManager::error("{}", ex.what());
         }
       }
     }
   }
 
 private:
+  static inline const std::string ToolchainLoaderSource = R"(
+    #include <CXPM/ToolchainDescriptor.hpp>
+    using namespace CXPM;
+    extern ToolchainDescriptor toolchain;
+    extern "C" const ToolchainDescriptor* get_toolchain()  { return &toolchain; }
+  )";
+
+  static inline ToolchainDescriptor
+  build_toolchain_plugin(const std::filesystem::path &source_path,
+                         const String &project_path) {
+
+    auto name = source_path.parent_path().filename().string();
+
+    auto loader_path = std::filesystem::path(project_path.c_str())
+                           .append("toolchain-" + name + ".loader.cpp");
+
+    std::ofstream loader_stream(loader_path,
+                                std::ios_base::trunc | std::ios_base::out);
+    loader_stream << ToolchainLoaderSource;
+    loader_stream.flush();
+
+    auto library_path = std::filesystem::path(project_path.c_str())
+                            .append("libtoolchain-" + name + ".so");
+
+    auto compiler = Utils::Unix::EnvironmentManager::which("c++");
+
+    if (compiler.empty()) {
+      throw Core::Exceptions::RuntimeException(
+          "Couldn't find a c++ compiler to bootstrap toolchain {}", name);
+    }
+
+    auto command = std::format(
+        "{} -std=c++23 -fPIC -shared -I{} -I{} -I{} -I{} {} {} -o {}",
+        compiler.c_str(),
+        (std::filesystem::path(cxpm_BASE_INSTALL_PREFIX) / "lib/cxpm/headers")
+            .string(),
+        (std::filesystem::path(cxpm_BASE_INSTALL_PREFIX) / "share/cxpm/headers")
+            .string(),
+        (std::filesystem::path(cxpm_BASE_INSTALL_PREFIX) / "include").string(),
+        (std::filesystem::path(cxpm_BASE_SOURCE_PREFIX) / "src").string(),
+        source_path.string(), loader_path.string(), library_path.string());
+
+    auto build_result = Utils::Unix::ShellManager::exec(command);
+
+    if (std::get<0>(build_result) != 0) {
+      throw Core::Exceptions::RuntimeException(
+          "Couldn't build toolchain plugin {}: {}", name,
+          std::get<2>(build_result));
+    }
+
+    return load_toolchain_plugin(library_path.string());
+  }
+
+  static inline ToolchainDescriptor
+  load_toolchain_plugin(const String &library_path) {
+
+    typedef const ToolchainDescriptor *(*getter_type)();
+
+    void *handle = dlopen(library_path.c_str(), RTLD_NOW | RTLD_DEEPBIND);
+
+    if (handle == nullptr) {
+      throw Core::Exceptions::RuntimeException(
+          "Couldn't load toolchain plugin at path {}: not found!",
+          library_path);
+    }
+
+    auto get_toolchain =
+        reinterpret_cast<getter_type>(dlsym(handle, "get_toolchain"));
+
+    if (get_toolchain == nullptr) {
+      dlclose(handle);
+      throw Core::Exceptions::RuntimeException(
+          "Couldn't load toolchain plugin at path {}: malformed get_toolchain "
+          "method",
+          library_path);
+    }
+
+    auto descriptor = *get_toolchain();
+
+    dlclose(handle);
+
+    return descriptor;
+  }
+
   static inline BasicCollection<ToolchainDescriptor> toolchains;
-  static inline BasicCollection<ToolchainDescriptor>::iterator
-      current_toolchain;
 };
 } // namespace CXPM::Controllers

@@ -7,3 +7,4 @@ add_subdirectory(applications/cxpm)
 
 add_subdirectory(modules/toolchains/g++)
 add_subdirectory(modules/toolchains/gcc)
+add_subdirectory(modules/toolchains/nvcc)

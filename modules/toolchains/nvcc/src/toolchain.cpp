@@ -1,6 +1,6 @@
 #include <CXPM/Toolchain.hpp>
 
-auto toolchain = CXPM::Toolchain()
+CXPM::ToolchainDescriptor toolchain = CXPM::Toolchain()
                      .name_set("nvcc")
                      .version_set("generic")
                      .include_directory_prefix_set("-I")
@@ -10,5 +10,3 @@ auto toolchain = CXPM::Toolchain()
                      .linker_executable_set("/opt/cuda/bin/nvcc")
                      .language_set("cuda")
                      .compiler_options_set({"-pthread"});
-
-extern "C" Toolchain *get_toolchain() { return &toolchain; }

@@ -348,10 +348,14 @@ StaticClass(ProjectManager)
 
     auto [loader_build_result, loader_compile_commands] =
         Toolchain(CXPM::Controllers::ToolchainManager::current(
-                      extra_toolchain_search_paths))
+                      project_path, extra_toolchain_search_paths))
             .build(manifest_project);
 
-    return {BuildManifestResultStatus::Success, loader_compile_commands};
+    auto manifest_status = loader_build_result == Status::Success
+                               ? BuildManifestResultStatus::Success
+                               : BuildManifestResultStatus::Failure;
+
+    return {manifest_status, loader_compile_commands};
   }
 
   static inline ProjectDescriptor
@@ -407,6 +411,21 @@ StaticClass(ProjectManager)
                                     .append(project_path.c_str())
                                     .append("package.loader.cpp"));
 
+    // generated toolchain plugins
+    if (std::filesystem::is_directory(project_path.c_str())) {
+      using directory_iterator = std::filesystem::directory_iterator;
+      for (auto entry : directory_iterator(project_path.c_str())) {
+        auto filename = entry.path().filename().string();
+
+        if ((filename.starts_with("toolchain-") &&
+             filename.ends_with(".loader.cpp")) ||
+            (filename.starts_with("libtoolchain-") &&
+             filename.ends_with(".so"))) {
+          std::filesystem::remove_all(entry.path());
+        }
+      }
+    }
+
     return 0;
   }
 
@@ -418,22 +437,15 @@ private:
           .name_set("project-manifest")
           .type_set("shared-library")
           .include_directories_append({
-              std::filesystem::path()
-                  .append(cxpm_BASE_INSTALL_PREFIX)
-                  .append("/lib/cxpm/headers")
+              (std::filesystem::path(cxpm_BASE_INSTALL_PREFIX) /
+               "lib/cxpm/headers")
                   .string(),
-              std::filesystem::path()
-                  .append(cxpm_BASE_INSTALL_PREFIX)
-                  .append("/share/cxpm/headers")
+              (std::filesystem::path(cxpm_BASE_INSTALL_PREFIX) /
+               "share/cxpm/headers")
                   .string(),
-              std::filesystem::path()
-                  .append(cxpm_BASE_INSTALL_PREFIX)
-                  .append("/include")
+              (std::filesystem::path(cxpm_BASE_INSTALL_PREFIX) / "include")
                   .string(),
-              // std::filesystem::path().append(cxpm_DEBUG_BUILD_PREFIX).append("/src").string(),
-              std::filesystem::path()
-                  .append(cxpm_BASE_SOURCE_PREFIX)
-                  .append("/src")
+              (std::filesystem::path(cxpm_BASE_SOURCE_PREFIX) / "src")
                   .string(),
           })
           .options_append({"-std=c++23", "-Wall", "-Werror", "-pedantic"})

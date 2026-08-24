@@ -92,8 +92,6 @@ auto toolchain = Toolchain()
                      .archive_suffix_set(".a")
                      .executable_prefix_set("")
                      .executable_suffix_set("");
-
-extern "C" Toolchain *get_toolchain() { return &toolchain; }
 ```
 
 ## Pkg-Config Integration
