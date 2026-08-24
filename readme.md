@@ -19,10 +19,12 @@ If you're interested in discussing or contributing to this idea, feel free to fo
 would have a package.cpp as following
 
 ```cpp
-#include "CXPM/TargetDescriptor.hpp"
-#include <CXPM/ProjectDescriptor.hpp>
+#include "CXPM/Target.hpp"
+#include <CXPM/Project.hpp>
 
- auto example = TargetDescriptor()
+using namespace CXPM;
+
+ auto example = Target()
                        .name_set("example-executable")
                        .version_set("1.0.0")
                        .type_set("executable")
@@ -31,7 +33,7 @@ would have a package.cpp as following
                        .link_libraries_append({"m"})
                        .create();
 
-auto project = ProjectDescriptor()
+auto project = Project()
                         .add(example)
                         .create();
 ```
@@ -134,6 +136,25 @@ cxpm follows a predictable, POSIX-aligned installation layout:
 - pkg-config files → `<prefix>/lib/pkgconfig/<project-name>.pc`
 
 The uniform structure avoids special-case install paths and ensures consistent behavior across environments.
+
+## JSON Manifests
+
+`package.cpp`/`toolchain.cpp` can be described declaratively instead, as `package.json`/
+`toolchain.json` — no compiler, no shared object, no `dlopen` involved on that path:
+
+```bash
+cxpm --generate package-json .
+cxpm --build .
+```
+
+See [docs/SRS-json-manifests.md](docs/SRS-json-manifests.md) and
+[docs/SRS-generate.md](docs/SRS-generate.md).
+
+## Sandboxed Descriptor Extraction
+
+Loading a compiled `package.cpp`/`toolchain.cpp` now happens in a separate, resource-limited
+`cxpm-descriptor-sandbox` process by default, rather than `dlopen`-ing that compiled code directly
+into the main `cxpm` process. See [docs/SRS-sandbox.md](docs/SRS-sandbox.md).
 
 # Contributing
 

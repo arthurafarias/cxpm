@@ -135,6 +135,11 @@ struct Target : public TargetDescriptor, public TargetInterface<Target> {
     dependencies = value;
     return *this;
   }
+
+  virtual Target &dependencies_append(const String &value) {
+    dependencies.push_back(value);
+    return *this;
+  }
   virtual const BasicCollection<CompileCommandDescriptor> &
   compile_commands_get() const override {
     return compile_commands;

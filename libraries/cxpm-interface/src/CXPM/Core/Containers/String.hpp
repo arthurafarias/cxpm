@@ -24,6 +24,10 @@ public:
   inline static String join(const BasicCollection<String> &collection,
                             String delimiter) {
 
+    if (collection.empty()) {
+      return String();
+    }
+
     String result = collection.front();
 
     for (auto el = collection.begin() + 1; el < collection.end(); el++) {
@@ -34,15 +38,14 @@ public:
   }
 
   static inline String trim(const String &source) {
-    auto _left_trimmed = String::trim_left(source);
-    auto _right_trimmed = String::trim_left(_left_trimmed);
-    return String::trim_right(_right_trimmed);
+    auto left_trimmed = String::trim_left(source);
+    return String::trim_right(left_trimmed);
   }
 
   static inline String trim_left(const String &source) {
     size_t first = 0;
     for (; first < source.size(); first++) {
-      if (std::isprint((source)[first])) {
+      if (!std::isspace(static_cast<unsigned char>((source)[first]))) {
         break;
       }
     }
@@ -53,13 +56,13 @@ public:
   static inline String trim_right(const String &source) {
     if (source.empty())
       return source; // Handle empty string edge case
+    // end is a signed int (not size_t), so the loop condition below already
+    // terminates cleanly at end == -1 with no unsigned-underflow risk.
     int end = source.size() - 1;
     for (; end >= 0; end--) {
-      if (std::isprint((source)[end])) {
+      if (!std::isspace(static_cast<unsigned char>((source)[end]))) {
         break;
       }
-      if (end == 0)
-        break; // Prevents underflow on unsigned size_t
     }
 
     return source.substr(0,

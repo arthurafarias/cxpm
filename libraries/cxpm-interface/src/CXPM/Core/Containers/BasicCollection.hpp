@@ -46,14 +46,16 @@ operator%(Archiver &ar, const ValueToken<BasicCollection<ValueType>> &token) {
 
   ar % ArrayStartToken{"BasicCollection"};
 
-  ar % ValueToken{collection.front()};
+  if (!collection.empty()) {
+    ar % ValueToken{collection.front()};
 
-  for (auto& value :
-       collection | std::views::drop(1)) {
+    for (auto& value :
+         collection | std::views::drop(1)) {
 
-    ar % SeparatorToken{};
+      ar % SeparatorToken{};
 
-    ar % ValueToken{value};
+      ar % ValueToken{value};
+    }
   }
 
   ar % ArrayEndToken{"BasicCollection"};

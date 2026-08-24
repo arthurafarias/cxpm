@@ -1,0 +1,14 @@
+{
+  "targets": [
+    {
+      "name": "example-executable-json",
+      "version": "1.0.0",
+      "type": "executable",
+      "sources": ["src/main.cpp"],
+      "options": ["-fPIE", "-fstack-protector-all"],
+      "link_libraries": ["m"],
+      "include_directories": ["src"]
+    }
+  ],
+  "toolchains": []
+}

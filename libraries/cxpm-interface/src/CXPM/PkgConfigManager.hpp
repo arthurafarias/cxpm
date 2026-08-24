@@ -10,7 +10,12 @@
 using namespace CXPM::Core::Containers;
 using namespace CXPM;
 
-namespace Controllers {
+// Was the global ::Controllers namespace (distinct from CXPM::Controllers, which
+// ProjectManager/ToolchainManager/DescriptorSandbox use) until it was consolidated here -- see
+// docs/SRS-architecture.md item A17. Unqualified `Controllers::` lookups from within namespace
+// CXPM (e.g. Toolchain.hpp's Controllers::PackageConfigManager::find_package call) now
+// consistently resolve to this one namespace regardless of header include order.
+namespace CXPM::Controllers {
 
 class PackageConfigManager final {
 
@@ -64,9 +69,9 @@ public:
     configuration.replace(configuration.find(prefix_needle),
                           prefix_needle.size(), toolchain.install_prefix);
     configuration.replace(configuration.find(version_needle),
-                          version_needle.size(), package.name);
+                          version_needle.size(), package.version);
     configuration.replace(configuration.find(description_needle),
-                          description_needle.size(), toolchain.install_prefix);
+                          description_needle.size(), String(""));
 
     return configuration;
   }
@@ -85,4 +90,4 @@ Libs: -L${libdir} -l{{name}}
   )";
 };
 
-} // namespace Controllers
+} // namespace CXPM::Controllers

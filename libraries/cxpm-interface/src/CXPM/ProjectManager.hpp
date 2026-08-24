@@ -4,6 +4,8 @@
 #include "CXPM/Core/Containers/Collection.hpp"
 #include "CXPM/Core/Containers/String.hpp"
 #include "CXPM/Core/Exceptions/RuntimeException.hpp"
+#include "CXPM/DescriptorSandbox.hpp"
+#include "CXPM/Modules/Serialization/JsonManifest.hpp"
 #include "CXPM/Modules/Serialization/JsonOutputArchiver.hpp"
 #include "CXPM/Project.hpp"
 #include "CXPM/ProjectDescriptor.hpp"
@@ -17,6 +19,7 @@
 
 #include <filesystem>
 #include <fstream>
+#include <sstream>
 #include <tuple>
 
 #ifndef cxpm_BASE_INSTALL_PREFIX
@@ -89,26 +92,19 @@ StaticClass(ProjectManager)
       build_path = directory.c_str();
     }
 
-    auto [build_manifest_result, build_manifest_comands] =
-        Controllers::ProjectManager::build_manifest(build_path.string(),
-                                                    modules_search_paths);
+    // Toolchain discovery (ToolchainManager::autoscan) used to happen only as a side effect of
+    // ToolchainManager::current() being called from inside build_manifest() to pick a toolchain
+    // for compiling package.cpp itself. That made toolchain discovery silently dependent on the
+    // manifest being a package.cpp; a package.json manifest never triggered it at all, so
+    // autoselect() below would see an empty toolchain registry. Call current() exactly once,
+    // up front, so both manifest formats populate the toolchain registry identically, and pass
+    // its result into load_project() instead of letting build_manifest() call current() again
+    // (which would otherwise re-run autoscan's toolchain JIT-compilation a second time).
+    auto manifest_toolchain = CXPM::Controllers::ToolchainManager::current(
+        build_path.string(), modules_search_paths);
 
-    commands.append_range(build_manifest_comands);
-
-    if (build_manifest_result != 0) {
-
-      throw Core::Exceptions::RuntimeException(
-          "Failed to build manifest {} using {}",
-          build_path.string() + "/project-manifest.so",
-          build_path.string() + "/package.json");
-    }
-
-    auto project_manifest = Controllers::ProjectManager::load_from_manifest(
-        std::filesystem::path(build_path.string())
-            .append("libproject-manifest.so")
-            .string());
-
-    project_manifest.compile_comands = build_manifest_comands;
+    auto project_manifest = Controllers::ProjectManager::load_project(
+        build_path.string(), manifest_toolchain, commands);
 
     for (auto toolchain : project_manifest.toolchains) {
       try {
@@ -167,6 +163,62 @@ StaticClass(ProjectManager)
     }
 
     return {Status::Success, project_manifest, toolchain};
+  }
+
+  // Loads a project's manifest, dispatching on which serialization alternative is present in
+  // `project_path` (see docs/SRS-json-manifests.md): a package.cpp is compiled into a shared
+  // object and dlopen'd back exactly as before; a package.json is parsed directly, with no
+  // compilation or dlopen involved at all. package.cpp takes precedence when both exist, so
+  // adding a package.json alongside an existing package.cpp is never a silent behavior change.
+  static inline ProjectDescriptor
+  load_project(const String &project_path,
+              const ToolchainDescriptor &manifest_toolchain,
+              BasicCollection<CompileCommandDescriptor> &manifest_compile_commands) {
+
+    auto cpp_manifest_path =
+        std::filesystem::path(project_path.c_str()) / "package.cpp";
+    auto json_manifest_path =
+        std::filesystem::path(project_path.c_str()) / "package.json";
+
+    if (std::filesystem::exists(cpp_manifest_path)) {
+      auto [build_manifest_result, build_manifest_commands] =
+          build_manifest(project_path, manifest_toolchain);
+
+      manifest_compile_commands.append_range(build_manifest_commands);
+
+      if (build_manifest_result != BuildManifestResultStatus::Success) {
+        throw Core::Exceptions::RuntimeException(
+            "Failed to build manifest {} using {}",
+            (std::filesystem::path(project_path.c_str()) /
+             "libproject-manifest.so")
+                .string(),
+            cpp_manifest_path.string());
+      }
+
+      auto project = load_from_manifest(
+          (std::filesystem::path(project_path.c_str()) /
+           "libproject-manifest.so")
+              .string());
+      project.compile_comands = build_manifest_commands;
+      return project;
+    }
+
+    if (std::filesystem::exists(json_manifest_path)) {
+      std::ifstream stream(json_manifest_path);
+      if (!stream) {
+        throw Core::Exceptions::RuntimeException(
+            "Couldn't open project manifest {}", json_manifest_path.string());
+      }
+      std::ostringstream buffer;
+      buffer << stream.rdbuf();
+
+      using namespace CXPM::Modules::Serialization;
+      return project_descriptor_from_json(
+          parse_json(String(buffer.str())));
+    }
+
+    throw Core::Exceptions::RuntimeException(
+        "Couldn't find package.cpp or package.json in {}", project_path);
   }
 
   using BuildTargetOutputREsult =
@@ -334,7 +386,7 @@ StaticClass(ProjectManager)
 
   static inline BuildManifestResult
   build_manifest(const String &project_path,
-                 BasicCollection<String> extra_toolchain_search_paths) {
+                 const ToolchainDescriptor &manifest_toolchain) {
 
     auto [generate_loader_result, loader_path] = generate_loader(project_path);
 
@@ -347,9 +399,7 @@ StaticClass(ProjectManager)
     manifest_project.project_path_set(project_path);
 
     auto [loader_build_result, loader_compile_commands] =
-        Toolchain(CXPM::Controllers::ToolchainManager::current(
-                      project_path, extra_toolchain_search_paths))
-            .build(manifest_project);
+        Toolchain(manifest_toolchain).build(manifest_project);
 
     auto manifest_status = loader_build_result == Status::Success
                                ? BuildManifestResultStatus::Success
@@ -360,6 +410,14 @@ StaticClass(ProjectManager)
 
   static inline ProjectDescriptor
   load_from_manifest(const String &manifest_path) {
+
+    // manifest_path was just compiled from this project's own package.cpp; sandbox loading it
+    // by default rather than dlopen()-ing it directly into this process (see
+    // docs/SRS-sandbox.md). CXPM_SANDBOX_DISABLE=1 restores the pre-sandbox direct-dlopen
+    // behavior below.
+    if (CXPM::Controllers::DescriptorSandbox::enabled()) {
+      return CXPM::Controllers::DescriptorSandbox::load_project(manifest_path);
+    }
 
     typedef Project *(*getter_type)();
 

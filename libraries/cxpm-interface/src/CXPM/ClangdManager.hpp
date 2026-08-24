@@ -14,7 +14,12 @@
 using namespace CXPM::Core::Containers;
 using namespace CXPM;
 
-namespace Controllers {
+// See docs/SRS-architecture.md item A17: consolidated onto CXPM::Controllers (matching
+// ProjectManager/ToolchainManager/PackageConfigManager) instead of the separate global
+// ::Controllers this used to live in. This header is still dead/never-included code with its
+// own separate defect (item A14: Collection<T> is misused here as if it were a template) --
+// that is unrelated to and unfixed by this namespace change.
+namespace CXPM::Controllers {
 
 class ClangdManager final {
 
@@ -31,4 +36,4 @@ StaticClass(ClangdManager)
   }
 };
 
-} // namespace Controllers
+} // namespace CXPM::Controllers

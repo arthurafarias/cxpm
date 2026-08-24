@@ -15,11 +15,13 @@ inline static Map<String, BasicCollection<String>> Parse(BasicCollection<String>
 
     if (token.starts_with("--")) {
       current_argument = token.substr(2, token.size() - 2);
+      options[current_argument];
       continue;
     }
 
     if (token.starts_with("-")) {
       current_argument = token.substr(1, token.size() - 1);
+      options[current_argument];
       continue;
     }
 

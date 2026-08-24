@@ -6,6 +6,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED YES)
 
 file(GLOB_RECURSE ${PROJECT_NAME}_HEADERS CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/*.hpp)
 
+# CXPM/Testing/*.hpp is the self-registering unit-test harness/tests: it ships in the
+# source tree so tests stay colocated with the classes they cover (see docs/testing.md),
+# but it is not part of the installed public API and must not be packaged.
+list(FILTER ${PROJECT_NAME}_HEADERS EXCLUDE REGEX "/Testing/")
+
 add_library(${PROJECT_NAME} INTERFACE)
 
 target_sources(${PROJECT_NAME}
@@ -15,7 +20,15 @@ target_sources(${PROJECT_NAME}
     FILES ${${PROJECT_NAME}_HEADERS}
 )
 
-target_compile_definitions(${PROJECT_NAME} INTERFACE cxpm_BASE_SOURCE_PREFIX="${CMAKE_CURRENT_SOURCE_DIR}")
+# cxpm_SANDBOX_HELPER_PATH points CXPM::Controllers::DescriptorSandbox (see
+# CXPM/Controllers/DescriptorSandbox.hpp, docs/SRS-sandbox.md) at the cxpm-descriptor-sandbox
+# helper this same build produces, so a build/install of cxpm never depends on that helper
+# already being installed system-wide. $<TARGET_FILE:...> is a generator expression: CMake only
+# needs the target to exist somewhere by the end of configuration, not before this line runs.
+target_compile_definitions(${PROJECT_NAME} INTERFACE
+  cxpm_BASE_SOURCE_PREFIX="${CMAKE_CURRENT_SOURCE_DIR}"
+  cxpm_SANDBOX_HELPER_PATH="$<TARGET_FILE:cxpm-descriptor-sandbox>"
+)
 target_compile_options(${PROJECT_NAME} INTERFACE -Wall -Wextra)
 
 include(GNUInstallDirs)

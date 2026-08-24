@@ -5,6 +5,8 @@
 #include "CXPM/ToolchainDescriptor.hpp"
 
 #include "CXPM/Core/Exceptions/RuntimeException.hpp"
+#include "CXPM/DescriptorSandbox.hpp"
+#include "CXPM/Modules/Serialization/JsonManifest.hpp"
 #include "CXPM/Utils/Macros/StaticClass.hpp"
 #include "CXPM/Utils/Unix/EnvironmentManager.hpp"
 #include "CXPM/Utils/Unix/ShellManager.hpp"
@@ -13,6 +15,7 @@
 #include <dlfcn.h>
 #include <filesystem>
 #include <fstream>
+#include <sstream>
 
 using namespace CXPM;
 
@@ -156,14 +159,33 @@ StaticClass(ToolchainManager) public
       }
       for (auto entry : recursive_directory_iterator(path.c_str())) {
 
-        if (!entry.is_regular_file() ||
-            entry.path().filename() != "toolchain.cpp") {
+        if (!entry.is_regular_file()) {
+          continue;
+        }
+
+        auto filename = entry.path().filename();
+
+        // toolchain.cpp and toolchain.json are alternative serializations of the same
+        // descriptor (see docs/SRS-json-manifests.md). When both sit in the same directory,
+        // toolchain.cpp takes precedence (compiled and reloaded exactly as before); the
+        // sibling toolchain.json is skipped rather than also discovered as a second,
+        // possibly-stale toolchain with the same name.
+        if (filename == "toolchain.json" &&
+            std::filesystem::exists(entry.path().parent_path() /
+                                    "toolchain.cpp")) {
+          continue;
+        }
+
+        if (filename != "toolchain.cpp" && filename != "toolchain.json") {
           continue;
         }
 
         try {
 
-          auto descriptor = build_toolchain_plugin(entry.path(), project_path);
+          auto descriptor =
+              filename == "toolchain.cpp"
+                  ? build_toolchain_plugin(entry.path(), project_path)
+                  : load_toolchain_json(entry.path());
 
           if (ToolchainManager::valid(descriptor)) {
             toolchains.push_back(descriptor);
@@ -231,7 +253,31 @@ private:
   }
 
   static inline ToolchainDescriptor
+  load_toolchain_json(const std::filesystem::path &source_path) {
+
+    std::ifstream stream(source_path);
+    if (!stream) {
+      throw Core::Exceptions::RuntimeException(
+          "Couldn't open toolchain plugin {}", source_path.string());
+    }
+
+    std::ostringstream buffer;
+    buffer << stream.rdbuf();
+
+    using namespace CXPM::Modules::Serialization;
+    return toolchain_descriptor_from_json(parse_json(String(buffer.str())));
+  }
+
+  static inline ToolchainDescriptor
   load_toolchain_plugin(const String &library_path) {
+
+    // library_path was just JIT-compiled from a toolchain.cpp that this cxpm invocation's
+    // caller (a project or its dependencies) supplied; sandbox loading it by default rather
+    // than dlopen()-ing it directly into this process (see docs/SRS-sandbox.md).
+    // CXPM_SANDBOX_DISABLE=1 restores the pre-sandbox direct-dlopen behavior below.
+    if (CXPM::Controllers::DescriptorSandbox::enabled()) {
+      return CXPM::Controllers::DescriptorSandbox::load_toolchain(library_path);
+    }
 
     typedef const ToolchainDescriptor *(*getter_type)();
 
