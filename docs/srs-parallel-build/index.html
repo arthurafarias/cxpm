@@ -17,7 +17,7 @@
 </script>
 
   
-  <link rel="stylesheet" href="../cxpm/css/main.min.705c6b10a27719bb861d20380e003ddc3bcfb26a9d5969863974a958f0604544.css" integrity="sha256-cFxrEKJ3GbuGHSA4DgA93DvPsmqdWWmGOXSpWPBgRUQ=">
+  <link rel="stylesheet" href="/cxpm/css/main.min.705c6b10a27719bb861d20380e003ddc3bcfb26a9d5969863974a958f0604544.css" integrity="sha256-cFxrEKJ3GbuGHSA4DgA93DvPsmqdWWmGOXSpWPBgRUQ=">
 
 
 </head>
@@ -28,7 +28,7 @@
     <button class="menu-toggle" id="menu-toggle" aria-label="Toggle navigation" aria-controls="sidebar" aria-expanded="false">
       <span></span><span></span><span></span>
     </button>
-    <a class="brand" href="../cxpm/">
+    <a class="brand" href="/cxpm/">
       <span class="brand-mark">cxpm</span>
       <span class="brand-sub">docs</span>
     </a>
@@ -61,7 +61,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/">Overview</a>
+    <a href="/cxpm/">Overview</a>
     
     
   </li>
@@ -69,7 +69,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/quickstart/">Quickstart</a>
+    <a href="/cxpm/quickstart/">Quickstart</a>
     
     
   </li>
@@ -77,7 +77,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/architecture/">Architecture</a>
+    <a href="/cxpm/architecture/">Architecture</a>
     
     
   </li>
@@ -85,7 +85,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/tooling/">CLI Tooling</a>
+    <a href="/cxpm/tooling/">CLI Tooling</a>
     
     
   </li>
@@ -93,7 +93,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/testing/">Testing</a>
+    <a href="/cxpm/testing/">Testing</a>
     
     
   </li>
@@ -101,7 +101,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/roadmap/">Roadmap</a>
+    <a href="/cxpm/roadmap/">Roadmap</a>
     
     
   </li>
@@ -118,7 +118,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/srs-architecture/">Architecture &amp; Flaws</a>
+    <a href="/cxpm/srs-architecture/">Architecture &amp; Flaws</a>
     
     
   </li>
@@ -126,7 +126,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/srs-unit-testing/">Unit Testing the API</a>
+    <a href="/cxpm/srs-unit-testing/">Unit Testing the API</a>
     
     
   </li>
@@ -134,7 +134,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/srs-ctest-tooling/">CMake/CTest Tooling</a>
+    <a href="/cxpm/srs-ctest-tooling/">CMake/CTest Tooling</a>
     
     
   </li>
@@ -142,7 +142,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/srs-json-manifests/">JSON Manifests</a>
+    <a href="/cxpm/srs-json-manifests/">JSON Manifests</a>
     
     
   </li>
@@ -150,7 +150,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/srs-generate/">cxpm --generate</a>
+    <a href="/cxpm/srs-generate/">cxpm --generate</a>
     
     
   </li>
@@ -158,7 +158,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/srs-sandbox/">Descriptor Sandbox</a>
+    <a href="/cxpm/srs-sandbox/">Descriptor Sandbox</a>
     
     
   </li>
@@ -166,7 +166,7 @@
   
   <li class="menu-item is-active">
     
-    <a href="../cxpm/srs-parallel-build/" aria-current="page">Parallel Build (proposed)</a>
+    <a href="/cxpm/srs-parallel-build/" aria-current="page">Parallel Build (proposed)</a>
     
     
   </li>
@@ -188,7 +188,7 @@
     <div class="content-inner">
       
 <nav class="breadcrumbs" aria-label="Breadcrumb">
-  <a href="../cxpm/">cxpm</a>
+  <a href="/cxpm/">cxpm</a>
   <span class="sep">/</span><span>SRS: Parallel Build</span>
 </nav>
 <article class="prose">
@@ -202,14 +202,14 @@ against a stated baseline rather than reverse-engineered from a diff.
 <strong>Scope:</strong> <code>CXPM::Toolchain::build</code> (both overloads), <code>Controllers::ProjectManager::build_project</code>
 (<code>libraries/cxpm-interface/src/CXPM/ProjectManager.hpp</code>), <code>Views::ApplicationView</code>&rsquo;s <code>--build</code> flag
 handling, <code>Threading::ThreadPool</code> (<code>Core/Threading/ThreadPool.hpp</code>)
-<strong>Companion documents:</strong> <a href="../cxpm/architecture/">architecture.md</a>
-, <a href="../cxpm/srs-architecture/">SRS-architecture.md</a>
+<strong>Companion documents:</strong> <a href="/cxpm/architecture/">architecture.md</a>
+, <a href="/cxpm/srs-architecture/">SRS-architecture.md</a>
 
 items A21 (JIT-compilation caching — complementary, not a substitute, for this SRS: caching avoids
 recompiling toolchains that haven&rsquo;t changed, parallelism speeds up the compiles that do still have
 to happen), A22 (toolchain-plugin naming collision — a hard prerequisite for §3.4), A24
 (<code>BasicCollection</code> is not thread-safe), A28 (<code>ShellManager::exec</code>&rsquo;s <code>popen</code>-based process spawn),
-A37 (toolchain-registry population ordering); <a href="../cxpm/srs-sandbox/">SRS-sandbox.md</a>
+A37 (toolchain-registry population ordering); <a href="/cxpm/srs-sandbox/">SRS-sandbox.md</a>
  (the existing
 <code>ThreadPool</code>/<code>posix_spawn</code> rationale this SRS builds on)</p>
 <hr>
@@ -247,14 +247,14 @@ target in the same project. This is the load-bearing fact behind this SRS: <stro
 project is, today, an independent build unit</strong>, so parallelizing across targets requires no
 topological sort, no dependency resolution, and no new data on <code>TargetDescriptor</code> — it is safe
 with the schema exactly as it stands. (If a future change adds real target-to-target dependencies —
-see <a href="../cxpm/roadmap/">roadmap.md</a>
+see <a href="/cxpm/roadmap/">roadmap.md</a>
  item 13 — this SRS&rsquo;s target-level requirements below would need
 revisiting; §4 flags this explicitly as the one assumption that could later invalidate them.)</p>
 <p><strong>The primitives this SRS needs already exist and are already safe to share across threads:</strong></p>
 <ul>
 <li><code>Threading::ThreadPool::get_instance()</code> — a bounded worker pool (default
 <code>std::thread::hardware_concurrency()</code> threads), already used by <code>ShellManager::exec_async</code>
-(<code>ShellManager.hpp:72-85</code>) and chosen over <code>fork()</code> in <a href="../cxpm/srs-sandbox/">SRS-sandbox.md §3.2.3</a>
+(<code>ShellManager.hpp:72-85</code>) and chosen over <code>fork()</code> in <a href="/cxpm/srs-sandbox/">SRS-sandbox.md §3.2.3</a>
 
 precisely because it doesn&rsquo;t duplicate a multithreaded process&rsquo;s lock state.</li>
 <li><code>Core::Logging::LoggerManager</code> logs through <code>std::osyncstream</code> (<code>LoggerManager.hpp:32</code>), which
@@ -300,7 +300,7 @@ constructor already uses) when neither is set.</li>
 <li><code>N = 1</code> SHALL produce build behavior indistinguishable in outcome from today&rsquo;s fully
 sequential code path — this is the escape hatch for anyone who hits a concurrency-related
 regression, in the same spirit as <code>CXPM_SANDBOX_DISABLE=1</code> in
-<a href="../cxpm/srs-sandbox/">SRS-sandbox.md §3.2.4</a>
+<a href="/cxpm/srs-sandbox/">SRS-sandbox.md §3.2.4</a>
 .</li>
 </ul>
 </li>
@@ -383,7 +383,7 @@ loop is parallelized</strong>; that follow-up is tracked as future work (§4), n
 <ul>
 <li><strong>No target-to-target dependency support, by design.</strong> §2 establishes that today&rsquo;s schema has
 none, so parallelizing target builds is unconditionally safe. The moment
-<a href="../cxpm/roadmap/">roadmap.md</a>
+<a href="/cxpm/roadmap/">roadmap.md</a>
  item 13 (a real dependency-resolution story) adds one, §3.2&rsquo;s
 &ldquo;build every target concurrently&rdquo; requirement stops being universally correct and this SRS
 needs a follow-up (a real scheduler respecting the new graph, not just &ldquo;submit everything at
@@ -419,7 +419,7 @@ is a distinct property from the injection issue A28 describes.</li>
 	<tbody>
 			<tr>
 					<td>§3.1.2/§3.1.3: object-file compilation is bounded by the configured job budget, not one thread per source file</td>
-					<td>A dry-run (<code>dry=true</code>) unit test building a target with more sources than <code>hardware_concurrency()</code> returns the same per-source results as today, exercised through <code>ThreadPoolTest</code>-style instrumentation (e.g., a counting/blocking stub task) rather than timing, matching this project&rsquo;s existing preference (see <a href="../cxpm/srs-sandbox/#4-known-limitations-accepted-for-this-iteration">SRS-sandbox.md §4</a>
+					<td>A dry-run (<code>dry=true</code>) unit test building a target with more sources than <code>hardware_concurrency()</code> returns the same per-source results as today, exercised through <code>ThreadPoolTest</code>-style instrumentation (e.g., a counting/blocking stub task) rather than timing, matching this project&rsquo;s existing preference (see <a href="/cxpm/srs-sandbox/#4-known-limitations-accepted-for-this-iteration">SRS-sandbox.md §4</a>
 ) for behavioral assertions over wall-clock ones in CI</td>
 			</tr>
 			<tr>
@@ -440,7 +440,7 @@ is a distinct property from the injection issue A28 describes.</li>
 			</tr>
 			<tr>
 					<td>§3.4: the toolchain-discovery loop is untouched by this change</td>
-					<td>The existing <code>sandbox_extracts_toolchain_descriptor_as_json</code> / <code>cli_build_example_executable*</code> CTest cases (<a href="../cxpm/srs-sandbox/#5-testing">SRS-sandbox.md §5</a>
+					<td>The existing <code>sandbox_extracts_toolchain_descriptor_as_json</code> / <code>cli_build_example_executable*</code> CTest cases (<a href="/cxpm/srs-sandbox/#5-testing">SRS-sandbox.md §5</a>
 ) continue to pass unmodified — no new test needed here, only confirmation nothing in this SRS touches <code>ToolchainManager::autoscan</code></td>
 			</tr>
 	</tbody>

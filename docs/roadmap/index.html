@@ -17,7 +17,7 @@
 </script>
 
   
-  <link rel="stylesheet" href="../cxpm/css/main.min.705c6b10a27719bb861d20380e003ddc3bcfb26a9d5969863974a958f0604544.css" integrity="sha256-cFxrEKJ3GbuGHSA4DgA93DvPsmqdWWmGOXSpWPBgRUQ=">
+  <link rel="stylesheet" href="/cxpm/css/main.min.705c6b10a27719bb861d20380e003ddc3bcfb26a9d5969863974a958f0604544.css" integrity="sha256-cFxrEKJ3GbuGHSA4DgA93DvPsmqdWWmGOXSpWPBgRUQ=">
 
 
 </head>
@@ -28,7 +28,7 @@
     <button class="menu-toggle" id="menu-toggle" aria-label="Toggle navigation" aria-controls="sidebar" aria-expanded="false">
       <span></span><span></span><span></span>
     </button>
-    <a class="brand" href="../cxpm/">
+    <a class="brand" href="/cxpm/">
       <span class="brand-mark">cxpm</span>
       <span class="brand-sub">docs</span>
     </a>
@@ -61,7 +61,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/">Overview</a>
+    <a href="/cxpm/">Overview</a>
     
     
   </li>
@@ -69,7 +69,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/quickstart/">Quickstart</a>
+    <a href="/cxpm/quickstart/">Quickstart</a>
     
     
   </li>
@@ -77,7 +77,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/architecture/">Architecture</a>
+    <a href="/cxpm/architecture/">Architecture</a>
     
     
   </li>
@@ -85,7 +85,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/tooling/">CLI Tooling</a>
+    <a href="/cxpm/tooling/">CLI Tooling</a>
     
     
   </li>
@@ -93,7 +93,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/testing/">Testing</a>
+    <a href="/cxpm/testing/">Testing</a>
     
     
   </li>
@@ -101,7 +101,7 @@
   
   <li class="menu-item is-active">
     
-    <a href="../cxpm/roadmap/" aria-current="page">Roadmap</a>
+    <a href="/cxpm/roadmap/" aria-current="page">Roadmap</a>
     
     
   </li>
@@ -118,7 +118,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/srs-architecture/">Architecture &amp; Flaws</a>
+    <a href="/cxpm/srs-architecture/">Architecture &amp; Flaws</a>
     
     
   </li>
@@ -126,7 +126,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/srs-unit-testing/">Unit Testing the API</a>
+    <a href="/cxpm/srs-unit-testing/">Unit Testing the API</a>
     
     
   </li>
@@ -134,7 +134,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/srs-ctest-tooling/">CMake/CTest Tooling</a>
+    <a href="/cxpm/srs-ctest-tooling/">CMake/CTest Tooling</a>
     
     
   </li>
@@ -142,7 +142,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/srs-json-manifests/">JSON Manifests</a>
+    <a href="/cxpm/srs-json-manifests/">JSON Manifests</a>
     
     
   </li>
@@ -150,7 +150,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/srs-generate/">cxpm --generate</a>
+    <a href="/cxpm/srs-generate/">cxpm --generate</a>
     
     
   </li>
@@ -158,7 +158,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/srs-sandbox/">Descriptor Sandbox</a>
+    <a href="/cxpm/srs-sandbox/">Descriptor Sandbox</a>
     
     
   </li>
@@ -166,7 +166,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/srs-parallel-build/">Parallel Build (proposed)</a>
+    <a href="/cxpm/srs-parallel-build/">Parallel Build (proposed)</a>
     
     
   </li>
@@ -188,7 +188,7 @@
     <div class="content-inner">
       
 <nav class="breadcrumbs" aria-label="Breadcrumb">
-  <a href="../cxpm/">cxpm</a>
+  <a href="/cxpm/">cxpm</a>
   <span class="sep">/</span><span>Roadmap</span>
 </nav>
 <article class="prose">
@@ -196,14 +196,14 @@
 <p>This page collects concrete next steps, roughly ordered by leverage: cheap/safe fixes first,
 then correctness-affecting design decisions, then longer-range architecture work. Every item
 with an &ldquo;A#&rdquo; reference is itemized in detail, with file:line citations, in
-<a href="../cxpm/srs-architecture/">srs-architecture.md</a>
+<a href="/cxpm/srs-architecture/">srs-architecture.md</a>
 .</p>
 <h2 id="recently-shipped">Recently shipped</h2>
 <p>Three capabilities landed together and are documented as their own SRS pages rather than roadmap
-items: <a href="../cxpm/srs-json-manifests/">package.json/toolchain.json as manifest alternatives</a>
+items: <a href="/cxpm/srs-json-manifests/">package.json/toolchain.json as manifest alternatives</a>
 ,
-<a href="../cxpm/srs-generate/"><code>cxpm --generate</code></a>
-, and <a href="../cxpm/srs-sandbox/">sandboxed descriptor extraction</a>
+<a href="/cxpm/srs-generate/"><code>cxpm --generate</code></a>
+, and <a href="/cxpm/srs-sandbox/">sandboxed descriptor extraction</a>
 . The
 JSON manifest path also directly mitigates part of item 6 below (no JIT-compilation cost at all
 on that path) and the sandbox directly mitigates the highest-severity concern that would otherwise
@@ -225,7 +225,7 @@ other collection field.</li>
 <li><strong>Rename <code>ProjectDescriptor::compile_comands</code></strong> (A32) — a one-line fix with no behavioral risk.
 (The misleading <code>&quot;package.json&quot;</code> error message this item used to also list, A34, is now moot:
 <code>ProjectManager::build_project</code>&rsquo;s old error-handling code was superseded wholesale by
-<code>load_project</code> when <a href="../cxpm/srs-json-manifests/">package.json support</a>
+<code>load_project</code> when <a href="/cxpm/srs-json-manifests/">package.json support</a>
  was added, and that
 reference is correct now that <code>package.json</code> is a real manifest format.)</li>
 <li><strong>Delete or finish the dead orphan headers</strong>: <code>ClangdManager.hpp</code>, <code>ShellCommandBuilder.hpp</code>,
@@ -254,7 +254,7 @@ restructuring the module layout in a way that seems harmless.</li>
 above, a prebuilt-<code>.so</code>-with-cache-invalidation model is probably the right end state — decide
 and delete the other path.</li>
 <li><del>Consolidate the two <code>Controllers</code> namespaces (A17)</del> — <strong>done</strong>, and not a moment too soon:
-adding <code>CXPM::Controllers::DescriptorSandbox</code> (see <a href="../cxpm/srs-sandbox/">srs-sandbox.md</a>
+adding <code>CXPM::Controllers::DescriptorSandbox</code> (see <a href="/cxpm/srs-sandbox/">srs-sandbox.md</a>
 ) flipped
 which <code>Controllers</code> namespace unqualified lookup found first and turned this from a latent
 footgun into an actual build failure. <code>PkgConfigManager</code>/<code>ClangdManager</code> now live in
@@ -288,12 +288,12 @@ pkg-config-discoverable packages (building on <code>PackageConfigManager::find_p
 natural first increment.</li>
 <li><del>An input archiver / manifest introspection story.</del> — <strong>done</strong>: <code>AbstractInputArchiver</code>&rsquo;s
 constructor access-specifier bug (A33) is fixed, and <code>JsonInputArchiver</code> plus the full
-<code>package.json</code>/<code>toolchain.json</code> manifest path (see <a href="../cxpm/srs-json-manifests/">srs-json-manifests.md</a>
+<code>package.json</code>/<code>toolchain.json</code> manifest path (see <a href="/cxpm/srs-json-manifests/">srs-json-manifests.md</a>
 )
 now let tooling introspect or author a project with no compiler in the loop.</li>
 <li><strong>ABI/version-checked plugin loading</strong> (A23). Both <code>ProjectManager</code> and <code>ToolchainManager</code>
 <code>dlopen</code> a freshly-compiled <code>.so</code> and trust its layout matches the headers <code>cxpm</code> itself was
-built against, with no explicit version check. The sandbox (<a href="../cxpm/srs-sandbox/">srs-sandbox.md</a>
+built against, with no explicit version check. The sandbox (<a href="/cxpm/srs-sandbox/">srs-sandbox.md</a>
 )
 confines a layout mismatch&rsquo;s blast radius to the disposable child process, but does not add
 the version check itself — that&rsquo;s still open, and worth landing <em>before</em> or <em>alongside</em> item 6
@@ -305,34 +305,34 @@ installs headers but exports nothing (no <code>install(EXPORT ...)</code>, no
 include-path wiring, the same way <code>build.sh</code> and the JIT-compiled plugins already do in-tree.
 A proper CMake package export would let external toolchain-plugin authors depend on
 <code>cxpm-interface</code> the normal CMake way instead of guessing include paths.</li>
-<li><strong>Stronger sandbox isolation.</strong> <a href="../cxpm/srs-sandbox/#4-known-limitations-accepted-for-this-iteration">srs-sandbox.md §4</a>
+<li><strong>Stronger sandbox isolation.</strong> <a href="/cxpm/srs-sandbox/#4-known-limitations-accepted-for-this-iteration">srs-sandbox.md §4</a>
 
 bounds CPU/memory/wall-clock time and removes direct memory access to the parent process, but
 does not restrict filesystem or network access from within the sandboxed child. Linux
 <code>seccomp-bpf</code> and/or a mount/user namespace would meaningfully narrow that further, at the cost
 of platform-specific code the current implementation deliberately avoided for portability.</li>
 <li><strong>Automate the <code>CXPM_SANDBOX_DISABLE=1</code> fallback path as a CTest case.</strong> Currently verified
-manually only (see <a href="../cxpm/srs-sandbox/#5-testing">srs-sandbox.md §5</a>
+manually only (see <a href="/cxpm/srs-sandbox/#5-testing">srs-sandbox.md §5</a>
 ); promoting it to an
 integration test would close the one deliberately-manual gap in that SRS&rsquo;s test coverage.</li>
 <li><strong>Unit-test <code>ToolchainManager</code>/<code>ProjectManager</code> orchestration against a fake toolchain.</strong>
 <code>ToolchainInterface</code> was already pure-virtual and mockable before this session; the sandbox
 work adds another natural seam (<code>DescriptorSandbox</code> could be made injectable rather than
 called directly) that would let <code>build_project</code>&rsquo;s toolchain-selection and error-handling logic
-be unit-tested without a real compiler — see <a href="../cxpm/srs-unit-testing/#8-deferred-coverage--future-work">srs-unit-testing.md §8</a>
+be unit-tested without a real compiler — see <a href="/cxpm/srs-unit-testing/#8-deferred-coverage--future-work">srs-unit-testing.md §8</a>
 ,
 which this item would close.</li>
 </ol>
 <h2 id="what-was-intentionally-not-changed-in-this-pass">What was intentionally <em>not</em> changed in this pass</h2>
 <p>The remaining open items above are design decisions with real trade-offs (performance vs.
 plugin-model simplicity, security hardening vs. implementation effort, concurrency guarantees vs.
-API surface). They are documented here and in <a href="../cxpm/srs-architecture/">srs-architecture.md</a>
+API surface). They are documented here and in <a href="/cxpm/srs-architecture/">srs-architecture.md</a>
  with
 enough detail (file:line citations, concrete correction sketches) to be picked up independently,
-rather than bundled into this change — see <a href="../cxpm/srs-architecture/#42-deferred-itemized-not-changed-in-this-pass">srs-architecture.md §4.2</a>
+rather than bundled into this change — see <a href="/cxpm/srs-architecture/#42-deferred-itemized-not-changed-in-this-pass">srs-architecture.md §4.2</a>
 
 for the full itemized list of still-deferred findings with severities, and
-<a href="../cxpm/srs-sandbox/#4-known-limitations-accepted-for-this-iteration">srs-sandbox.md §4</a>
+<a href="/cxpm/srs-sandbox/#4-known-limitations-accepted-for-this-iteration">srs-sandbox.md §4</a>
  for the
 sandbox&rsquo;s own explicitly accepted limitations.</p>
 

@@ -17,7 +17,7 @@
 </script>
 
   
-  <link rel="stylesheet" href="../cxpm/css/main.min.705c6b10a27719bb861d20380e003ddc3bcfb26a9d5969863974a958f0604544.css" integrity="sha256-cFxrEKJ3GbuGHSA4DgA93DvPsmqdWWmGOXSpWPBgRUQ=">
+  <link rel="stylesheet" href="/cxpm/css/main.min.705c6b10a27719bb861d20380e003ddc3bcfb26a9d5969863974a958f0604544.css" integrity="sha256-cFxrEKJ3GbuGHSA4DgA93DvPsmqdWWmGOXSpWPBgRUQ=">
 
 
 </head>
@@ -28,7 +28,7 @@
     <button class="menu-toggle" id="menu-toggle" aria-label="Toggle navigation" aria-controls="sidebar" aria-expanded="false">
       <span></span><span></span><span></span>
     </button>
-    <a class="brand" href="../cxpm/">
+    <a class="brand" href="/cxpm/">
       <span class="brand-mark">cxpm</span>
       <span class="brand-sub">docs</span>
     </a>
@@ -61,7 +61,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/">Overview</a>
+    <a href="/cxpm/">Overview</a>
     
     
   </li>
@@ -69,7 +69,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/quickstart/">Quickstart</a>
+    <a href="/cxpm/quickstart/">Quickstart</a>
     
     
   </li>
@@ -77,7 +77,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/architecture/">Architecture</a>
+    <a href="/cxpm/architecture/">Architecture</a>
     
     
   </li>
@@ -85,7 +85,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/tooling/">CLI Tooling</a>
+    <a href="/cxpm/tooling/">CLI Tooling</a>
     
     
   </li>
@@ -93,7 +93,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/testing/">Testing</a>
+    <a href="/cxpm/testing/">Testing</a>
     
     
   </li>
@@ -101,7 +101,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/roadmap/">Roadmap</a>
+    <a href="/cxpm/roadmap/">Roadmap</a>
     
     
   </li>
@@ -118,7 +118,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/srs-architecture/">Architecture &amp; Flaws</a>
+    <a href="/cxpm/srs-architecture/">Architecture &amp; Flaws</a>
     
     
   </li>
@@ -126,7 +126,7 @@
   
   <li class="menu-item is-active">
     
-    <a href="../cxpm/srs-unit-testing/" aria-current="page">Unit Testing the API</a>
+    <a href="/cxpm/srs-unit-testing/" aria-current="page">Unit Testing the API</a>
     
     
   </li>
@@ -134,7 +134,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/srs-ctest-tooling/">CMake/CTest Tooling</a>
+    <a href="/cxpm/srs-ctest-tooling/">CMake/CTest Tooling</a>
     
     
   </li>
@@ -142,7 +142,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/srs-json-manifests/">JSON Manifests</a>
+    <a href="/cxpm/srs-json-manifests/">JSON Manifests</a>
     
     
   </li>
@@ -150,7 +150,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/srs-generate/">cxpm --generate</a>
+    <a href="/cxpm/srs-generate/">cxpm --generate</a>
     
     
   </li>
@@ -158,7 +158,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/srs-sandbox/">Descriptor Sandbox</a>
+    <a href="/cxpm/srs-sandbox/">Descriptor Sandbox</a>
     
     
   </li>
@@ -166,7 +166,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/srs-parallel-build/">Parallel Build (proposed)</a>
+    <a href="/cxpm/srs-parallel-build/">Parallel Build (proposed)</a>
     
     
   </li>
@@ -188,7 +188,7 @@
     <div class="content-inner">
       
 <nav class="breadcrumbs" aria-label="Breadcrumb">
-  <a href="../cxpm/">cxpm</a>
+  <a href="/cxpm/">cxpm</a>
   <span class="sep">/</span><span>SRS: Unit Testing the API</span>
 </nav>
 <article class="prose">
@@ -199,7 +199,7 @@
 <strong>Scope of this document:</strong> every header under <code>libraries/cxpm-interface/src/CXPM/</code>, the <code>cxpm</code>
 CLI entry point (<code>applications/cxpm/src/cxpm.cpp</code> + <code>CXPM::Views::ApplicationView</code>), and the
 three toolchain plugins (<code>modules/toolchains/{gcc,g++,nvcc}</code>)
-<strong>Status at the time of writing:</strong> implemented — see <a href="../cxpm/testing/">testing.md</a>
+<strong>Status at the time of writing:</strong> implemented — see <a href="/cxpm/testing/">testing.md</a>
  for the current
 pass/fail state and how to reproduce it.</p>
 <hr>
@@ -212,7 +212,7 @@ requirements.</p>
 <h2 id="2-scope">2. Scope</h2>
 <h3 id="21-in-scope">2.1 In scope</h3>
 <ul>
-<li>Every class, free function and template documented in <a href="../cxpm/architecture/">architecture.md</a>
+<li>Every class, free function and template documented in <a href="/cxpm/architecture/">architecture.md</a>
 &rsquo;s
 component table.</li>
 <li>The fluent builder contracts of <code>Target</code>, <code>Project</code>, <code>Toolchain</code>/<code>ToolchainDescriptor</code>.</li>
@@ -224,7 +224,7 @@ component table.</li>
 <li><code>CXPM::Status</code> and its <code>std::to_string</code> specialization.</li>
 <li><code>Controllers::PackageConfigManager::emit_configuration</code> (the pure half of <code>PkgConfigManager</code>).</li>
 <li>The <code>cxpm</code> executable&rsquo;s argument-parsing and exit-code contract, exercised as a black box
-through CTest (see <a href="../cxpm/srs-ctest-tooling/">srs-ctest-tooling.md</a>
+through CTest (see <a href="/cxpm/srs-ctest-tooling/">srs-ctest-tooling.md</a>
 ).</li>
 </ul>
 <h3 id="22-out-of-scope-for-this-iteration">2.2 Out of scope for this iteration</h3>
@@ -274,7 +274,7 @@ dropped.</p>
 </table>
 <p>This split exists because roughly a third of the public API (toolchain discovery, JIT plugin
 compilation, process execution) is inherently an integration concern — see
-<a href="../cxpm/testing/#testability-tiers">testing.md §Testability tiers</a>
+<a href="/cxpm/testing/#testability-tiers">testing.md §Testability tiers</a>
  for the full component-by-component
 classification this split is derived from.</p>
 <h2 id="4-test-harness-requirements">4. Test-harness requirements</h2>
@@ -353,7 +353,7 @@ satisfies it today.</p>
 					<td><code>Modules/ProgramOptions/Parse.hpp</code></td>
 					<td>long/short flags with values, positional arguments, <strong>trailing/valueless flags</strong></td>
 					<td><code>ParseTest</code></td>
-					<td>Implemented (regression, see <a href="../cxpm/srs-architecture/">srs-architecture.md</a>
+					<td>Implemented (regression, see <a href="/cxpm/srs-architecture/">srs-architecture.md</a>
 )</td>
 			</tr>
 			<tr>
@@ -401,7 +401,7 @@ satisfies it today.</p>
 			<tr>
 					<td><code>Value</code> ↔ JSON codec (<code>parse_json</code>/<code>write_json</code>/<code>write_json_pretty</code>)</td>
 					<td><code>Modules/Serialization/JsonValue{Parser,Writer}.hpp</code></td>
-					<td>every alternative, string escapes incl. <code>\u</code> BMP, nested structures, pretty-printing, malformed-input rejection — see <a href="../cxpm/srs-json-manifests/">srs-json-manifests.md</a>
+					<td>every alternative, string escapes incl. <code>\u</code> BMP, nested structures, pretty-printing, malformed-input rejection — see <a href="/cxpm/srs-json-manifests/">srs-json-manifests.md</a>
 </td>
 					<td><code>JsonValueCodecTest</code></td>
 					<td>Implemented</td>
@@ -409,7 +409,7 @@ satisfies it today.</p>
 			<tr>
 					<td><code>to_json</code>/<code>*_descriptor_from_json</code></td>
 					<td><code>Modules/Serialization/JsonManifest.hpp</code></td>
-					<td>round trip for <code>TargetDescriptor</code>/<code>ToolchainDescriptor</code>/<code>ProjectDescriptor</code>, default-field fallback, wrong-type rejection — see <a href="../cxpm/srs-json-manifests/">srs-json-manifests.md</a>
+					<td>round trip for <code>TargetDescriptor</code>/<code>ToolchainDescriptor</code>/<code>ProjectDescriptor</code>, default-field fallback, wrong-type rejection — see <a href="/cxpm/srs-json-manifests/">srs-json-manifests.md</a>
 </td>
 					<td><code>JsonManifestTest</code></td>
 					<td>Implemented</td>
@@ -424,7 +424,7 @@ satisfies it today.</p>
 			<tr>
 					<td><code>ManifestGenerator</code> (<code>--generate</code> templates)</td>
 					<td><code>Modules/Generators/ManifestGenerator.hpp</code></td>
-					<td>all four kinds; JSON kinds round-trip through the real descriptor parser — see <a href="../cxpm/srs-generate/">srs-generate.md</a>
+					<td>all four kinds; JSON kinds round-trip through the real descriptor parser — see <a href="/cxpm/srs-generate/">srs-generate.md</a>
 </td>
 					<td><code>ManifestGeneratorTest</code></td>
 					<td>Implemented</td>
@@ -439,7 +439,7 @@ satisfies it today.</p>
 			<tr>
 					<td><code>cxpm-descriptor-sandbox</code> helper</td>
 					<td><code>applications/cxpm-descriptor-sandbox/src/main.cpp</code></td>
-					<td>success path and every documented failure path, run directly — see <a href="../cxpm/srs-sandbox/">srs-sandbox.md</a>
+					<td>success path and every documented failure path, run directly — see <a href="/cxpm/srs-sandbox/">srs-sandbox.md</a>
 </td>
 					<td><code>tests/cli/CMakeLists.txt</code> CTest tests (<code>sandbox_*</code>)</td>
 					<td>Implemented (CLI/integration tier)</td>
@@ -468,7 +468,7 @@ satisfies it today.</p>
 			</tr>
 	</tbody>
 </table>
-<p>70 unit-test cases across 16 test groups pass today; see <a href="../cxpm/testing/">testing.md</a>
+<p>70 unit-test cases across 16 test groups pass today; see <a href="/cxpm/testing/">testing.md</a>
  for the live
 count and how to reproduce it locally.</p>
 <h2 id="6-regression-test-requirement">6. Regression-test requirement</h2>
@@ -522,7 +522,7 @@ regressions are pinned:</p>
 			<tr>
 					<td><code>cxpm --install</code>&rsquo;s exit code never reflected <code>Status::Failure</code> (<code>switch</code> with two no-op <code>break</code>s)</td>
 					<td><code>Views/ApplicationView.hpp</code></td>
-					<td>exercised by the CLI tier; see <a href="../cxpm/srs-architecture/#4-itemized-flaws">srs-architecture.md §4</a>
+					<td>exercised by the CLI tier; see <a href="/cxpm/srs-architecture/#4-itemized-flaws">srs-architecture.md §4</a>
  item A2</td>
 			</tr>
 	</tbody>
@@ -550,7 +550,7 @@ whether a C++ compiler is available on <code>PATH</code> beyond the one that bui
 <ul>
 <li><strong><code>ToolchainManager</code>/<code>ProjectManager</code> unit-level coverage.</strong> Both are static-only &ldquo;controller&rdquo;
 classes with private mutable static state and no dependency-injection seam (see
-<a href="../cxpm/srs-architecture/">srs-architecture.md</a>
+<a href="/cxpm/srs-architecture/">srs-architecture.md</a>
  item B29). Unit-testing them in isolation would
 require either exposing a <code>reset()</code>/injection hook or refactoring them into instantiable objects
 that accept a <code>ToolchainInterface</code>/filesystem abstraction. Until then they are covered only at
@@ -559,7 +559,7 @@ the CLI/integration tier via <code>cli_build_example_executable</code>.</li>
 <code>fault_backend</code>/<code>fault_file</code>/<code>fault_plan</code> harness for storage faults, cxpm has no equivalent for
 simulating a failing/partial compiler invocation. A fake <code>ToolchainInterface</code> implementation
 (the interfaces are already pure-virtual and mockable, see
-<a href="../cxpm/architecture/">architecture.md</a>
+<a href="/cxpm/architecture/">architecture.md</a>
 ) would let <code>ProjectManager</code>&rsquo;s orchestration logic be
 unit-tested without a real compiler.</li>
 <li><strong><code>EnvironmentManager::which</code>/<code>get</code>.</strong> Needs a temp-directory-based <code>PATH</code> fixture
@@ -568,7 +568,7 @@ unit-tested without a real compiler.</li>
 test case.</li>
 <li><strong><code>Map&lt;K,V&gt;</code>&rsquo;s JSON <code>operator%</code>.</strong> Calls <code>.front()</code> on a <code>std::map</code>, which has no such member —
 this is a hard compile error if ever instantiated, and is therefore untested and untestable
-until it is redesigned (see <a href="../cxpm/srs-architecture/">srs-architecture.md</a>
+until it is redesigned (see <a href="/cxpm/srs-architecture/">srs-architecture.md</a>
  item B1/Map).</li>
 </ul>
 <h2 id="9-acceptance-criteria">9. Acceptance criteria</h2>
@@ -584,7 +584,7 @@ passing, self-registering <code>TestGroup</code>;</li>
 <li>the CLI smoke tier passes without requiring a working C++ compiler beyond the one used to build
 <code>cxpm</code> itself.</li>
 </ul>
-<p>All of the above hold as of this writing — see <a href="../cxpm/testing/">testing.md</a>
+<p>All of the above hold as of this writing — see <a href="/cxpm/testing/">testing.md</a>
  for the reproducible
 <code>ctest</code> output.</p>
 

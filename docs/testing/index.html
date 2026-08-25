@@ -17,7 +17,7 @@
 </script>
 
   
-  <link rel="stylesheet" href="../cxpm/css/main.min.705c6b10a27719bb861d20380e003ddc3bcfb26a9d5969863974a958f0604544.css" integrity="sha256-cFxrEKJ3GbuGHSA4DgA93DvPsmqdWWmGOXSpWPBgRUQ=">
+  <link rel="stylesheet" href="/cxpm/css/main.min.705c6b10a27719bb861d20380e003ddc3bcfb26a9d5969863974a958f0604544.css" integrity="sha256-cFxrEKJ3GbuGHSA4DgA93DvPsmqdWWmGOXSpWPBgRUQ=">
 
 
 </head>
@@ -28,7 +28,7 @@
     <button class="menu-toggle" id="menu-toggle" aria-label="Toggle navigation" aria-controls="sidebar" aria-expanded="false">
       <span></span><span></span><span></span>
     </button>
-    <a class="brand" href="../cxpm/">
+    <a class="brand" href="/cxpm/">
       <span class="brand-mark">cxpm</span>
       <span class="brand-sub">docs</span>
     </a>
@@ -61,7 +61,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/">Overview</a>
+    <a href="/cxpm/">Overview</a>
     
     
   </li>
@@ -69,7 +69,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/quickstart/">Quickstart</a>
+    <a href="/cxpm/quickstart/">Quickstart</a>
     
     
   </li>
@@ -77,7 +77,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/architecture/">Architecture</a>
+    <a href="/cxpm/architecture/">Architecture</a>
     
     
   </li>
@@ -85,7 +85,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/tooling/">CLI Tooling</a>
+    <a href="/cxpm/tooling/">CLI Tooling</a>
     
     
   </li>
@@ -93,7 +93,7 @@
   
   <li class="menu-item is-active">
     
-    <a href="../cxpm/testing/" aria-current="page">Testing</a>
+    <a href="/cxpm/testing/" aria-current="page">Testing</a>
     
     
   </li>
@@ -101,7 +101,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/roadmap/">Roadmap</a>
+    <a href="/cxpm/roadmap/">Roadmap</a>
     
     
   </li>
@@ -118,7 +118,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/srs-architecture/">Architecture &amp; Flaws</a>
+    <a href="/cxpm/srs-architecture/">Architecture &amp; Flaws</a>
     
     
   </li>
@@ -126,7 +126,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/srs-unit-testing/">Unit Testing the API</a>
+    <a href="/cxpm/srs-unit-testing/">Unit Testing the API</a>
     
     
   </li>
@@ -134,7 +134,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/srs-ctest-tooling/">CMake/CTest Tooling</a>
+    <a href="/cxpm/srs-ctest-tooling/">CMake/CTest Tooling</a>
     
     
   </li>
@@ -142,7 +142,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/srs-json-manifests/">JSON Manifests</a>
+    <a href="/cxpm/srs-json-manifests/">JSON Manifests</a>
     
     
   </li>
@@ -150,7 +150,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/srs-generate/">cxpm --generate</a>
+    <a href="/cxpm/srs-generate/">cxpm --generate</a>
     
     
   </li>
@@ -158,7 +158,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/srs-sandbox/">Descriptor Sandbox</a>
+    <a href="/cxpm/srs-sandbox/">Descriptor Sandbox</a>
     
     
   </li>
@@ -166,7 +166,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/srs-parallel-build/">Parallel Build (proposed)</a>
+    <a href="/cxpm/srs-parallel-build/">Parallel Build (proposed)</a>
     
     
   </li>
@@ -188,16 +188,16 @@
     <div class="content-inner">
       
 <nav class="breadcrumbs" aria-label="Breadcrumb">
-  <a href="../cxpm/">cxpm</a>
+  <a href="/cxpm/">cxpm</a>
   <span class="sep">/</span><span>Testing</span>
 </nav>
 <article class="prose">
   <h1 id="testing">Testing</h1>
 <p>cxpm&rsquo;s test suite has two tiers: an in-process <strong>unit</strong> binary (<code>cxpm_tests</code>) and a set of
 <strong>CLI</strong> tests that run the real <code>cxpm</code> executable (and the <code>cxpm-descriptor-sandbox</code> helper) as
-subprocesses through CTest. See <a href="../cxpm/srs-unit-testing/">srs-unit-testing.md</a>
+subprocesses through CTest. See <a href="/cxpm/srs-unit-testing/">srs-unit-testing.md</a>
  for the requirements
-this suite satisfies and <a href="../cxpm/srs-ctest-tooling/">srs-ctest-tooling.md</a>
+this suite satisfies and <a href="/cxpm/srs-ctest-tooling/">srs-ctest-tooling.md</a>
  for the CMake tooling that
 registers the CLI tier.</p>
 <h2 id="running-the-suite">Running the suite</h2>
@@ -224,9 +224,9 @@ registers the CLI tier.</p>
 </span></span></code></pre></div><p><code>cxpm_tests</code> itself reports 70 passing unit-test cases across 16 self-registering groups.</p>
 <p>Enable the slower, real-compiler-dependent integration tests too — this additionally covers
 building <code>examples/executable</code> (<code>package.cpp</code>) and <code>examples/executable-json</code> (<code>package.json</code>,
-see <a href="../cxpm/srs-json-manifests/">srs-json-manifests.md</a>
+see <a href="/cxpm/srs-json-manifests/">srs-json-manifests.md</a>
 ) end to end, plus the
-<code>cxpm-descriptor-sandbox</code> helper directly (see <a href="../cxpm/srs-sandbox/">srs-sandbox.md</a>
+<code>cxpm-descriptor-sandbox</code> helper directly (see <a href="/cxpm/srs-sandbox/">srs-sandbox.md</a>
 ):</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cmake -S . -B build -DCXPM_BUILD_CLI_INTEGRATION_TESTS<span style="color:#f92672">=</span>ON
 </span></span><span style="display:flex;"><span>cmake --build build -j
@@ -287,7 +287,7 @@ architecture works.</p>
 <code>libraries/cxpm-interface/CMakeLists.txt</code>), so installed packages ship production headers only.</p>
 <h2 id="testability-tiers">Testability tiers</h2>
 <p>Not every component can be unit-tested the same way; the suite&rsquo;s structure follows directly from
-this classification (see <a href="../cxpm/srs-unit-testing/">srs-unit-testing.md §2.2/§8</a>
+this classification (see <a href="/cxpm/srs-unit-testing/">srs-unit-testing.md §2.2/§8</a>
  for the requirements
 this implies):</p>
 <p><strong>Easy — pure/deterministic, no I/O:</strong> <code>String</code>, <code>BasicCollection&lt;T&gt;::transform</code>, <code>Value</code>/<code>Variant</code>,
@@ -295,9 +295,9 @@ this implies):</p>
 <code>Target</code>/<code>Project</code>/<code>ToolchainDescriptor</code> builder chains, <code>JsonOutputArchiver</code> + tokens,
 <code>CompileCommandDescriptor</code>&rsquo;s <code>operator%</code>, <code>PackageConfigManager::emit_configuration</code>, the
 <code>Value</code>↔JSON codec and descriptor-level <code>to_json</code>/<code>*_from_json</code> conversions (see
-<a href="../cxpm/srs-json-manifests/">srs-json-manifests.md</a>
+<a href="/cxpm/srs-json-manifests/">srs-json-manifests.md</a>
 ), and the <code>--generate</code> template functions (see
-<a href="../cxpm/srs-generate/">srs-generate.md</a>
+<a href="/cxpm/srs-generate/">srs-generate.md</a>
 ) — all pure <code>String</code>-in/<code>String</code>-out functions.</p>
 <p><strong>Medium — a subprocess but no compiler/filesystem-heavy setup:</strong> the <code>cxpm</code> executable&rsquo;s
 argument-parsing and early-validation exit codes (the CLI <em>smoke</em> tier), including <code>--generate</code>&rsquo;s
@@ -306,7 +306,7 @@ overwrite-protection behavior.</p>
 compilation, loading), <code>ProjectManager::build_project</code>/<code>install_target</code>, <code>Toolchain</code>&rsquo;s real
 <code>object_build</code>/<code>executable_link</code>/<code>shared_object_link</code>/<code>archive_link</code> exec paths,
 <code>EnvironmentManager::which</code>, <code>PackageConfigManager::find_package</code>, and the
-<code>cxpm-descriptor-sandbox</code> helper (see <a href="../cxpm/srs-sandbox/">srs-sandbox.md</a>
+<code>cxpm-descriptor-sandbox</code> helper (see <a href="/cxpm/srs-sandbox/">srs-sandbox.md</a>
 ), which needs a real
 compiled shared object to load. These are covered only by the opt-in CLI <em>integration</em> tier
 (<code>CXPM_BUILD_CLI_INTEGRATION_TESTS=ON</code>), which runs a real <code>cxpm --build</code> against fixture copies
@@ -352,11 +352,11 @@ adds a <code>coverage</code> target that runs the unit suite and regenerates an 
 </span></span></code></pre></div><p>The report counts only <code>libraries/cxpm-interface/src/</code>, excluding <code>CXPM/Testing/</code> itself, since
 the goal is coverage of the code under test, not of the test harness.</p>
 <h2 id="known-gaps">Known gaps</h2>
-<p>See <a href="../cxpm/srs-unit-testing/#8-deferred-coverage--future-work">srs-unit-testing.md §8</a>
+<p>See <a href="/cxpm/srs-unit-testing/#8-deferred-coverage--future-work">srs-unit-testing.md §8</a>
  for the
 itemized list of components not yet unit-tested (<code>ToolchainManager</code>, <code>ProjectManager</code>&rsquo;s
 orchestration logic, <code>ShellManager</code> fault injection, <code>EnvironmentManager::which</code>/<code>get</code>) and why.
-<code>CXPM_SANDBOX_DISABLE=1</code>&rsquo;s fallback path (see <a href="../cxpm/srs-sandbox/#5-testing">srs-sandbox.md §5</a>
+<code>CXPM_SANDBOX_DISABLE=1</code>&rsquo;s fallback path (see <a href="/cxpm/srs-sandbox/#5-testing">srs-sandbox.md §5</a>
 ) is
 verified manually but not yet an automated CTest case.</p>
 

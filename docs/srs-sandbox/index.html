@@ -17,7 +17,7 @@
 </script>
 
   
-  <link rel="stylesheet" href="../cxpm/css/main.min.705c6b10a27719bb861d20380e003ddc3bcfb26a9d5969863974a958f0604544.css" integrity="sha256-cFxrEKJ3GbuGHSA4DgA93DvPsmqdWWmGOXSpWPBgRUQ=">
+  <link rel="stylesheet" href="/cxpm/css/main.min.705c6b10a27719bb861d20380e003ddc3bcfb26a9d5969863974a958f0604544.css" integrity="sha256-cFxrEKJ3GbuGHSA4DgA93DvPsmqdWWmGOXSpWPBgRUQ=">
 
 
 </head>
@@ -28,7 +28,7 @@
     <button class="menu-toggle" id="menu-toggle" aria-label="Toggle navigation" aria-controls="sidebar" aria-expanded="false">
       <span></span><span></span><span></span>
     </button>
-    <a class="brand" href="../cxpm/">
+    <a class="brand" href="/cxpm/">
       <span class="brand-mark">cxpm</span>
       <span class="brand-sub">docs</span>
     </a>
@@ -61,7 +61,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/">Overview</a>
+    <a href="/cxpm/">Overview</a>
     
     
   </li>
@@ -69,7 +69,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/quickstart/">Quickstart</a>
+    <a href="/cxpm/quickstart/">Quickstart</a>
     
     
   </li>
@@ -77,7 +77,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/architecture/">Architecture</a>
+    <a href="/cxpm/architecture/">Architecture</a>
     
     
   </li>
@@ -85,7 +85,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/tooling/">CLI Tooling</a>
+    <a href="/cxpm/tooling/">CLI Tooling</a>
     
     
   </li>
@@ -93,7 +93,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/testing/">Testing</a>
+    <a href="/cxpm/testing/">Testing</a>
     
     
   </li>
@@ -101,7 +101,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/roadmap/">Roadmap</a>
+    <a href="/cxpm/roadmap/">Roadmap</a>
     
     
   </li>
@@ -118,7 +118,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/srs-architecture/">Architecture &amp; Flaws</a>
+    <a href="/cxpm/srs-architecture/">Architecture &amp; Flaws</a>
     
     
   </li>
@@ -126,7 +126,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/srs-unit-testing/">Unit Testing the API</a>
+    <a href="/cxpm/srs-unit-testing/">Unit Testing the API</a>
     
     
   </li>
@@ -134,7 +134,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/srs-ctest-tooling/">CMake/CTest Tooling</a>
+    <a href="/cxpm/srs-ctest-tooling/">CMake/CTest Tooling</a>
     
     
   </li>
@@ -142,7 +142,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/srs-json-manifests/">JSON Manifests</a>
+    <a href="/cxpm/srs-json-manifests/">JSON Manifests</a>
     
     
   </li>
@@ -150,7 +150,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/srs-generate/">cxpm --generate</a>
+    <a href="/cxpm/srs-generate/">cxpm --generate</a>
     
     
   </li>
@@ -158,7 +158,7 @@
   
   <li class="menu-item is-active">
     
-    <a href="../cxpm/srs-sandbox/" aria-current="page">Descriptor Sandbox</a>
+    <a href="/cxpm/srs-sandbox/" aria-current="page">Descriptor Sandbox</a>
     
     
   </li>
@@ -166,7 +166,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/srs-parallel-build/">Parallel Build (proposed)</a>
+    <a href="/cxpm/srs-parallel-build/">Parallel Build (proposed)</a>
     
     
   </li>
@@ -188,7 +188,7 @@
     <div class="content-inner">
       
 <nav class="breadcrumbs" aria-label="Breadcrumb">
-  <a href="../cxpm/">cxpm</a>
+  <a href="/cxpm/">cxpm</a>
   <span class="sep">/</span><span>SRS: Descriptor Sandbox</span>
 </nav>
 <article class="prose">
@@ -198,9 +198,9 @@
 <strong>Scope:</strong> <code>applications/cxpm-descriptor-sandbox</code>, <code>CXPM::Controllers::DescriptorSandbox</code>
 (<code>libraries/cxpm-interface/src/CXPM/DescriptorSandbox.hpp</code>), the two call sites it replaces:
 <code>ProjectManager::load_from_manifest</code>, <code>ToolchainManager::load_toolchain_plugin</code>
-<strong>Companion documents:</strong> <a href="../cxpm/architecture/">architecture.md</a>
-, <a href="../cxpm/srs-json-manifests/">srs-json-manifests.md</a>
- (the codec used as the IPC format), <a href="../cxpm/srs-architecture/">srs-architecture.md</a>
+<strong>Companion documents:</strong> <a href="/cxpm/architecture/">architecture.md</a>
+, <a href="/cxpm/srs-json-manifests/">srs-json-manifests.md</a>
+ (the codec used as the IPC format), <a href="/cxpm/srs-architecture/">srs-architecture.md</a>
  items A28/A21 (the trust-boundary and performance context this responds to)</p>
 <hr>
 <h2 id="1-purpose">1. Purpose</h2>
@@ -237,13 +237,13 @@ JSON-encoded descriptor on stdout.</p>
 			<tr>
 					<td>A <code>package.json</code>/<code>toolchain.json</code> manifest</td>
 					<td><strong>N/A — nothing to sandbox</strong></td>
-					<td>Parsed by cxpm&rsquo;s own trusted <code>JsonValueParser</code>; never compiled, never <code>dlopen</code>&rsquo;d, never runs as code. This is a direct, structural security advantage of <a href="../cxpm/srs-json-manifests/">srs-json-manifests.md</a>
+					<td>Parsed by cxpm&rsquo;s own trusted <code>JsonValueParser</code>; never compiled, never <code>dlopen</code>&rsquo;d, never runs as code. This is a direct, structural security advantage of <a href="/cxpm/srs-json-manifests/">srs-json-manifests.md</a>
 &rsquo;s declarative format over the <code>.cpp</code> format, independent of anything else in this document.</td>
 			</tr>
 			<tr>
 					<td>The toolchain&rsquo;s actual compiler/linker/archiver invocations (<code>Toolchain::object_build</code>/<code>executable_link</code>/&hellip;)</td>
 					<td>Not newly sandboxed here</td>
-					<td>These already run as separate <code>popen</code>&rsquo;d processes (<code>Utils::Unix::ShellManager::exec</code>), not <code>dlopen</code>&rsquo;d in-process — see <a href="../cxpm/srs-architecture/">srs-architecture.md</a>
+					<td>These already run as separate <code>popen</code>&rsquo;d processes (<code>Utils::Unix::ShellManager::exec</code>), not <code>dlopen</code>&rsquo;d in-process — see <a href="/cxpm/srs-architecture/">srs-architecture.md</a>
  item A28 for that call site&rsquo;s own (different) hardening needs</td>
 			</tr>
 	</tbody>
@@ -271,7 +271,7 @@ before any of the loaded code&rsquo;s static initializers run.</li>
 (matching the exact getter name the existing generated loader stubs already export — see
 <code>ProjectManager::BasicProjectLoaderSource</code> / <code>ToolchainManager::ToolchainLoaderSource</code>), call
 it, and print the resulting descriptor as <strong>compact JSON on stdout</strong> via <code>to_json()</code> +
-<code>write_json()</code> (<a href="../cxpm/srs-json-manifests/">srs-json-manifests.md</a>
+<code>write_json()</code> (<a href="/cxpm/srs-json-manifests/">srs-json-manifests.md</a>
 ).</li>
 <li>On any failure (missing file, missing symbol, malformed argument, exception during
 serialization), it SHALL print a diagnostic to <strong>stderr</strong> and exit non-zero: <code>1</code> for a runtime
@@ -284,7 +284,7 @@ failure.</li>
 <code>DescriptorSandbox::load_toolchain(shared_object_path) -&gt; ToolchainDescriptor</code> SHALL spawn the
 helper, capture its stdout and stderr, wait for it to exit, and on success parse its stdout as
 JSON back into the corresponding descriptor via <code>*_descriptor_from_json</code>
-(<a href="../cxpm/srs-json-manifests/">srs-json-manifests.md</a>
+(<a href="/cxpm/srs-json-manifests/">srs-json-manifests.md</a>
 ). On non-zero exit, they SHALL throw
 <code>RuntimeException</code> including the captured stderr text and (if applicable) which signal killed
 the child.</li>
@@ -319,7 +319,7 @@ and everything above them.</li>
 <h2 id="4-known-limitations-accepted-for-this-iteration">4. Known limitations (accepted for this iteration)</h2>
 <ul>
 <li><strong>No ABI/schema version check</strong> between the descriptor layout the sandboxed <code>.cpp</code> was compiled
-against and the one the parent process expects. This is <a href="../cxpm/srs-architecture/">srs-architecture.md</a>
+against and the one the parent process expects. This is <a href="/cxpm/srs-architecture/">srs-architecture.md</a>
 
 item A23, unchanged by this SRS — the sandbox changes <em>where</em> the <code>dlopen</code> happens (an isolated
 child instead of the main process), not whether the loaded code&rsquo;s compiled struct layout is
@@ -332,21 +332,21 @@ security property this SRS is chartered to provide.</li>
 declares <code>extern ProjectDescriptor project;</code> for a global actually typed <code>Project</code> in the
 compiled TU (layout-compatible today because <code>Project</code> adds no data members over
 <code>ProjectDescriptor</code>, but not enforced by the type system) — pre-existing behavior, documented
-in <a href="../cxpm/srs-architecture/">srs-architecture.md</a>
+in <a href="/cxpm/srs-architecture/">srs-architecture.md</a>
  item A23, not introduced or worsened here.</li>
 <li><strong>Best-effort, not a hard security boundary.</strong> <code>setrlimit</code>/<code>prctl</code> failures are not treated as
 fatal (a tightened-but-imperfect sandbox beats none), and nothing here constitutes a full
 container/namespace/seccomp jail. It bounds CPU, memory and wall-clock time and removes direct
 memory access to the parent process; it does not restrict filesystem or network access from
 within the child. A future iteration could add <code>seccomp-bpf</code>/Linux namespaces for stronger
-isolation — tracked in <a href="../cxpm/roadmap/">roadmap.md</a>
+isolation — tracked in <a href="/cxpm/roadmap/">roadmap.md</a>
 .</li>
 <li><strong>One extra process per manifest/toolchain load.</strong> This is a real, measured cost, additive to
 the existing per-invocation JIT-compilation cost documented in
-<a href="../cxpm/srs-architecture/">srs-architecture.md</a>
+<a href="/cxpm/srs-architecture/">srs-architecture.md</a>
  item A21. It was not separately benchmarked because
 it is dominated by that pre-existing compilation cost (compiling a <code>toolchain.cpp</code> takes ~4
-seconds on the reference machine used for <a href="../cxpm/srs-ctest-tooling/">srs-ctest-tooling.md</a>
+seconds on the reference machine used for <a href="/cxpm/srs-ctest-tooling/">srs-ctest-tooling.md</a>
 &rsquo;s
 integration tests; <code>posix_spawn</code>-ing a tiny helper and reading a few hundred bytes from a pipe
 is not the bottleneck). Once item A21&rsquo;s caching is implemented, this cost will be worth
@@ -375,7 +375,7 @@ re-measuring in isolation.</li>
 			</tr>
 			<tr>
 					<td><code>CXPM_SANDBOX_DISABLE=1</code> fallback still produces a working build</td>
-					<td>Manually verified during implementation (<code>cxpm --build examples/executable</code> with <code>CXPM_SANDBOX_DISABLE=1</code> produces the same runnable executable as the sandboxed path); not yet promoted to an automated CTest case — see <a href="../cxpm/roadmap/">roadmap.md</a>
+					<td>Manually verified during implementation (<code>cxpm --build examples/executable</code> with <code>CXPM_SANDBOX_DISABLE=1</code> produces the same runnable executable as the sandboxed path); not yet promoted to an automated CTest case — see <a href="/cxpm/roadmap/">roadmap.md</a>
 </td>
 			</tr>
 	</tbody>

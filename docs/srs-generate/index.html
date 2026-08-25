@@ -17,7 +17,7 @@
 </script>
 
   
-  <link rel="stylesheet" href="../cxpm/css/main.min.705c6b10a27719bb861d20380e003ddc3bcfb26a9d5969863974a958f0604544.css" integrity="sha256-cFxrEKJ3GbuGHSA4DgA93DvPsmqdWWmGOXSpWPBgRUQ=">
+  <link rel="stylesheet" href="/cxpm/css/main.min.705c6b10a27719bb861d20380e003ddc3bcfb26a9d5969863974a958f0604544.css" integrity="sha256-cFxrEKJ3GbuGHSA4DgA93DvPsmqdWWmGOXSpWPBgRUQ=">
 
 
 </head>
@@ -28,7 +28,7 @@
     <button class="menu-toggle" id="menu-toggle" aria-label="Toggle navigation" aria-controls="sidebar" aria-expanded="false">
       <span></span><span></span><span></span>
     </button>
-    <a class="brand" href="../cxpm/">
+    <a class="brand" href="/cxpm/">
       <span class="brand-mark">cxpm</span>
       <span class="brand-sub">docs</span>
     </a>
@@ -61,7 +61,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/">Overview</a>
+    <a href="/cxpm/">Overview</a>
     
     
   </li>
@@ -69,7 +69,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/quickstart/">Quickstart</a>
+    <a href="/cxpm/quickstart/">Quickstart</a>
     
     
   </li>
@@ -77,7 +77,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/architecture/">Architecture</a>
+    <a href="/cxpm/architecture/">Architecture</a>
     
     
   </li>
@@ -85,7 +85,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/tooling/">CLI Tooling</a>
+    <a href="/cxpm/tooling/">CLI Tooling</a>
     
     
   </li>
@@ -93,7 +93,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/testing/">Testing</a>
+    <a href="/cxpm/testing/">Testing</a>
     
     
   </li>
@@ -101,7 +101,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/roadmap/">Roadmap</a>
+    <a href="/cxpm/roadmap/">Roadmap</a>
     
     
   </li>
@@ -118,7 +118,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/srs-architecture/">Architecture &amp; Flaws</a>
+    <a href="/cxpm/srs-architecture/">Architecture &amp; Flaws</a>
     
     
   </li>
@@ -126,7 +126,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/srs-unit-testing/">Unit Testing the API</a>
+    <a href="/cxpm/srs-unit-testing/">Unit Testing the API</a>
     
     
   </li>
@@ -134,7 +134,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/srs-ctest-tooling/">CMake/CTest Tooling</a>
+    <a href="/cxpm/srs-ctest-tooling/">CMake/CTest Tooling</a>
     
     
   </li>
@@ -142,7 +142,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/srs-json-manifests/">JSON Manifests</a>
+    <a href="/cxpm/srs-json-manifests/">JSON Manifests</a>
     
     
   </li>
@@ -150,7 +150,7 @@
   
   <li class="menu-item is-active">
     
-    <a href="../cxpm/srs-generate/" aria-current="page">cxpm --generate</a>
+    <a href="/cxpm/srs-generate/" aria-current="page">cxpm --generate</a>
     
     
   </li>
@@ -158,7 +158,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/srs-sandbox/">Descriptor Sandbox</a>
+    <a href="/cxpm/srs-sandbox/">Descriptor Sandbox</a>
     
     
   </li>
@@ -166,7 +166,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/srs-parallel-build/">Parallel Build (proposed)</a>
+    <a href="/cxpm/srs-parallel-build/">Parallel Build (proposed)</a>
     
     
   </li>
@@ -188,7 +188,7 @@
     <div class="content-inner">
       
 <nav class="breadcrumbs" aria-label="Breadcrumb">
-  <a href="../cxpm/">cxpm</a>
+  <a href="/cxpm/">cxpm</a>
   <span class="sep">/</span><span>SRS: cxpm --generate</span>
 </nav>
 <article class="prose">
@@ -196,8 +196,8 @@
 <h2 id="cxpm---generate-scaffolding-packagecpp--toolchaincpp--packagejson--toolchainjson"><code>cxpm --generate</code>: Scaffolding package.cpp / toolchain.cpp / package.json / toolchain.json</h2>
 <p><strong>Project:</strong> cxpm
 <strong>Scope:</strong> <code>CXPM::Modules::Generators::*</code> (<code>ManifestGenerator.hpp</code>), <code>ApplicationView::generate</code>
-<strong>Companion documents:</strong> <a href="../cxpm/srs-json-manifests/">srs-json-manifests.md</a>
- (the format this feature emits), <a href="../cxpm/tooling/">tooling.md</a>
+<strong>Companion documents:</strong> <a href="/cxpm/srs-json-manifests/">srs-json-manifests.md</a>
+ (the format this feature emits), <a href="/cxpm/tooling/">tooling.md</a>
  (CLI reference)</p>
 <hr>
 <h2 id="1-purpose">1. Purpose</h2>
@@ -218,7 +218,7 @@ flag&rsquo;s captured tokens are <code>values</code>; <code>values.front()</code
 <li>If <code>directory</code> does not exist, it SHALL be created (<code>std::filesystem::create_directories</code>).</li>
 <li>The output filename SHALL be fixed per kind: <code>package.cpp</code>, <code>package.json</code>, <code>toolchain.cpp</code>,
 <code>toolchain.json</code> respectively — matching exactly what <code>assert_project_directory</code>
-(<a href="../cxpm/srs-json-manifests/">srs-json-manifests.md</a>
+(<a href="/cxpm/srs-json-manifests/">srs-json-manifests.md</a>
 ) and <code>ToolchainManager::autoscan</code> look for, so
 the freshly generated file is immediately usable with no rename.</li>
 <li>If the target file already exists, <code>--generate</code> SHALL refuse to overwrite it and raise
@@ -226,7 +226,7 @@ the freshly generated file is immediately usable with no rename.</li>
 <li>On success, the command SHALL log the written path (via <code>LoggerManager::info</code>) and return exit
 code 0; any failure (unknown kind, refused overwrite, filesystem error) SHALL propagate as an
 exception, caught by <code>main()</code>&rsquo;s existing handler, resulting in a non-zero exit code — consistent
-with every other command&rsquo;s exit-code contract (see <a href="../cxpm/srs-architecture/">srs-architecture.md</a>
+with every other command&rsquo;s exit-code contract (see <a href="/cxpm/srs-architecture/">srs-architecture.md</a>
 
 item A7, which established that contract for <code>--install</code>).</li>
 <li><code>print_usage()</code>&rsquo;s help text SHALL document <code>--generate</code>, its four kinds, and <code>--force</code>.</li>
@@ -236,14 +236,14 @@ item A7, which established that contract for <code>--install</code>).</li>
 <li><strong><code>package-cpp</code></strong> and <strong><code>toolchain-cpp</code></strong> SHALL be rendered from a fixed C++ source template
 (via <code>std::format</code>) using the <code>Target</code>/<code>Project</code> and <code>Toolchain</code> fluent builder APIs
 respectively — i.e. the generated source SHALL be idiomatic, using the same builder pattern
-documented in <a href="../cxpm/tooling/">tooling.md</a>
+documented in <a href="/cxpm/tooling/">tooling.md</a>
 , not the broken <code>TargetDescriptor()</code>/<code>ProjectDescriptor()</code>
-pattern <a href="../cxpm/srs-architecture/">srs-architecture.md</a>
+pattern <a href="/cxpm/srs-architecture/">srs-architecture.md</a>
  item A30 fixed in the README.</li>
 <li><strong><code>package-json</code></strong> and <strong><code>toolchain-json</code></strong> SHALL NOT be hand-written string templates. They
 SHALL be produced by constructing a real <code>Target</code>/<code>ProjectDescriptor</code> or <code>Toolchain</code> object with
 representative example values, then serializing it through the same <code>to_json()</code> +
-<code>write_json_pretty()</code> path defined in <a href="../cxpm/srs-json-manifests/">srs-json-manifests.md</a>
+<code>write_json_pretty()</code> path defined in <a href="/cxpm/srs-json-manifests/">srs-json-manifests.md</a>
 . This
 guarantees, by construction, that a generated <code>package.json</code>/<code>toolchain.json</code> is always
 parseable by <code>ProjectManager::load_project</code>/<code>ToolchainManager::autoscan</code> — there is no separate
@@ -300,7 +300,7 @@ consumer (<code>package-cpp</code>/<code>package.json</code> → <code>cxpm --bu
 with it.</li>
 <li><code>cxpm --generate</code> with no <code>kind</code> argument, or an unrecognized <code>kind</code>, fails cleanly with a
 message naming the valid options, matching every other command&rsquo;s &ldquo;fail fast with a clear
-message&rdquo; contract established across <a href="../cxpm/srs-architecture/">srs-architecture.md</a>
+message&rdquo; contract established across <a href="/cxpm/srs-architecture/">srs-architecture.md</a>
 &rsquo;s regression
 fixes.</li>
 </ul>

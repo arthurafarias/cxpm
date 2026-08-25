@@ -17,7 +17,7 @@
 </script>
 
   
-  <link rel="stylesheet" href="../cxpm/css/main.min.705c6b10a27719bb861d20380e003ddc3bcfb26a9d5969863974a958f0604544.css" integrity="sha256-cFxrEKJ3GbuGHSA4DgA93DvPsmqdWWmGOXSpWPBgRUQ=">
+  <link rel="stylesheet" href="/cxpm/css/main.min.705c6b10a27719bb861d20380e003ddc3bcfb26a9d5969863974a958f0604544.css" integrity="sha256-cFxrEKJ3GbuGHSA4DgA93DvPsmqdWWmGOXSpWPBgRUQ=">
 
 
 </head>
@@ -28,7 +28,7 @@
     <button class="menu-toggle" id="menu-toggle" aria-label="Toggle navigation" aria-controls="sidebar" aria-expanded="false">
       <span></span><span></span><span></span>
     </button>
-    <a class="brand" href="../cxpm/">
+    <a class="brand" href="/cxpm/">
       <span class="brand-mark">cxpm</span>
       <span class="brand-sub">docs</span>
     </a>
@@ -61,7 +61,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/">Overview</a>
+    <a href="/cxpm/">Overview</a>
     
     
   </li>
@@ -69,7 +69,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/quickstart/">Quickstart</a>
+    <a href="/cxpm/quickstart/">Quickstart</a>
     
     
   </li>
@@ -77,7 +77,7 @@
   
   <li class="menu-item is-active">
     
-    <a href="../cxpm/architecture/" aria-current="page">Architecture</a>
+    <a href="/cxpm/architecture/" aria-current="page">Architecture</a>
     
     
   </li>
@@ -85,7 +85,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/tooling/">CLI Tooling</a>
+    <a href="/cxpm/tooling/">CLI Tooling</a>
     
     
   </li>
@@ -93,7 +93,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/testing/">Testing</a>
+    <a href="/cxpm/testing/">Testing</a>
     
     
   </li>
@@ -101,7 +101,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/roadmap/">Roadmap</a>
+    <a href="/cxpm/roadmap/">Roadmap</a>
     
     
   </li>
@@ -118,7 +118,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/srs-architecture/">Architecture &amp; Flaws</a>
+    <a href="/cxpm/srs-architecture/">Architecture &amp; Flaws</a>
     
     
   </li>
@@ -126,7 +126,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/srs-unit-testing/">Unit Testing the API</a>
+    <a href="/cxpm/srs-unit-testing/">Unit Testing the API</a>
     
     
   </li>
@@ -134,7 +134,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/srs-ctest-tooling/">CMake/CTest Tooling</a>
+    <a href="/cxpm/srs-ctest-tooling/">CMake/CTest Tooling</a>
     
     
   </li>
@@ -142,7 +142,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/srs-json-manifests/">JSON Manifests</a>
+    <a href="/cxpm/srs-json-manifests/">JSON Manifests</a>
     
     
   </li>
@@ -150,7 +150,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/srs-generate/">cxpm --generate</a>
+    <a href="/cxpm/srs-generate/">cxpm --generate</a>
     
     
   </li>
@@ -158,7 +158,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/srs-sandbox/">Descriptor Sandbox</a>
+    <a href="/cxpm/srs-sandbox/">Descriptor Sandbox</a>
     
     
   </li>
@@ -166,7 +166,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/srs-parallel-build/">Parallel Build (proposed)</a>
+    <a href="/cxpm/srs-parallel-build/">Parallel Build (proposed)</a>
     
     
   </li>
@@ -188,7 +188,7 @@
     <div class="content-inner">
       
 <nav class="breadcrumbs" aria-label="Breadcrumb">
-  <a href="../cxpm/">cxpm</a>
+  <a href="/cxpm/">cxpm</a>
   <span class="sep">/</span><span>Architecture</span>
 </nav>
 <article class="prose">
@@ -235,14 +235,14 @@
 <code>cxpm-descriptor-sandbox</code> helper executable) <code>posix_spawn</code>s a disposable, resource-limited child
 process to <code>dlopen</code> a compiled <code>package.cpp</code>/<code>toolchain.cpp</code> shared object and hand its descriptor
 back as JSON over a pipe, rather than <code>dlopen</code>-ing that (potentially third-party) compiled code
-directly inside the running <code>cxpm</code> process. See <a href="../cxpm/srs-sandbox/">srs-sandbox.md</a>
+directly inside the running <code>cxpm</code> process. See <a href="/cxpm/srs-sandbox/">srs-sandbox.md</a>
 .</p>
 <p>Every JIT-compilation step above is uncached: toolchain plugins are recompiled from source and
 loaded fresh on every single <code>cxpm --build</code>/<code>--install</code> invocation, including the project
 manifest itself, whenever the <code>.cpp</code> manifest format is used. See
-<a href="../cxpm/srs-architecture/">srs-architecture.md</a>
+<a href="/cxpm/srs-architecture/">srs-architecture.md</a>
  item A21 for the performance implication and a
-suggested caching correction — and see <a href="../cxpm/srs-json-manifests/">srs-json-manifests.md</a>
+suggested caching correction — and see <a href="/cxpm/srs-json-manifests/">srs-json-manifests.md</a>
  for the
 <code>.json</code> alternative, which pays neither this compilation cost nor needs the sandbox at all, since
 it never executes code in the first place.</p>
@@ -274,7 +274,7 @@ it never executes code in the first place.</p>
 			<tr>
 					<td><code>DescriptorSandbox</code></td>
 					<td><code>CXPM::Controllers</code></td>
-					<td><code>posix_spawn</code>s <code>cxpm-descriptor-sandbox</code> to extract a descriptor from a compiled manifest/toolchain <code>.so</code> out of process — see <a href="../cxpm/srs-sandbox/">srs-sandbox.md</a>
+					<td><code>posix_spawn</code>s <code>cxpm-descriptor-sandbox</code> to extract a descriptor from a compiled manifest/toolchain <code>.so</code> out of process — see <a href="/cxpm/srs-sandbox/">srs-sandbox.md</a>
 </td>
 			</tr>
 			<tr>
@@ -315,7 +315,7 @@ it never executes code in the first place.</p>
 			<tr>
 					<td><code>JsonValueParser</code>/<code>write_json</code>/<code>write_json_pretty</code></td>
 					<td><code>CXPM::Modules::Serialization</code></td>
-					<td>The <code>Value</code> ↔ JSON text codec backing <code>package.json</code>/<code>toolchain.json</code> and <code>DescriptorSandbox</code>&rsquo;s IPC format — see <a href="../cxpm/srs-json-manifests/">srs-json-manifests.md</a>
+					<td>The <code>Value</code> ↔ JSON text codec backing <code>package.json</code>/<code>toolchain.json</code> and <code>DescriptorSandbox</code>&rsquo;s IPC format — see <a href="/cxpm/srs-json-manifests/">srs-json-manifests.md</a>
 </td>
 			</tr>
 			<tr>
@@ -326,7 +326,7 @@ it never executes code in the first place.</p>
 			<tr>
 					<td><code>ManifestGenerator</code></td>
 					<td><code>CXPM::Modules::Generators</code></td>
-					<td>Backs <code>cxpm --generate</code>; the <code>*-json</code> kinds are rendered through the serializers above, not hand-written — see <a href="../cxpm/srs-generate/">srs-generate.md</a>
+					<td>Backs <code>cxpm --generate</code>; the <code>*-json</code> kinds are rendered through the serializers above, not hand-written — see <a href="/cxpm/srs-generate/">srs-generate.md</a>
 </td>
 			</tr>
 			<tr>
@@ -347,12 +347,12 @@ it never executes code in the first place.</p>
 loader stub exposes an <code>extern &quot;C&quot; get_project()</code> symbol that <code>ProjectManager</code> resolves. This
 means the manifest language is exactly as expressive as C++ itself — no custom parser, no schema
 to keep in sync — at the cost of every <code>cxpm --build</code> compiling and loading a fresh shared object
-before doing any real build work (see A21/A22 in <a href="../cxpm/srs-architecture/">srs-architecture.md</a>
+before doing any real build work (see A21/A22 in <a href="/cxpm/srs-architecture/">srs-architecture.md</a>
  for
 the concrete cost and a naming-collision caveat this currently has).</p>
 <p><code>package.json</code> is the declarative alternative: <code>ProjectManager::load_project</code> parses it straight
 into the same <code>ProjectDescriptor</code> the <code>.cpp</code> path produces, with no compiler invocation and no
-<code>dlopen</code> at all (see <a href="../cxpm/srs-json-manifests/">srs-json-manifests.md</a>
+<code>dlopen</code> at all (see <a href="/cxpm/srs-json-manifests/">srs-json-manifests.md</a>
 ). Everything downstream of
 &ldquo;the manifest is loaded&rdquo; — toolchain selection, building, installing — is identical regardless of
 which format was on disk, because both paths converge on the same struct.
@@ -365,7 +365,7 @@ either from a <code>toolchain.cpp</code> plugin (compiled on demand, using whate
 <code>toolchain.cpp</code> source (<code>install(FILES src/toolchain.cpp DESTINATION share/cxpm/toolchains/&lt;name&gt;)</code>).
 This plugin model is what lets <code>nvcc</code> (an entirely different toolchain family) sit alongside
 <code>gcc</code>/<code>g++</code> without any special-casing in <code>cxpm</code> itself; the <code>.cpp</code>/<code>.json</code> choice is orthogonal
-to that — see <a href="../cxpm/srs-json-manifests/">srs-json-manifests.md</a>
+to that — see <a href="/cxpm/srs-json-manifests/">srs-json-manifests.md</a>
 .</p>
 <h2 id="sandboxed-descriptor-extraction">Sandboxed descriptor extraction</h2>
 <p>Both manifest formats ultimately need a <code>ProjectDescriptor</code>/<code>ToolchainDescriptor</code> in the running
@@ -375,20 +375,20 @@ to mean <code>dlopen</code>-ing the compiled <code>.so</code> directly into <cod
 of the <code>cxpm</code> process the instant <code>dlopen()</code> returned. <code>CXPM::Controllers::DescriptorSandbox</code> now
 does that step in a <code>posix_spawn</code>&rsquo;d, resource-limited child process instead, communicating the
 result back as JSON — reusing the exact same codec <code>package.json</code> is parsed with. See
-<a href="../cxpm/srs-sandbox/">srs-sandbox.md</a>
+<a href="/cxpm/srs-sandbox/">srs-sandbox.md</a>
  for the full design and its explicitly accepted limitations.</p>
 <h2 id="honest-status">Honest status</h2>
 <p>This architecture is functional today — see the <code>cli_build_example_executable</code>/
 <code>cli_build_example_executable_json</code> integration tests in
-<a href="../cxpm/srs-ctest-tooling/">srs-ctest-tooling.md</a>
+<a href="/cxpm/srs-ctest-tooling/">srs-ctest-tooling.md</a>
  for reproducible end-to-end builds through both
 manifest formats and the sandboxed descriptor-loading path — but several parts are stubbed, dead,
-or internally inconsistent. <a href="../cxpm/srs-architecture/">srs-architecture.md</a>
+or internally inconsistent. <a href="/cxpm/srs-architecture/">srs-architecture.md</a>
  itemizes every such flaw
 found while writing this documentation, with file:line citations and a suggested correction for
 each; several have since been fixed, including one — the <code>CXPM::Controllers</code>/<code>::Controllers</code>
 namespace split (item A17) — that broke this codebase&rsquo;s own build while implementing
-<a href="../cxpm/srs-sandbox/">srs-sandbox.md</a>
+<a href="/cxpm/srs-sandbox/">srs-sandbox.md</a>
 , turning a documented-but-latent flaw into concrete proof of why
 it mattered.</p>
 

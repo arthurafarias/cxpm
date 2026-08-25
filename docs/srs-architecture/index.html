@@ -17,7 +17,7 @@
 </script>
 
   
-  <link rel="stylesheet" href="../cxpm/css/main.min.705c6b10a27719bb861d20380e003ddc3bcfb26a9d5969863974a958f0604544.css" integrity="sha256-cFxrEKJ3GbuGHSA4DgA93DvPsmqdWWmGOXSpWPBgRUQ=">
+  <link rel="stylesheet" href="/cxpm/css/main.min.705c6b10a27719bb861d20380e003ddc3bcfb26a9d5969863974a958f0604544.css" integrity="sha256-cFxrEKJ3GbuGHSA4DgA93DvPsmqdWWmGOXSpWPBgRUQ=">
 
 
 </head>
@@ -28,7 +28,7 @@
     <button class="menu-toggle" id="menu-toggle" aria-label="Toggle navigation" aria-controls="sidebar" aria-expanded="false">
       <span></span><span></span><span></span>
     </button>
-    <a class="brand" href="../cxpm/">
+    <a class="brand" href="/cxpm/">
       <span class="brand-mark">cxpm</span>
       <span class="brand-sub">docs</span>
     </a>
@@ -61,7 +61,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/">Overview</a>
+    <a href="/cxpm/">Overview</a>
     
     
   </li>
@@ -69,7 +69,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/quickstart/">Quickstart</a>
+    <a href="/cxpm/quickstart/">Quickstart</a>
     
     
   </li>
@@ -77,7 +77,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/architecture/">Architecture</a>
+    <a href="/cxpm/architecture/">Architecture</a>
     
     
   </li>
@@ -85,7 +85,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/tooling/">CLI Tooling</a>
+    <a href="/cxpm/tooling/">CLI Tooling</a>
     
     
   </li>
@@ -93,7 +93,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/testing/">Testing</a>
+    <a href="/cxpm/testing/">Testing</a>
     
     
   </li>
@@ -101,7 +101,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/roadmap/">Roadmap</a>
+    <a href="/cxpm/roadmap/">Roadmap</a>
     
     
   </li>
@@ -118,7 +118,7 @@
   
   <li class="menu-item is-active">
     
-    <a href="../cxpm/srs-architecture/" aria-current="page">Architecture &amp; Flaws</a>
+    <a href="/cxpm/srs-architecture/" aria-current="page">Architecture &amp; Flaws</a>
     
     
   </li>
@@ -126,7 +126,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/srs-unit-testing/">Unit Testing the API</a>
+    <a href="/cxpm/srs-unit-testing/">Unit Testing the API</a>
     
     
   </li>
@@ -134,7 +134,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/srs-ctest-tooling/">CMake/CTest Tooling</a>
+    <a href="/cxpm/srs-ctest-tooling/">CMake/CTest Tooling</a>
     
     
   </li>
@@ -142,7 +142,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/srs-json-manifests/">JSON Manifests</a>
+    <a href="/cxpm/srs-json-manifests/">JSON Manifests</a>
     
     
   </li>
@@ -150,7 +150,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/srs-generate/">cxpm --generate</a>
+    <a href="/cxpm/srs-generate/">cxpm --generate</a>
     
     
   </li>
@@ -158,7 +158,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/srs-sandbox/">Descriptor Sandbox</a>
+    <a href="/cxpm/srs-sandbox/">Descriptor Sandbox</a>
     
     
   </li>
@@ -166,7 +166,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/srs-parallel-build/">Parallel Build (proposed)</a>
+    <a href="/cxpm/srs-parallel-build/">Parallel Build (proposed)</a>
     
     
   </li>
@@ -188,7 +188,7 @@
     <div class="content-inner">
       
 <nav class="breadcrumbs" aria-label="Breadcrumb">
-  <a href="../cxpm/">cxpm</a>
+  <a href="/cxpm/">cxpm</a>
   <span class="sep">/</span><span>SRS: Architecture &amp; Flaws</span>
 </nav>
 <article class="prose">
@@ -199,9 +199,9 @@
 (every header under <code>libraries/cxpm-interface/src/CXPM/</code>), <code>applications/cxpm/src/cxpm.cpp</code>, and
 all three toolchain plugins, then itemizing the architecture as it actually behaves today —
 not as aspirational design.
-<strong>Companion documents:</strong> <a href="../cxpm/architecture/">architecture.md</a>
+<strong>Companion documents:</strong> <a href="/cxpm/architecture/">architecture.md</a>
  (component diagram),
-<a href="../cxpm/srs-unit-testing/">srs-unit-testing.md</a>
+<a href="/cxpm/srs-unit-testing/">srs-unit-testing.md</a>
  (test coverage this SRS&rsquo;s requirements imply)</p>
 <hr>
 <h2 id="1-purpose">1. Purpose</h2>
@@ -215,7 +215,7 @@ severity, a suggested correction, and — for the subset fixed as part of this c
 regression test that pins the fix.</li>
 </ol>
 <h2 id="2-architecture-overview">2. Architecture overview</h2>
-<p>See <a href="../cxpm/architecture/">architecture.md</a>
+<p>See <a href="/cxpm/architecture/">architecture.md</a>
  for the full component table and control-flow diagram.
 In one paragraph: <code>cxpm</code> (<code>Views::ApplicationView</code>) parses <code>argv</code> into build/install commands;
 <code>Controllers::ProjectManager</code> compiles the target directory&rsquo;s <code>package.cpp</code> into a shared object
@@ -258,10 +258,10 @@ environment variable, then a fixed list of system/user install-prefix-relative d
 (incorrect behavior or dead API surface with no workaround), <strong>Medium</strong> (maintainability/latent
 risk, not user-visible today), <strong>Low</strong> (cosmetic/naming).</p>
 <p>Status: <strong>Fixed</strong> = corrected and regression-tested as part of this change (see
-<a href="../cxpm/srs-unit-testing/#6-regression-test-requirement">srs-unit-testing.md §6</a>
+<a href="/cxpm/srs-unit-testing/#6-regression-test-requirement">srs-unit-testing.md §6</a>
 ). <strong>Deferred</strong> =
 itemized here with a suggested correction but intentionally not changed in this pass, either
-because the fix is a larger design decision (see <a href="../cxpm/roadmap/">roadmap.md</a>
+because the fix is a larger design decision (see <a href="/cxpm/roadmap/">roadmap.md</a>
 ) or because it touches
 code with no current test coverage that would catch a regression.</p>
 <h3 id="41-fixed-in-this-change">4.1 Fixed in this change</h3>
@@ -351,13 +351,13 @@ code with no current test coverage that would catch a regression.</p>
 					<td><code>ProjectManager</code></td>
 					<td><code>build_project</code>&rsquo;s error message referenced <code>&quot;package.json&quot;</code> (<code>.../package.json</code> as the second <code>{}</code> in <code>&quot;Failed to build manifest {} using {}&quot;</code>) while the only manifest mechanism at the time was a compiled <code>package.cpp</code> — leftover text from an earlier design iteration, and confusing on its own terms even before this session</td>
 					<td><code>ProjectManager.hpp:103</code> (pre-fix)</td>
-					<td>Superseded by <code>ProjectManager::load_project</code> (<a href="../cxpm/srs-json-manifests/">srs-json-manifests.md</a>
+					<td>Superseded by <code>ProjectManager::load_project</code> (<a href="/cxpm/srs-json-manifests/">srs-json-manifests.md</a>
 ), whose own error messages correctly reference <code>package.cpp</code>/<code>package.json</code> as the two <em>real</em> manifest mechanisms — this finding is now moot rather than separately patched</td>
 			</tr>
 			<tr>
 					<td><strong>A37</strong></td>
 					<td><code>ProjectManager</code>/<code>ToolchainManager</code></td>
-					<td>Toolchain discovery (<code>ToolchainManager::autoscan</code>) only ran as a side effect of <code>build_manifest</code> calling <code>ToolchainManager::current</code> to pick a toolchain for compiling <code>package.cpp</code> itself — an entirely incidental trigger. Invisible before this session because there was only one manifest code path; became a real bug the moment <a href="../cxpm/srs-json-manifests/">srs-json-manifests.md</a>
+					<td>Toolchain discovery (<code>ToolchainManager::autoscan</code>) only ran as a side effect of <code>build_manifest</code> calling <code>ToolchainManager::current</code> to pick a toolchain for compiling <code>package.cpp</code> itself — an entirely incidental trigger. Invisible before this session because there was only one manifest code path; became a real bug the moment <a href="/cxpm/srs-json-manifests/">srs-json-manifests.md</a>
 &rsquo;s <code>package.json</code> path was added (confirmed by reproduction: <code>cxpm --build</code> against a <code>package.json</code>-only directory failed with &ldquo;Couldn&rsquo;t find a compatible toolchain&rdquo; because the toolchain registry was never populated)</td>
 					<td><code>ProjectManager.hpp</code> <code>build_project</code>/<code>build_manifest</code> (pre-fix)</td>
 					<td><code>build_project</code> now calls <code>ToolchainManager::current</code> explicitly, exactly once, up front, regardless of manifest format, and threads the result into <code>load_project</code>/<code>build_manifest</code> so <code>autoscan</code>&rsquo;s JIT-compilation is not paid twice on the <code>package.cpp</code> path either</td>
@@ -365,7 +365,7 @@ code with no current test coverage that would catch a regression.</p>
 			<tr>
 					<td><strong>A17</strong></td>
 					<td>Namespacing</td>
-					<td>Two incompatible <code>Controllers</code> namespaces existed: <code>CXPM::Controllers</code> (<code>ProjectManager</code>, <code>ToolchainManager</code>) and a separate global-scope <code>::Controllers</code> (<code>PkgConfigManager</code>, <code>ClangdManager</code>); <code>Toolchain.hpp:618</code> resolved <code>Controllers::PackageConfigManager</code> via unqualified lookup reaching the global one only by luck of C++ lookup rules. This stopped being latent and became a real, reproduced build failure while implementing <a href="../cxpm/srs-sandbox/">srs-sandbox.md</a>
+					<td>Two incompatible <code>Controllers</code> namespaces existed: <code>CXPM::Controllers</code> (<code>ProjectManager</code>, <code>ToolchainManager</code>) and a separate global-scope <code>::Controllers</code> (<code>PkgConfigManager</code>, <code>ClangdManager</code>); <code>Toolchain.hpp:618</code> resolved <code>Controllers::PackageConfigManager</code> via unqualified lookup reaching the global one only by luck of C++ lookup rules. This stopped being latent and became a real, reproduced build failure while implementing <a href="/cxpm/srs-sandbox/">srs-sandbox.md</a>
 : adding <code>CXPM::Controllers::DescriptorSandbox</code> shifted which <code>Controllers</code> unqualified lookup found first from inside <code>namespace CXPM</code>, and <code>Toolchain.hpp:618</code> broke outright with &ldquo;<code>CXPM::Controllers::PackageConfigManager</code> has not been declared&rdquo;</td>
 					<td><code>PkgConfigManager.hpp</code>, <code>ClangdManager.hpp</code> (pre-fix)</td>
 					<td>Consolidated <code>PkgConfigManager.hpp</code> and <code>ClangdManager.hpp</code> onto <code>namespace CXPM::Controllers</code>; updated the one call site that had spelled it out as <code>::Controllers::PackageConfigManager</code> (<code>PkgConfigManagerTest.hpp</code>) to <code>CXPM::Controllers::PackageConfigManager</code></td>
@@ -575,13 +575,13 @@ code with no current test coverage that would catch a regression.</p>
 					<td>No CI configuration exists anywhere in the repository (<code>readme.md</code>&rsquo;s git history references a past &ldquo;github-actions compiler&rdquo; change, but no workflow file survives in the current tree)</td>
 					<td>repo-wide search</td>
 					<td>High (process)</td>
-					<td>Add a CI workflow that runs <code>ctest -L unit</code> (and, on a runner with a compiler, the full suite) on every push/PR — see <a href="../cxpm/roadmap/">roadmap.md</a>
+					<td>Add a CI workflow that runs <code>ctest -L unit</code> (and, on a runner with a compiler, the full suite) on every push/PR — see <a href="/cxpm/roadmap/">roadmap.md</a>
 </td>
 			</tr>
 	</tbody>
 </table>
 <h2 id="5-requirements-for-tests-covering-correct-function">5. Requirements for tests covering correct function</h2>
-<p>For every <strong>Fixed</strong> item in §4.1, <a href="../cxpm/srs-unit-testing/#6-regression-test-requirement">srs-unit-testing.md §6</a>
+<p>For every <strong>Fixed</strong> item in §4.1, <a href="/cxpm/srs-unit-testing/#6-regression-test-requirement">srs-unit-testing.md §6</a>
 
 names the exact test case pinning it — that table is the traceability link this SRS&rsquo;s &ldquo;cover in
 tests the requirements to function correctly&rdquo; mandate is checked against. For <strong>Deferred</strong> items,
@@ -591,7 +591,7 @@ pattern established in §4.1.</p>
 <h2 id="6-acceptance-criteria">6. Acceptance criteria</h2>
 <ul>
 <li>Every item in §4.1 has landed and is pinned by a named test (verified: see
-<a href="../cxpm/srs-unit-testing/">srs-unit-testing.md</a>
+<a href="/cxpm/srs-unit-testing/">srs-unit-testing.md</a>
 ).</li>
 <li>Every item in §4.2 is recorded with a severity and a concrete suggested correction, so it can be
 picked up independently without re-deriving the analysis (this document).</li>

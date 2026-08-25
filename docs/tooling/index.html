@@ -17,7 +17,7 @@
 </script>
 
   
-  <link rel="stylesheet" href="../cxpm/css/main.min.705c6b10a27719bb861d20380e003ddc3bcfb26a9d5969863974a958f0604544.css" integrity="sha256-cFxrEKJ3GbuGHSA4DgA93DvPsmqdWWmGOXSpWPBgRUQ=">
+  <link rel="stylesheet" href="/cxpm/css/main.min.705c6b10a27719bb861d20380e003ddc3bcfb26a9d5969863974a958f0604544.css" integrity="sha256-cFxrEKJ3GbuGHSA4DgA93DvPsmqdWWmGOXSpWPBgRUQ=">
 
 
 </head>
@@ -28,7 +28,7 @@
     <button class="menu-toggle" id="menu-toggle" aria-label="Toggle navigation" aria-controls="sidebar" aria-expanded="false">
       <span></span><span></span><span></span>
     </button>
-    <a class="brand" href="../cxpm/">
+    <a class="brand" href="/cxpm/">
       <span class="brand-mark">cxpm</span>
       <span class="brand-sub">docs</span>
     </a>
@@ -61,7 +61,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/">Overview</a>
+    <a href="/cxpm/">Overview</a>
     
     
   </li>
@@ -69,7 +69,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/quickstart/">Quickstart</a>
+    <a href="/cxpm/quickstart/">Quickstart</a>
     
     
   </li>
@@ -77,7 +77,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/architecture/">Architecture</a>
+    <a href="/cxpm/architecture/">Architecture</a>
     
     
   </li>
@@ -85,7 +85,7 @@
   
   <li class="menu-item is-active">
     
-    <a href="../cxpm/tooling/" aria-current="page">CLI Tooling</a>
+    <a href="/cxpm/tooling/" aria-current="page">CLI Tooling</a>
     
     
   </li>
@@ -93,7 +93,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/testing/">Testing</a>
+    <a href="/cxpm/testing/">Testing</a>
     
     
   </li>
@@ -101,7 +101,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/roadmap/">Roadmap</a>
+    <a href="/cxpm/roadmap/">Roadmap</a>
     
     
   </li>
@@ -118,7 +118,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/srs-architecture/">Architecture &amp; Flaws</a>
+    <a href="/cxpm/srs-architecture/">Architecture &amp; Flaws</a>
     
     
   </li>
@@ -126,7 +126,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/srs-unit-testing/">Unit Testing the API</a>
+    <a href="/cxpm/srs-unit-testing/">Unit Testing the API</a>
     
     
   </li>
@@ -134,7 +134,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/srs-ctest-tooling/">CMake/CTest Tooling</a>
+    <a href="/cxpm/srs-ctest-tooling/">CMake/CTest Tooling</a>
     
     
   </li>
@@ -142,7 +142,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/srs-json-manifests/">JSON Manifests</a>
+    <a href="/cxpm/srs-json-manifests/">JSON Manifests</a>
     
     
   </li>
@@ -150,7 +150,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/srs-generate/">cxpm --generate</a>
+    <a href="/cxpm/srs-generate/">cxpm --generate</a>
     
     
   </li>
@@ -158,7 +158,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/srs-sandbox/">Descriptor Sandbox</a>
+    <a href="/cxpm/srs-sandbox/">Descriptor Sandbox</a>
     
     
   </li>
@@ -166,7 +166,7 @@
   
   <li class="menu-item">
     
-    <a href="../cxpm/srs-parallel-build/">Parallel Build (proposed)</a>
+    <a href="/cxpm/srs-parallel-build/">Parallel Build (proposed)</a>
     
     
   </li>
@@ -188,7 +188,7 @@
     <div class="content-inner">
       
 <nav class="breadcrumbs" aria-label="Breadcrumb">
-  <a href="../cxpm/">cxpm</a>
+  <a href="/cxpm/">cxpm</a>
   <span class="sep">/</span><span>Tooling</span>
 </nav>
 <article class="prose">
@@ -199,7 +199,7 @@ build orchestration, install logic and manifest generation all live in the heade
 <code>cxpm-interface</code> library. A second, small executable, <code>cxpm-descriptor-sandbox</code>, is described
 separately under <a href="#sandboxed-descriptor-extraction">Sandboxed descriptor extraction</a>
  below. See
-<a href="../cxpm/quickstart/">quickstart.md</a>
+<a href="/cxpm/quickstart/">quickstart.md</a>
  for a recorded, end-to-end terminal walkthrough of the commands
 below.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>usage: cxpm [option] [arguments]
@@ -218,7 +218,7 @@ below.</p>
 </span></span></code></pre></div><p><code>--build</code>/<code>-b</code> requires exactly one directory argument containing a <code>package.cpp</code> <strong>or</strong>
 <code>package.json</code> (<code>Views::ApplicationView::assert_project_directory</code> validates this, and that the
 directory exists, before doing anything else — see
-<a href="../cxpm/srs-json-manifests/">srs-json-manifests.md</a>
+<a href="/cxpm/srs-json-manifests/">srs-json-manifests.md</a>
 ). If both are present, <code>package.cpp</code> takes
 precedence. <code>cxpm</code> loads the manifest into a <code>Project</code>, resolves a toolchain for each target&rsquo;s
 <code>.language</code>, and shells out to that toolchain&rsquo;s compiler, linker and archiver.</p>
@@ -239,11 +239,11 @@ POSIX-aligned prefix layout:</p>
 </span></span><span style="display:flex;"><span>cxpm --generate toolchain-json ./my-toolchain --force
 </span></span></code></pre></div><p><code>--generate</code>/<code>-g</code> writes a starter <code>package.cpp</code>/<code>package.json</code>/<code>toolchain.cpp</code>/<code>toolchain.json</code>
 into <code>directory</code> (default <code>.</code>, created if missing), refusing to overwrite an existing file unless
-<code>--force</code> is also given. See <a href="../cxpm/srs-generate/">srs-generate.md</a>
+<code>--force</code> is also given. See <a href="/cxpm/srs-generate/">srs-generate.md</a>
 .</p>
 <h2 id="describing-a-project-packagecpp-or-packagejson">Describing a project: <code>package.cpp</code> or <code>package.json</code></h2>
 <p>The <code>.cpp</code> and <code>.json</code> forms describe the exact same <code>ProjectDescriptor</code>; pick whichever fits —
-see <a href="../cxpm/srs-json-manifests/">srs-json-manifests.md</a>
+see <a href="/cxpm/srs-json-manifests/">srs-json-manifests.md</a>
  for the full requirements, and
 <code>cxpm --generate package-cpp</code>/<code>cxpm --generate package-json</code> to produce a starting point for
 either.</p>
@@ -264,7 +264,7 @@ either.</p>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">auto</span> project <span style="color:#f92672">=</span> Project().add(example).create();
 </span></span></code></pre></div><p>Use <code>Target</code>/<code>Project</code> (not the bare <code>TargetDescriptor</code>/<code>ProjectDescriptor</code> structs, which have no
-builder methods) — see <a href="../cxpm/srs-architecture/#41-fixed-in-this-change">srs-architecture.md item A30</a>
+builder methods) — see <a href="/cxpm/srs-architecture/#41-fixed-in-this-change">srs-architecture.md item A30</a>
 
 for a past README example that got this wrong.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
@@ -307,7 +307,7 @@ for a complete, buildable example.</p>
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p><code>cxpm</code> discovers <code>toolchain.cpp</code>/<code>toolchain.json</code> files on a search path seeded from the
 <code>cxpm_BUILD_EXTRA_MODULES_PATH</code> environment variable plus a fixed list of install-prefix-relative
-directories (see <a href="../cxpm/architecture/">architecture.md</a>
+directories (see <a href="/cxpm/architecture/">architecture.md</a>
 ). A <code>toolchain.cpp</code> is compiled on demand and
 its descriptor extracted through the sandbox described below; a <code>toolchain.json</code> is parsed
 directly, with no compilation step at all. <code>modules/toolchains/{gcc,g++,nvcc}</code> are the three
@@ -317,7 +317,7 @@ toolchains shipped with cxpm itself, installed as source under
 <p>Loading a compiled <code>package.cpp</code>/<code>toolchain.cpp</code> requires running whatever static-initializer code
 that <code>.cpp</code> file contains. <code>cxpm</code> does this in a separate, resource-limited child process
 (<code>cxpm-descriptor-sandbox</code>) rather than inside the main <code>cxpm</code> process — see
-<a href="../cxpm/srs-sandbox/">srs-sandbox.md</a>
+<a href="/cxpm/srs-sandbox/">srs-sandbox.md</a>
  for the full design. This is transparent to normal use; it can be
 disabled (falling back to the pre-sandbox direct-load behavior) with:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>CXPM_SANDBOX_DISABLE<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span> cxpm --build .
@@ -326,9 +326,9 @@ disabled (falling back to the pre-sandbox direct-load behavior) with:</p>
 <p>The tooling described on this page is <em>what <code>cxpm</code> does for its users</em>. A separate CMake/CTest
 facility exists for <em>testing</em> <code>cxpm</code> — registering <code>cxpm --build</code>/<code>--install</code>/<code>--generate</code>
 invocations (and direct <code>cxpm-descriptor-sandbox</code> calls) as CTest tests with fixtures, labels and
-exit-code assertions. See <a href="../cxpm/srs-ctest-tooling/">srs-ctest-tooling.md</a>
+exit-code assertions. See <a href="/cxpm/srs-ctest-tooling/">srs-ctest-tooling.md</a>
  and
-<a href="../cxpm/testing/">testing.md</a>
+<a href="/cxpm/testing/">testing.md</a>
  for that.</p>
 
 </article>
