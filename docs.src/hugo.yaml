@@ -2,7 +2,7 @@ baseURL: "/cxpm"
 locale: "en-US"
 title: "cxpm"
 theme: "hextra-lite"
-relativeURLs: true
+relativeURLs: false
 enableRobotsTXT: true
 enableGitInfo: false
 disableKinds: ["taxonomy", "term"]
