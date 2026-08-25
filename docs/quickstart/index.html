@@ -158,6 +158,14 @@
   
   <li class="menu-item">
     
+    <a href="/cxpm/srs-cli-subcommands/">Git-Style Subcommand CLI</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
     <a href="/cxpm/srs-sandbox/">Descriptor Sandbox</a>
     
     
@@ -210,10 +218,10 @@ build instructions) and reachable on <code>PATH</code>.</p>
   });
 </script>
 <h2 id="following-along-without-the-player">Following along without the player</h2>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cxpm --generate package-json hello-cxpm
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cxpm generate package-json hello-cxpm
 </span></span><span style="display:flex;"><span>cd hello-cxpm
 </span></span><span style="display:flex;"><span>cat package.json
-</span></span></code></pre></div><p><code>--generate package-json</code> (see <a href="/cxpm/srs-generate/">srs-generate.md</a>
+</span></span></code></pre></div><p><code>generate package-json</code> (see <a href="/cxpm/srs-generate/">srs-generate.md</a>
 ) writes a starter
 <code>package.json</code> whose target <code>name</code> comes from the directory argument (<code>hello-cxpm</code> here) and
 whose <code>sources</code> already points at <code>src/main.cpp</code> — that file itself isn&rsquo;t generated, so create it:</p>
@@ -224,15 +232,15 @@ whose <code>sources</code> already points at <code>src/main.cpp</code> — that 
 </span></span><span style="display:flex;"><span>  printf(<span style="color:#e6db74">&#34;Hello from cxpm!</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>);
 </span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cxpm --build .
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cxpm build .
 </span></span><span style="display:flex;"><span>./hello-cxpm
-</span></span></code></pre></div><p><code>--build</code> (see <a href="/cxpm/tooling/#building-a-project">tooling.md</a>
+</span></span></code></pre></div><p><code>build</code> (see <a href="/cxpm/tooling/#building-a-project">tooling.md</a>
 ) resolves a toolchain for the target&rsquo;s
 <code>language</code>, JIT-compiles it, then invokes its compiler and linker.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cxpm --install . --prefix ./install
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cxpm install . --prefix ./install
 </span></span><span style="display:flex;"><span>find install -type f | sort
 </span></span><span style="display:flex;"><span>./install/bin/hello-cxpm
-</span></span></code></pre></div><p><code>--install</code> (see <a href="/cxpm/tooling/#installing-a-project">tooling.md</a>
+</span></span></code></pre></div><p><code>install</code> (see <a href="/cxpm/tooling/#installing-a-project">tooling.md</a>
 ) builds first, then copies the
 result into a POSIX-aligned prefix: the executable under <code>bin/</code>, and a generated
 <code>hello-cxpm.pc</code> under <code>lib/pkgconfig/</code>.</p>
@@ -246,14 +254,14 @@ a toolchain search directory outside the normal install-prefix locations, which 
 recording finds a <code>g++</code> toolchain without requiring a system-wide <code>cxpm</code> install first. In a
 normal install (<code>cmake --install</code>, which also installs <code>modules/toolchains/{gcc,g++,nvcc}</code>),
 this variable isn&rsquo;t needed.</li>
-<li><code>cxpm --build</code>/<code>--install</code> JIT-compile <strong>every</strong> toolchain plugin visible on the search path
+<li><code>cxpm build</code>/<code>install</code> JIT-compile <strong>every</strong> toolchain plugin visible on the search path
 before selecting one (see <a href="/cxpm/srs-architecture/">srs-architecture.md</a>
  for this and other
 itemized flaws) — the recording&rsquo;s search directory contains only <code>g++</code> so that startup cost
 doesn&rsquo;t dominate the cast.</li>
 </ul>
 <h2 id="re-recording-the-cast">Re-recording the cast</h2>
-<p>The exact script used to produce <a href="/casts/quickstart.cast"><code>casts/quickstart.cast</code></a>
+<p>The exact script used to produce <a href="../casts/quickstart.cast"><code>casts/quickstart.cast</code></a>
  — including
 prompt pacing and the scoped toolchain directory above — lives at
 <a href="https://github.com/arthurafarias/cxpm/blob/master/misc/record-quickstart-cast.sh" rel="noopener" target="_blank"><code>misc/record-quickstart-cast.sh</code></a>
@@ -264,6 +272,9 @@ in the repository:</p>
 </article>
 
 
+
+  
+  
 
   
   
@@ -343,7 +354,7 @@ in the repository:</p>
 </script>
 
   
-  <script src="../cxpm/js/main.min.e798f0576266bcbe7ecb6e7d2fed1ee409601c191998058910a32ec41ba2c455.js" integrity="sha256-55jwV2JmvL5&#43;y259L&#43;0e5AlgHBkZmAWJEKMuxBuixFU=" defer></script>
+  <script src="/cxpm/js/main.min.e798f0576266bcbe7ecb6e7d2fed1ee409601c191998058910a32ec41ba2c455.js" integrity="sha256-55jwV2JmvL5&#43;y259L&#43;0e5AlgHBkZmAWJEKMuxBuixFU=" defer></script>
 
 
 </body>

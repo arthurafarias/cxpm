@@ -18,6 +18,8 @@
   </url><url>
     <loc>/cxpm/srs-sandbox/</loc>
   </url><url>
+    <loc>/cxpm/srs-cli-subcommands/</loc>
+  </url><url>
     <loc>/cxpm/srs-json-manifests/</loc>
   </url><url>
     <loc>/cxpm/srs-parallel-build/</loc>

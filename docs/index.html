@@ -159,6 +159,14 @@
   
   <li class="menu-item">
     
+    <a href="/cxpm/srs-cli-subcommands/">Git-Style Subcommand CLI</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
     <a href="/cxpm/srs-sandbox/">Descriptor Sandbox</a>
     
     
@@ -208,9 +216,9 @@
 </span></span><span style="display:flex;"><span>                   .create();
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">auto</span> project <span style="color:#f92672">=</span> Project().add(example).create();
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cxpm --generate package-json .   <span style="color:#75715e"># or: cxpm --generate package-cpp .</span>
-</span></span><span style="display:flex;"><span>cxpm --build .
-</span></span><span style="display:flex;"><span>cxpm --install . --prefix /usr/local
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cxpm generate package-json .   <span style="color:#75715e"># or: cxpm generate package-cpp .</span>
+</span></span><span style="display:flex;"><span>cxpm build .
+</span></span><span style="display:flex;"><span>cxpm install . --prefix /usr/local
 </span></span></code></pre></div><div class="cards">
 <div class="card"><h3>Two ways to describe a project</h3><p><code>package.cpp</code> is compiled into a shared object and loaded back through a generated loader stub — a real C++ translation unit, not a parsed format. <code>package.json</code> describes the same <code>ProjectDescriptor</code> declaratively: no compilation, no code execution at all.</p></div>
 <div class="card"><h3>Pluggable toolchains</h3><p>Compiler/linker/archiver conventions are themselves described as a <code>ToolchainDescriptor</code>, either JIT-compiled from a <code>toolchain.cpp</code> plugin or read directly from a <code>toolchain.json</code>.</p></div>
@@ -243,6 +251,8 @@ stubbed or dead code, and what a contributor should fix first — see the
 <li><a href="/cxpm/srs-json-manifests/">Software Requirements Specification: JSON Manifests</a>
 </li>
 <li><a href="/cxpm/srs-generate/">Software Requirements Specification: <code>cxpm --generate</code></a>
+</li>
+<li><a href="/cxpm/srs-cli-subcommands/">Software Requirements Specification: Git-Style Subcommand CLI</a>
 </li>
 <li><a href="/cxpm/srs-sandbox/">Software Requirements Specification: Descriptor Sandbox</a>
 </li>

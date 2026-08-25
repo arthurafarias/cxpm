@@ -18,7 +18,7 @@
   {
     "title": "Quickstart",
     "href": "/cxpm/quickstart/",
-    "content": "Quickstart This walks through the whole cxpm lifecycle — scaffold, build, run, install — on a fresh project, recorded end to end as an asciinema cast. It assumes cxpm is already built (see the readme for build instructions) and reachable on PATH.\nFollowing along without the player cxpm --generate package-json hello-cxpm cd hello-cxpm cat package.json --generate package-json (see srs-generate.md ) …"
+    "content": "Quickstart This walks through the whole cxpm lifecycle — scaffold, build, run, install — on a fresh project, recorded end to end as an asciinema cast. It assumes cxpm is already built (see the readme for build instructions) and reachable on PATH.\nFollowing along without the player cxpm generate package-json hello-cxpm cd hello-cxpm cat package.json generate package-json (see srs-generate.md ) …"
   }
 
   ,
@@ -46,7 +46,7 @@
   {
     "title": "SRS: cxpm --generate",
     "href": "/cxpm/srs-generate/",
-    "content": "Software Requirements Specification cxpm --generate: Scaffolding package.cpp / toolchain.cpp / package.json / toolchain.json Project: cxpm Scope: CXPM::Modules::Generators::* (ManifestGenerator.hpp), ApplicationView::generate Companion documents: srs-json-manifests.md (the format this feature emits), tooling.md (CLI reference)\n1. Purpose Before this feature, starting a new cxpm project meant …"
+    "content": "Software Requirements Specification cxpm --generate: Scaffolding package.cpp / toolchain.cpp / package.json / toolchain.json Project: cxpm Scope: CXPM::Modules::Generators::* (ManifestGenerator.hpp), ApplicationView::generate Companion documents: srs-json-manifests.md (the format this feature emits), tooling.md (CLI reference)\nNote: §2.1 item 1 below describes --generate/-g as a flag alongside …"
   }
 
   ,
@@ -54,6 +54,13 @@
     "title": "SRS: Descriptor Sandbox",
     "href": "/cxpm/srs-sandbox/",
     "content": "Software Requirements Specification Sandbox Infrastructure for Building C++ Descriptors Project: cxpm Scope: applications/cxpm-descriptor-sandbox, CXPM::Controllers::DescriptorSandbox (libraries/cxpm-interface/src/CXPM/DescriptorSandbox.hpp), the two call sites it replaces: ProjectManager::load_from_manifest, ToolchainManager::load_toolchain_plugin Companion documents: architecture.md , …"
+  }
+
+  ,
+  {
+    "title": "SRS: Git-Style Subcommand CLI",
+    "href": "/cxpm/srs-cli-subcommands/",
+    "content": "Software Requirements Specification A Git-Style Subcommand CLI, and a Reusable ProgramOptions Command-Line Framework Project: cxpm Scope: CXPM::Modules::ProgramOptions::* (OptionDescriptor, OptionsDescriptorCollection, CommandDescriptor, CommandRegistry, ParsedCommand, CommandLineParser, HelpFormatter), Views::ApplicationView Companion documents: srs-architecture.md (items A16, A35 — the dead …"
   }
 
   ,

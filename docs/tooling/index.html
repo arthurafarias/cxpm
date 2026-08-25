@@ -158,6 +158,14 @@
   
   <li class="menu-item">
     
+    <a href="/cxpm/srs-cli-subcommands/">Git-Style Subcommand CLI</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
     <a href="/cxpm/srs-sandbox/">Descriptor Sandbox</a>
     
     
@@ -202,30 +210,37 @@ separately under <a href="#sandboxed-descriptor-extraction">Sandboxed descriptor
 <a href="/cxpm/quickstart/">quickstart.md</a>
  for a recorded, end-to-end terminal walkthrough of the commands
 below.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>usage: cxpm [option] [arguments]
+<p><code>cxpm</code> is a git-style subcommand CLI — <code>cxpm &lt;command&gt; [&lt;args&gt;]</code> — implemented on top of a small,
+reusable command-line framework in <code>cxpm-interface</code> itself
+(<code>CXPM::Modules::ProgramOptions::{CommandRegistry,CommandLineParser,HelpFormatter}</code>). See
+<a href="/cxpm/srs-cli-subcommands/">srs-cli-subcommands.md</a>
+ for the full contract and the framework&rsquo;s design;
+this page is the day-to-day reference.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>usage: cxpm &lt;command&gt; [&lt;args&gt;]
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>options:
-</span></span><span style="display:flex;"><span>    -b|--build &lt;directory&gt;:     build the project whose package.cpp/package.json lives in &lt;directory&gt;
-</span></span><span style="display:flex;"><span>    -i|--install &lt;directory&gt;:   install the project whose package.cpp/package.json lives in &lt;directory&gt;
-</span></span><span style="display:flex;"><span>        --prefix &lt;path&gt;:        install prefix (default: /usr/local)
-</span></span><span style="display:flex;"><span>    -u|--uninstall &lt;directory&gt;: documented, not yet implemented — see srs-architecture.md item A13
-</span></span><span style="display:flex;"><span>    -g|--generate &lt;kind&gt; [directory]: generate a starter manifest; kind is one of
+</span></span><span style="display:flex;"><span>commands:
+</span></span><span style="display:flex;"><span>    build &lt;directory&gt;:                build the project whose package.cpp/package.json lives in &lt;directory&gt;
+</span></span><span style="display:flex;"><span>    install &lt;directory&gt; [--prefix &lt;path&gt;]: install the project (default prefix: /usr/local)
+</span></span><span style="display:flex;"><span>    generate &lt;kind&gt; [directory] [--force]: generate a starter manifest; kind is one of
 </span></span><span style="display:flex;"><span>                                        package-cpp, package-json, toolchain-cpp, toolchain-json
 </span></span><span style="display:flex;"><span>                                        (directory defaults to &#39;.&#39;; add --force to overwrite)
-</span></span><span style="display:flex;"><span>    -h|--help:                  print this usage text
+</span></span><span style="display:flex;"><span>    help [&lt;command&gt;]:                 show this message, or detailed help for one command
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>-h/--help works on every command (`cxpm &lt;command&gt; --help`, or `cxpm help &lt;command&gt;`).
+</span></span><span style="display:flex;"><span>`uninstall` is not yet implemented — see srs-architecture.md item A13.
 </span></span></code></pre></div><h2 id="building-a-project">Building a project</h2>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cxpm --build .
-</span></span></code></pre></div><p><code>--build</code>/<code>-b</code> requires exactly one directory argument containing a <code>package.cpp</code> <strong>or</strong>
-<code>package.json</code> (<code>Views::ApplicationView::assert_project_directory</code> validates this, and that the
-directory exists, before doing anything else — see
-<a href="/cxpm/srs-json-manifests/">srs-json-manifests.md</a>
-). If both are present, <code>package.cpp</code> takes
-precedence. <code>cxpm</code> loads the manifest into a <code>Project</code>, resolves a toolchain for each target&rsquo;s
-<code>.language</code>, and shells out to that toolchain&rsquo;s compiler, linker and archiver.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cxpm build .
+</span></span></code></pre></div><p><code>build</code> requires exactly one directory argument containing a <code>package.cpp</code> <strong>or</strong> <code>package.json</code>
+(<code>Views::ApplicationView::assert_project_directory</code> validates this, and that the directory exists,
+before doing anything else — see <a href="/cxpm/srs-json-manifests/">srs-json-manifests.md</a>
+). If both are
+present, <code>package.cpp</code> takes precedence. <code>cxpm</code> loads the manifest into a <code>Project</code>, resolves a
+toolchain for each target&rsquo;s <code>.language</code>, and shells out to that toolchain&rsquo;s compiler, linker and
+archiver.</p>
 <h2 id="installing-a-project">Installing a project</h2>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cxpm --install . --prefix /usr/local
-</span></span></code></pre></div><p><code>--install</code>/<code>-i</code> builds the project first, then copies already-built artifacts into a
-POSIX-aligned prefix layout:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cxpm install . --prefix /usr/local
+</span></span></code></pre></div><p><code>install</code> builds the project first, then copies already-built artifacts into a POSIX-aligned
+prefix layout:</p>
 <ul>
 <li>Shared libraries → <code>&lt;prefix&gt;/lib</code></li>
 <li>Static libraries → <code>&lt;prefix&gt;/lib</code></li>
@@ -235,17 +250,18 @@ POSIX-aligned prefix layout:</p>
 </ul>
 <p><code>--prefix</code> defaults to <code>/usr/local</code> when omitted.</p>
 <h2 id="generating-a-starter-manifest">Generating a starter manifest</h2>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cxpm --generate package-json .        <span style="color:#75715e"># or package-cpp, toolchain-cpp, toolchain-json</span>
-</span></span><span style="display:flex;"><span>cxpm --generate toolchain-json ./my-toolchain --force
-</span></span></code></pre></div><p><code>--generate</code>/<code>-g</code> writes a starter <code>package.cpp</code>/<code>package.json</code>/<code>toolchain.cpp</code>/<code>toolchain.json</code>
-into <code>directory</code> (default <code>.</code>, created if missing), refusing to overwrite an existing file unless
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cxpm generate package-json .        <span style="color:#75715e"># or package-cpp, toolchain-cpp, toolchain-json</span>
+</span></span><span style="display:flex;"><span>cxpm generate toolchain-json ./my-toolchain --force
+</span></span></code></pre></div><p><code>generate</code> writes a starter <code>package.cpp</code>/<code>package.json</code>/<code>toolchain.cpp</code>/<code>toolchain.json</code> into
+<code>directory</code> (default <code>.</code>, created if missing), refusing to overwrite an existing file unless
 <code>--force</code> is also given. See <a href="/cxpm/srs-generate/">srs-generate.md</a>
-.</p>
+ (its content requirements are
+unchanged by the move to a subcommand — only the invocation syntax moved).</p>
 <h2 id="describing-a-project-packagecpp-or-packagejson">Describing a project: <code>package.cpp</code> or <code>package.json</code></h2>
 <p>The <code>.cpp</code> and <code>.json</code> forms describe the exact same <code>ProjectDescriptor</code>; pick whichever fits —
 see <a href="/cxpm/srs-json-manifests/">srs-json-manifests.md</a>
  for the full requirements, and
-<code>cxpm --generate package-cpp</code>/<code>cxpm --generate package-json</code> to produce a starting point for
+<code>cxpm generate package-cpp</code>/<code>cxpm generate package-json</code> to produce a starting point for
 either.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;CXPM/Target.hpp&gt;</span><span style="color:#75715e">
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;CXPM/Project.hpp&gt;</span><span style="color:#75715e">
@@ -320,11 +336,11 @@ that <code>.cpp</code> file contains. <code>cxpm</code> does this in a separate,
 <a href="/cxpm/srs-sandbox/">srs-sandbox.md</a>
  for the full design. This is transparent to normal use; it can be
 disabled (falling back to the pre-sandbox direct-load behavior) with:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>CXPM_SANDBOX_DISABLE<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span> cxpm --build .
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>CXPM_SANDBOX_DISABLE<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span> cxpm build .
 </span></span></code></pre></div><p><code>package.json</code>/<code>toolchain.json</code> never need this at all, since parsing them never executes code.</p>
 <h2 id="testing-cxpm-itself">Testing <code>cxpm</code> itself</h2>
 <p>The tooling described on this page is <em>what <code>cxpm</code> does for its users</em>. A separate CMake/CTest
-facility exists for <em>testing</em> <code>cxpm</code> — registering <code>cxpm --build</code>/<code>--install</code>/<code>--generate</code>
+facility exists for <em>testing</em> <code>cxpm</code> — registering <code>cxpm build</code>/<code>install</code>/<code>generate</code>
 invocations (and direct <code>cxpm-descriptor-sandbox</code> calls) as CTest tests with fixtures, labels and
 exit-code assertions. See <a href="/cxpm/srs-ctest-tooling/">srs-ctest-tooling.md</a>
  and
@@ -334,6 +350,9 @@ exit-code assertions. See <a href="/cxpm/srs-ctest-tooling/">srs-ctest-tooling.m
 </article>
 
 
+
+  
+  
 
   
   
@@ -417,7 +436,7 @@ exit-code assertions. See <a href="/cxpm/srs-ctest-tooling/">srs-ctest-tooling.m
 </script>
 
   
-  <script src="../cxpm/js/main.min.e798f0576266bcbe7ecb6e7d2fed1ee409601c191998058910a32ec41ba2c455.js" integrity="sha256-55jwV2JmvL5&#43;y259L&#43;0e5AlgHBkZmAWJEKMuxBuixFU=" defer></script>
+  <script src="/cxpm/js/main.min.e798f0576266bcbe7ecb6e7d2fed1ee409601c191998058910a32ec41ba2c455.js" integrity="sha256-55jwV2JmvL5&#43;y259L&#43;0e5AlgHBkZmAWJEKMuxBuixFU=" defer></script>
 
 
 </body>

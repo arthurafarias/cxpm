@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SRS: Git-Style Subcommand CLI · cxpm</title>
+<meta name="description" content="An experimental C&#43;&#43;-native package manager and build tool for C&#43;&#43;.">
+<link rel="icon" href="data:,">
+<script>
+  (function () {
+    try {
+      var saved = localStorage.getItem("cxpm-docs-theme");
+      var theme = saved || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.setAttribute("data-theme", theme);
+    } catch (e) {}
+  })();
+</script>
+
+  
+  <link rel="stylesheet" href="/cxpm/css/main.min.705c6b10a27719bb861d20380e003ddc3bcfb26a9d5969863974a958f0604544.css" integrity="sha256-cFxrEKJ3GbuGHSA4DgA93DvPsmqdWWmGOXSpWPBgRUQ=">
+
+
+</head>
+<body>
+<a class="skip-link" href="#main-content">Skip to content</a>
+<header class="topbar">
+  <div class="topbar-inner">
+    <button class="menu-toggle" id="menu-toggle" aria-label="Toggle navigation" aria-controls="sidebar" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <a class="brand" href="/cxpm/">
+      <span class="brand-mark">cxpm</span>
+      <span class="brand-sub">docs</span>
+    </a>
+    <div class="search" role="search">
+      <input type="search" id="search-input" placeholder="Search docs…" aria-label="Search documentation" autocomplete="off">
+      <kbd class="search-kbd">/</kbd>
+      <div id="search-results" class="search-results" hidden></div>
+    </div>
+    <div class="topbar-actions">
+      
+      <a class="icon-link" href="https://github.com/arthurafarias/cpkg" target="_blank" rel="noopener" aria-label="View source on GitHub">
+        <svg viewBox="0 0 16 16" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+      </a>
+      
+      <button class="icon-link theme-toggle" id="theme-toggle" aria-label="Toggle color theme">
+        <svg class="icon-sun" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="shell">
+  <nav class="sidebar" id="sidebar" aria-label="Sections">
+    
+<div class="sidebar-inner">
+  
+<ul class="menu">
+  
+  
+  <li class="menu-item">
+    
+    <a href="/cxpm/">Overview</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="/cxpm/quickstart/">Quickstart</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="/cxpm/architecture/">Architecture</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="/cxpm/tooling/">CLI Tooling</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="/cxpm/testing/">Testing</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="/cxpm/roadmap/">Roadmap</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item has-children">
+    
+    <span class="menu-group-label">Software Requirements Specs</span>
+    
+    
+      
+<ul class="menu">
+  
+  
+  <li class="menu-item">
+    
+    <a href="/cxpm/srs-architecture/">Architecture &amp; Flaws</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="/cxpm/srs-unit-testing/">Unit Testing the API</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="/cxpm/srs-ctest-tooling/">CMake/CTest Tooling</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="/cxpm/srs-json-manifests/">JSON Manifests</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="/cxpm/srs-generate/">cxpm --generate</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item is-active">
+    
+    <a href="/cxpm/srs-cli-subcommands/" aria-current="page">Git-Style Subcommand CLI</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="/cxpm/srs-sandbox/">Descriptor Sandbox</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
+    <a href="/cxpm/srs-parallel-build/">Parallel Build (proposed)</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+</ul>
+
+</div>
+
+
+
+  </nav>
+  <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+  <main class="content" id="main-content">
+    <div class="content-inner">
+      
+<nav class="breadcrumbs" aria-label="Breadcrumb">
+  <a href="/cxpm/">cxpm</a>
+  <span class="sep">/</span><span>SRS: Git-Style Subcommand CLI</span>
+</nav>
+<article class="prose">
+  <h1 id="software-requirements-specification">Software Requirements Specification</h1>
+<h2 id="a-git-style-subcommand-cli-and-a-reusable-programoptions-command-line-framework">A Git-Style Subcommand CLI, and a Reusable <code>ProgramOptions</code> Command-Line Framework</h2>
+<p><strong>Project:</strong> cxpm
+<strong>Scope:</strong> <code>CXPM::Modules::ProgramOptions::*</code> (<code>OptionDescriptor</code>, <code>OptionsDescriptorCollection</code>,
+<code>CommandDescriptor</code>, <code>CommandRegistry</code>, <code>ParsedCommand</code>, <code>CommandLineParser</code>, <code>HelpFormatter</code>),
+<code>Views::ApplicationView</code>
+<strong>Companion documents:</strong> <a href="/cxpm/srs-architecture/">srs-architecture.md</a>
+ (items A16, A35 — the dead
+option-descriptor schema and the hand-duplicated <code>print_usage()</code> this SRS resolves),
+<a href="/cxpm/srs-generate/">srs-generate.md</a>
+ (the <code>generate</code> command&rsquo;s own content requirements, unchanged
+by this SRS — only its CLI syntax moves), <a href="/cxpm/tooling/">tooling.md</a>
+ (CLI reference)</p>
+<hr>
+<h2 id="1-purpose">1. Purpose</h2>
+<p>Before this change, <code>cxpm</code> was a flat-flag CLI: every operation was a top-level <code>--flag</code>
+(<code>--build</code>, <code>--install</code>, <code>--generate</code>, each with a single-letter alias), all recognized by a single
+undifferentiated <code>ProgramOptions::Parse</code> call that returned one flat <code>Map&lt;String, BasicCollection&lt;String&gt;&gt;</code> with no notion of &ldquo;which flags are valid together.&rdquo; <code>ApplicationView::run()</code>
+then manually checked <code>options.contains(&quot;build&quot;) || options.contains(&quot;b&quot;)</code> and so on, in a growing
+chain of near-identical <code>if</code> blocks. A schema type for describing options
+(<code>ProgramOptions::OptionDescriptor</code>/<code>OptionsDescriptorCollection</code>) already existed but was
+never used: <code>ApplicationView::run()</code> constructed one and immediately discarded it
+(<a href="/cxpm/srs-architecture/">srs-architecture.md</a>
+ items A16, A35), and <code>print_usage()</code> was a separately
+hand-maintained string that could (and did) drift from what the flag-checking code actually
+accepted.</p>
+<p>This SRS does two things:</p>
+<ol>
+<li>Changes the CLI&rsquo;s shape from flat flags to git-style subcommands: <code>cxpm &lt;command&gt; [&lt;args&gt;]</code>
+(<code>cxpm build .</code>, <code>cxpm install . --prefix /usr/local</code>, <code>cxpm generate package-json .</code>,
+<code>cxpm help</code>), matching the surface every reader already knows from <code>git</code>.</li>
+<li>Replaces the ad hoc flag-checking in <code>ApplicationView::run()</code> with an actual, reusable
+command-line framework in <code>cxpm-interface</code> (the core library, not the <code>cxpm</code> application):
+<code>CommandDescriptor</code>/<code>CommandRegistry</code> declare <em>what</em> a command accepts, <code>CommandLineParser</code>
+turns argv into a validated <code>ParsedCommand</code> against that declaration, and <code>HelpFormatter</code>
+renders both the top-level command list and any one command&rsquo;s detailed usage directly from
+the same declaration — so the schema and the behavior can no longer drift apart, because the
+behavior <em>is</em> the schema now.</li>
+</ol>
+<p>This is a breaking CLI change: the old flag-style invocation (<code>cxpm --build .</code>, <code>-b</code>, <code>-i</code>, <code>-g</code>)
+is removed outright, with no backward-compatible shim. cxpm is, in its own documentation&rsquo;s words,
+&ldquo;an early conceptual prototype, audited honestly&rdquo; (see the project overview) — there is exactly
+one caller of this CLI in the repository (the CTest suite, updated alongside this change) and no
+external users to break silently.</p>
+<h2 id="2-requirements">2. Requirements</h2>
+<h3 id="21-cli-contract">2.1 CLI contract</h3>
+<ol>
+<li><code>cxpm &lt;command&gt; [&lt;args&gt;]</code> SHALL be the invocation shape. The first non-flag token SHALL select
+a command; every token after it SHALL be parsed against <em>that command&rsquo;s own</em> declared options,
+not a single global set.</li>
+<li>The recognized commands SHALL be exactly: <code>build</code>, <code>install</code>, <code>generate</code>, <code>help</code>.
+<ul>
+<li><code>cxpm build &lt;directory&gt;</code> — unchanged behavior from the old <code>-b|--build</code>
+(<a href="/cxpm/srs-architecture/">srs-architecture.md</a>
+ AR-1..AR-8 still describe the build pipeline
+itself; only the token that invokes it changes).</li>
+<li><code>cxpm install &lt;directory&gt; [--prefix &lt;path&gt;]</code> — unchanged behavior from the old
+<code>-i|--install</code>/<code>--prefix</code>. <code>--prefix</code> SHALL default to <code>/usr/local</code> when omitted; this
+default SHALL be declared once, on the <code>install</code> command&rsquo;s <code>OptionDescriptor</code> schema
+(<code>value_default</code>), not re-hardcoded at the <code>ApplicationView::run()</code> call site the way the old
+flag-checking code did.</li>
+<li><code>cxpm generate &lt;kind&gt; [directory] [--force]</code> — unchanged behavior and content requirements
+from <a href="/cxpm/srs-generate/">srs-generate.md</a>
+; only its invocation syntax moves from
+<code>-g|--generate &lt;kind&gt; [directory]</code> to a bare <code>generate</code> subcommand.</li>
+<li><code>cxpm help [&lt;command&gt;]</code> — prints the top-level command list, or (given a command name) that
+command&rsquo;s detailed usage.</li>
+</ul>
+</li>
+<li><code>cxpm</code> with no arguments SHALL print the top-level usage and exit non-zero (<code>1</code>) — a bare
+invocation is not the same as asking for help.</li>
+<li><code>cxpm -h</code>, <code>cxpm --help</code>, and <code>cxpm help</code> (with no further argument) SHALL each print the same
+top-level usage and exit <code>0</code>.</li>
+<li><code>cxpm help &lt;command&gt;</code>, <code>cxpm &lt;command&gt; -h</code>, and <code>cxpm &lt;command&gt; --help</code> SHALL each print that
+command&rsquo;s detailed usage (its full invocation line, its positional-argument placeholder, and
+every declared option with its short form, default, and description) and exit <code>0</code>. <code>-h</code>/
+<code>--help</code> SHALL be accepted on every command without needing to be declared in that command&rsquo;s
+own option schema.</li>
+<li>An unrecognized first token SHALL raise <code>RuntimeException</code> with the message <code>cxpm: '&lt;token&gt;' is not a cxpm command. See 'cxpm help'.</code> — caught by <code>main()</code>&rsquo;s existing top-level handler
+(<a href="/cxpm/srs-architecture/">srs-architecture.md</a>
+ AR-7&rsquo;s contract is unchanged: exceptions, not error
+codes, and a non-zero exit).</li>
+<li>A token that looks like an option (<code>-x</code>/<code>--xyz</code>) but is not declared on the <em>matched</em> command&rsquo;s
+schema, and is not the reserved <code>-h</code>/<code>--help</code>, SHALL raise <code>RuntimeException</code> naming the option
+(with its <code>-</code>/<code>--</code> spelling reconstructed) and the command, and pointing at
+<code>cxpm help &lt;command&gt;</code>.</li>
+<li>A command&rsquo;s own missing required positional argument (e.g. <code>cxpm build</code> with no directory,
+<code>cxpm generate</code> with no <code>kind</code>) SHALL raise <code>RuntimeException</code> with the same messages
+<code>ApplicationView</code> already raised pre-change — this SRS does not change <em>what</em> is required per
+command, only how the CLI routes tokens to that check.</li>
+</ol>
+<h3 id="22-programoptions-framework-core-library">2.2 <code>ProgramOptions</code> framework (core library)</h3>
+<p>The following new types live under <code>CXPM::Modules::ProgramOptions</code>, alongside the pre-existing
+<code>OptionDescriptor</code>/<code>OptionsDescriptorCollection</code>/<code>Parse</code> (the low-level flat tokenizer, unchanged
+and still directly unit-tested by <code>ParseTest</code>; the framework below is built <em>on top of</em> it rather
+than replacing it):</p>
+<ol>
+<li><strong><code>OptionDescriptor</code></strong> (existing type, trimmed): <code>name</code>, <code>name_short</code>, <code>value_default</code>,
+<code>description</code>. The previously-declared <code>value</code> field is removed: a descriptor is now purely a
+<em>schema</em> (what a command&rsquo;s author declares up front); a parsed invocation&rsquo;s actual values live
+on <code>ParsedCommand</code>, not mutated back onto the shared schema object.</li>
+<li><strong><code>OptionsDescriptorCollection::find(key)</code></strong> (added): resolves a raw token key — as produced by
+<code>ProgramOptions::Parse</code>, i.e. with any leading <code>--</code>/<code>-</code> already stripped — against either an
+option&rsquo;s long or short name, returning <code>nullptr</code> if neither matches.</li>
+<li><strong><code>CommandDescriptor</code></strong>: one subcommand&rsquo;s schema — <code>name</code> (the token typed by a user),
+<code>description</code> (one line, used in the top-level command list), <code>arguments_usage</code> (a free-form
+placeholder for its positional arguments, e.g. <code>&lt;directory&gt;</code>, used only to render usage text),
+and <code>options</code> (an <code>OptionsDescriptorCollection</code>).</li>
+<li><strong><code>CommandRegistry</code></strong>: an ordered collection of <code>CommandDescriptor</code> with <code>find(name)</code> by exact
+match. <code>ApplicationView</code> builds exactly one registry (<code>command_registry()</code>), listing <code>build</code>,
+<code>install</code>, <code>generate</code>, <code>help</code>; adding a subcommand means adding one entry there.</li>
+<li><strong><code>ParsedCommand</code></strong>: the result of parsing — <code>command</code> (the matched name), <code>options</code> (a
+<code>Map&lt;String, BasicCollection&lt;String&gt;&gt;</code> already normalized to each option&rsquo;s <em>long</em> name, with
+any schema <code>value_default</code> filled in for an option the user omitted), and <code>positionals</code>.
+Convenience accessors: <code>has_option</code>, <code>option_values</code>, <code>option_value</code> (with a fallback).</li>
+<li><strong><code>CommandLineParser</code></strong>: constructed with a <code>CommandRegistry</code>; <code>parse(tokens)</code> implements
+§2.1&rsquo;s contract. It expects <code>tokens</code> with the program name already stripped (exactly what a
+conventional <code>argv + 1</code> would be) — <code>ApplicationView::run()</code> is responsible for that, since
+<code>AbstractApplication::args()</code> is seeded directly from <code>argv</code> (<code>argv[0]</code> included).</li>
+<li><strong><code>HelpFormatter</code></strong>: two pure, static string-building functions — <code>top_level(program_name, program_description, registry)</code> and <code>command(program_name, descriptor)</code> — with no I/O, so both
+are unit-testable without capturing stdout. <code>ApplicationView::print_usage()</code> and its new
+per-command counterpart wrap these in <code>std::osyncstream(std::cout) &lt;&lt; ...</code>, the same output
+mechanism the old hand-written string used.</li>
+</ol>
+<h3 id="23-applicationview-dispatch">2.3 <code>ApplicationView</code> dispatch</h3>
+<ol>
+<li><code>run()</code> SHALL: strip <code>args().front()</code>; if the remaining tokens are empty, print top-level usage
+and return <code>1</code>; otherwise construct the registry, parse, and dispatch on <code>parsed.command</code>
+(<code>help</code> handled first per §2.1 items 4–5, then <code>build</code>/<code>install</code>/<code>generate</code> each reading their
+directory/kind from <code>parsed.positionals</code> and their options from <code>parsed.options</code> — replacing
+every <code>options.contains(&quot;build&quot;) || options.contains(&quot;b&quot;)</code>-shaped check that existed before).</li>
+<li>The private business-logic methods this dispatch calls (<code>build</code>, <code>install_project</code>,
+<code>install_target</code>, <code>generate</code>, <code>assert_project_directory</code>) are unchanged by this SRS — only what
+calls them, and how their arguments are extracted from the parsed command line, changes.</li>
+</ol>
+<h2 id="3-non-goals">3. Non-goals</h2>
+<ul>
+<li>No backward-compatible flag shim (<code>--build</code> silently mapped to <code>build</code>, etc.) — see §1&rsquo;s
+rationale.</li>
+<li>No <code>cxpm version</code>/<code>--version</code> subcommand — not part of the git-like surface requested here, and
+cxpm has no version-numbering scheme of its own yet to report.</li>
+<li>No change to <code>uninstall</code>&rsquo;s status: it remains an undocumented, unwired stub
+(<a href="/cxpm/srs-architecture/">srs-architecture.md</a>
+ item A13, deferred) and is deliberately <strong>not</strong>
+added to the new command registry — adding it as a real, listed subcommand belongs to whichever
+change actually implements it, not to a CLI-surface reshuffle.</li>
+<li><code>CommandLineParser</code>/<code>HelpFormatter</code> are a small, purpose-built framework for <em>this</em> CLI&rsquo;s shape
+(one level of subcommands, no nested sub-subcommands, no positional-arity validation beyond what
+each command&rsquo;s own handler already checks). They are not a general-purpose argument-parsing
+library and do not attempt to be one.</li>
+<li>Every other SRS page that quotes the old <code>-b|--build</code>/<code>-i|--install</code>/<code>-g|--generate</code> syntax in
+its own examples (<a href="/cxpm/srs-generate/">srs-generate.md</a>
+, <a href="/cxpm/srs-json-manifests/">srs-json-manifests.md</a>
+,
+<a href="/cxpm/srs-sandbox/">srs-sandbox.md</a>
+, <a href="/cxpm/srs-parallel-build/">srs-parallel-build.md</a>
+,
+<a href="/cxpm/srs-unit-testing/">srs-unit-testing.md</a>
+, <a href="/cxpm/srs-ctest-tooling/">srs-ctest-tooling.md</a>
+) is a
+dated record of the spec current at the time it was written, in the same spirit as
+<a href="/cxpm/srs-architecture/">srs-architecture.md</a>
+ item A34&rsquo;s &ldquo;this finding is now moot rather than
+separately patched&rdquo; — those pages are intentionally left as-is. Only the <em>living</em> reference docs
+a user actually runs commands from (<a href="https://github.com/arthurafarias/cxpm#readme" rel="noopener" target="_blank">readme.md</a>
+,
+<a href="/cxpm/tooling/">tooling.md</a>
+, <a href="/cxpm/quickstart/">quickstart.md</a>
+, the site&rsquo;s front page) are updated to
+the new syntax alongside this change.</li>
+</ul>
+<h2 id="4-testing">4. Testing</h2>
+<table>
+	<thead>
+			<tr>
+					<th>Requirement</th>
+					<th>Verified by</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>§2.2 <code>CommandLineParser</code>: unknown command, unknown option, default fill-in, override, short-name resolution, valueless option, empty-argv/<code>-h</code>/<code>--help</code>/<code>help</code> equivalence, <code>help &lt;command&gt;</code> positional capture, <code>&lt;command&gt; -h</code> option capture</td>
+					<td><code>CommandLineParserTest</code> (<code>CXPM/Modules/ProgramOptions/Testing/CommandLineParserTest.hpp</code>) — pure unit tests against hand-built registries, no subprocess</td>
+			</tr>
+			<tr>
+					<td>§2.2 <code>HelpFormatter</code>: top-level lists every command, a command&rsquo;s usage line embeds its <code>arguments_usage</code>, its options (long name, short name, default), and the always-present <code>-h, --help</code> line</td>
+					<td><code>HelpFormatterTest</code> (<code>CXPM/Modules/ProgramOptions/Testing/HelpFormatterTest.hpp</code>)</td>
+			</tr>
+			<tr>
+					<td>§2.1 CLI contract end to end: help variants, unknown command, unknown option, missing-directory errors for <code>build</code>/<code>install</code>, <code>generate</code>&rsquo;s existing content contract under its new invocation syntax</td>
+					<td>CTest CLI tests in <code>tests/cli/CMakeLists.txt</code>: <code>cli_help</code>, <code>cli_help_short</code>, <code>cli_no_arguments_prints_usage_and_fails</code>, <code>cli_unknown_command_fails_cleanly</code>, <code>cli_unrecognized_option_fails_cleanly</code>, <code>cli_help_subcommand_shows_command_usage</code>, <code>cli_command_help_flag_shows_command_usage</code>, plus every pre-existing <code>cli_build_*</code>/<code>cli_install_*</code>/<code>cli_generate_*</code> test updated to the new syntax</td>
+			</tr>
+			<tr>
+					<td>End-to-end against a real toolchain: <code>build</code>/<code>install</code> still produce a running, installed executable under the new syntax</td>
+					<td><code>cli_build_example_executable(_json)</code>/<code>cli_install_example_executable*</code> (opt-in integration tier, <code>CXPM_BUILD_CLI_INTEGRATION_TESTS=ON</code>) — re-verified manually against a real <code>g++</code> toolchain while implementing this change</td>
+			</tr>
+	</tbody>
+</table>
+<h2 id="5-acceptance-criteria">5. Acceptance criteria</h2>
+<ul>
+<li><code>cxpm</code>, <code>cxpm -h</code>/<code>--help</code>/<code>help</code>, <code>cxpm help &lt;command&gt;</code>, and <code>cxpm &lt;command&gt; -h</code>/<code>--help</code> each
+produce the usage text §2.1 specifies, with the exit codes specified there.</li>
+<li><code>cxpm build &lt;directory&gt;</code>, <code>cxpm install &lt;directory&gt; [--prefix &lt;path&gt;]</code>, and
+<code>cxpm generate &lt;kind&gt; [directory] [--force]</code> behave identically to their pre-change
+<code>--build</code>/<code>--install</code>/<code>--generate</code> counterparts in every way <em>except</em> the token that invokes
+them.</li>
+<li>An unknown command and an unknown option each fail cleanly with a message naming what was wrong
+and pointing at <code>cxpm help</code>/<code>cxpm help &lt;command&gt;</code>, rather than silently falling through to the
+generic top-level usage the old flat-flag dispatch printed for anything it didn&rsquo;t recognize.</li>
+<li><a href="/cxpm/srs-architecture/">srs-architecture.md</a>
+ items A16 and A35 are resolved: <code>OptionDescriptor</code>
+and <code>OptionsDescriptorCollection</code> are now live schema every command is validated and rendered
+against, and <code>print_usage()</code> is generated from that schema rather than a separately maintained
+string.</li>
+</ul>
+<p>All of the above hold as of this writing.</p>
+
+</article>
+
+
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+
+
+
+
+<p class="edit-link"><a href="https://github.com/arthurafarias/cpkg/edit/master/hugosite/content/srs-cli-subcommands.md" target="_blank" rel="noopener">Edit this page on GitHub</a></p>
+
+
+
+
+    </div>
+  </main>
+  <aside class="toc-pane" aria-label="On this page">
+    
+
+<div class="toc-inner">
+  <p class="toc-title">On this page</p>
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#a-git-style-subcommand-cli-and-a-reusable-programoptions-command-line-framework">A Git-Style Subcommand CLI, and a Reusable <code>ProgramOptions</code> Command-Line Framework</a></li>
+    <li><a href="#1-purpose">1. Purpose</a></li>
+    <li><a href="#2-requirements">2. Requirements</a>
+      <ul>
+        <li><a href="#21-cli-contract">2.1 CLI contract</a></li>
+        <li><a href="#22-programoptions-framework-core-library">2.2 <code>ProgramOptions</code> framework (core library)</a></li>
+        <li><a href="#23-applicationview-dispatch">2.3 <code>ApplicationView</code> dispatch</a></li>
+      </ul>
+    </li>
+    <li><a href="#3-non-goals">3. Non-goals</a></li>
+    <li><a href="#4-testing">4. Testing</a></li>
+    <li><a href="#5-acceptance-criteria">5. Acceptance criteria</a></li>
+  </ul>
+</nav>
+</div>
+
+
+  </aside>
+</div>
+<footer class="site-footer">
+  <p>cxpm docs · built with Hugo · <a href="https://github.com/arthurafarias/cpkg" target="_blank" rel="noopener">source on GitHub</a></p>
+</footer>
+
+<script>
+  window.CXPM_DOCS = {
+    searchIndexURL: "\/cxpm\/search-index.json"
+  };
+</script>
+
+  
+  <script src="/cxpm/js/main.min.e798f0576266bcbe7ecb6e7d2fed1ee409601c191998058910a32ec41ba2c455.js" integrity="sha256-55jwV2JmvL5&#43;y259L&#43;0e5AlgHBkZmAWJEKMuxBuixFU=" defer></script>
+
+
+</body>
+</html>

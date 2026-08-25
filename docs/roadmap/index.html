@@ -158,6 +158,14 @@
   
   <li class="menu-item">
     
+    <a href="/cxpm/srs-cli-subcommands/">Git-Style Subcommand CLI</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
     <a href="/cxpm/srs-sandbox/">Descriptor Sandbox</a>
     
     
@@ -230,7 +238,10 @@ other collection field.</li>
 reference is correct now that <code>package.json</code> is a real manifest format.)</li>
 <li><strong>Delete or finish the dead orphan headers</strong>: <code>ClangdManager.hpp</code>, <code>ShellCommandBuilder.hpp</code>,
 <code>Modules/Serialization/KeyValueMapDescriptor.hpp</code> (A14), <code>Utils/Unix/which.hpp</code> (A15),
-<code>Core::{SharedPointer,UniquePointer,WeakPointer}</code> and <code>Utils/Print.hpp</code> (A16). None of these
+<code>Core::{SharedPointer,UniquePointer,WeakPointer}</code> and <code>Utils/Print.hpp</code> (A16b, formerly A16 —
+<code>ProgramOptions::OptionDescriptor</code>, A16&rsquo;s third item, is fixed; see
+<a href="/cxpm/srs-cli-subcommands/">srs-cli-subcommands.md</a>
+). None of these
 are reachable from any compiling code path today; keeping them either working or gone is
 strictly better than keeping them broken-and-included-in-nobody&rsquo;s-mental-model-of-the-API.</li>
 </ol>
@@ -379,6 +390,9 @@ sandbox&rsquo;s own explicitly accepted limitations.</p>
   
   
 
+  
+  
+
 
 
 
@@ -420,7 +434,7 @@ sandbox&rsquo;s own explicitly accepted limitations.</p>
 </script>
 
   
-  <script src="../cxpm/js/main.min.e798f0576266bcbe7ecb6e7d2fed1ee409601c191998058910a32ec41ba2c455.js" integrity="sha256-55jwV2JmvL5&#43;y259L&#43;0e5AlgHBkZmAWJEKMuxBuixFU=" defer></script>
+  <script src="/cxpm/js/main.min.e798f0576266bcbe7ecb6e7d2fed1ee409601c191998058910a32ec41ba2c455.js" integrity="sha256-55jwV2JmvL5&#43;y259L&#43;0e5AlgHBkZmAWJEKMuxBuixFU=" defer></script>
 
 
 </body>

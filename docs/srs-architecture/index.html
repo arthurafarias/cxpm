@@ -158,6 +158,14 @@
   
   <li class="menu-item">
     
+    <a href="/cxpm/srs-cli-subcommands/">Git-Style Subcommand CLI</a>
+    
+    
+  </li>
+  
+  
+  <li class="menu-item">
+    
     <a href="/cxpm/srs-sandbox/">Descriptor Sandbox</a>
     
     
@@ -363,6 +371,22 @@ code with no current test coverage that would catch a regression.</p>
 					<td><code>build_project</code> now calls <code>ToolchainManager::current</code> explicitly, exactly once, up front, regardless of manifest format, and threads the result into <code>load_project</code>/<code>build_manifest</code> so <code>autoscan</code>&rsquo;s JIT-compilation is not paid twice on the <code>package.cpp</code> path either</td>
 			</tr>
 			<tr>
+					<td><strong>A16</strong></td>
+					<td><code>Core::{SharedPointer,UniquePointer,WeakPointer}</code>, <code>Utils/Print.hpp</code>, <code>ProgramOptions::OptionDescriptor</code></td>
+					<td>Thin wrapper/utility headers never used anywhere in the codebase</td>
+					<td>grep-confirmed dead</td>
+					<td><code>ProgramOptions::OptionDescriptor</code>/<code>OptionsDescriptorCollection</code> are now the live schema <code>CommandLineParser</code> validates every subcommand&rsquo;s options against and <code>HelpFormatter</code> renders usage text from — see <a href="/cxpm/srs-cli-subcommands/">srs-cli-subcommands.md</a>
+. <code>Core::{SharedPointer,UniquePointer,WeakPointer}</code> and <code>Utils/Print.hpp</code> remain unused and are re-itemized below as A16b</td>
+			</tr>
+			<tr>
+					<td><strong>A35</strong></td>
+					<td><code>ApplicationView</code></td>
+					<td><code>OptionsDescriptorCollection</code> is constructed in <code>run()</code> and then never used — <code>print_usage()</code> is a hardcoded string instead of being generated from the schema</td>
+					<td><code>ApplicationView.hpp:30-31</code> (pre-fix)</td>
+					<td><code>run()</code> now builds a <code>CommandRegistry</code> of <code>CommandDescriptor</code>s (each carrying its own <code>OptionsDescriptorCollection</code>) and dispatches against it; <code>print_usage()</code>/the new per-command help both call <code>HelpFormatter::{top_level,command}</code>, which render directly from that registry — see <a href="/cxpm/srs-cli-subcommands/">srs-cli-subcommands.md</a>
+</td>
+			</tr>
+			<tr>
 					<td><strong>A17</strong></td>
 					<td>Namespacing</td>
 					<td>Two incompatible <code>Controllers</code> namespaces existed: <code>CXPM::Controllers</code> (<code>ProjectManager</code>, <code>ToolchainManager</code>) and a separate global-scope <code>::Controllers</code> (<code>PkgConfigManager</code>, <code>ClangdManager</code>); <code>Toolchain.hpp:618</code> resolved <code>Controllers::PackageConfigManager</code> via unqualified lookup reaching the global one only by luck of C++ lookup rules. This stopped being latent and became a real, reproduced build failure while implementing <a href="/cxpm/srs-sandbox/">srs-sandbox.md</a>
@@ -420,10 +444,11 @@ code with no current test coverage that would catch a regression.</p>
 			<tr>
 					<td><strong>A13</strong></td>
 					<td><code>ApplicationView</code></td>
-					<td><code>--uninstall</code>/<code>-u</code> is documented in <code>print_usage()</code> and has a stub private <code>uninstall()</code> method, but <code>run()</code> never checks for it — the flag is entirely non-functional</td>
-					<td><code>ApplicationView.hpp:106</code>, <code>171-173</code></td>
+					<td>A stub private <code>uninstall()</code> method exists, but <code>run()</code> never dispatches to it and it is not registered as a command — entirely unreachable from the CLI. (Previously it was at least <em>documented</em> in <code>print_usage()</code> despite doing nothing; <a href="/cxpm/srs-cli-subcommands/">srs-cli-subcommands.md</a>
+ deliberately left it out of the new <code>CommandRegistry</code> rather than list a command that does nothing — see that SRS&rsquo;s non-goals.)</td>
+					<td><code>ApplicationView.hpp</code> (<code>uninstall</code> method)</td>
 					<td>Medium</td>
-					<td>Wire it up, or remove it from the help text until implemented</td>
+					<td>Implement it and register a real <code>uninstall</code> command, or delete the stub until it is</td>
 			</tr>
 			<tr>
 					<td><strong>A14</strong></td>
@@ -442,9 +467,9 @@ code with no current test coverage that would catch a regression.</p>
 					<td>Move <code>which</code> into this file, or delete it</td>
 			</tr>
 			<tr>
-					<td><strong>A16</strong></td>
-					<td><code>Core::{SharedPointer,UniquePointer,WeakPointer}</code>, <code>Utils/Print.hpp</code>, <code>ProgramOptions::OptionDescriptor</code></td>
-					<td>Thin wrapper/utility headers never used anywhere in the codebase</td>
+					<td><strong>A16b</strong></td>
+					<td><code>Core::{SharedPointer,UniquePointer,WeakPointer}</code>, <code>Utils/Print.hpp</code></td>
+					<td>Thin wrapper/utility headers never used anywhere in the codebase (renumbered from A16, whose third item, <code>ProgramOptions::OptionDescriptor</code>, is now fixed — see §4.1)</td>
 					<td>grep-confirmed dead</td>
 					<td>Low</td>
 					<td>Start using them for a stated reason, or remove them to shrink the API surface a test suite has to cover</td>
@@ -562,14 +587,6 @@ code with no current test coverage that would catch a regression.</p>
 					<td>Fix the access specifier; decide whether manifest deserialization is in scope, and if not, remove the interface until it is</td>
 			</tr>
 			<tr>
-					<td><strong>A35</strong></td>
-					<td><code>ApplicationView</code></td>
-					<td><code>OptionsDescriptorCollection</code> is constructed in <code>run()</code> and then never used — <code>print_usage()</code> is a hardcoded string instead of being generated from the schema</td>
-					<td><code>ApplicationView.hpp:30-31</code></td>
-					<td>Low</td>
-					<td>Either use it to generate the usage text, or remove the dead variable</td>
-			</tr>
-			<tr>
 					<td><strong>A36</strong></td>
 					<td>CI</td>
 					<td>No CI configuration exists anywhere in the repository (<code>readme.md</code>&rsquo;s git history references a past &ldquo;github-actions compiler&rdquo; change, but no workflow file survives in the current tree)</td>
@@ -603,6 +620,9 @@ corrected target, so the two sections never conflict about what &ldquo;correct&r
 </article>
 
 
+
+  
+  
 
   
   
@@ -691,7 +711,7 @@ corrected target, so the two sections never conflict about what &ldquo;correct&r
 </script>
 
   
-  <script src="../cxpm/js/main.min.e798f0576266bcbe7ecb6e7d2fed1ee409601c191998058910a32ec41ba2c455.js" integrity="sha256-55jwV2JmvL5&#43;y259L&#43;0e5AlgHBkZmAWJEKMuxBuixFU=" defer></script>
+  <script src="/cxpm/js/main.min.e798f0576266bcbe7ecb6e7d2fed1ee409601c191998058910a32ec41ba2c455.js" integrity="sha256-55jwV2JmvL5&#43;y259L&#43;0e5AlgHBkZmAWJEKMuxBuixFU=" defer></script>
 
 
 </body>
