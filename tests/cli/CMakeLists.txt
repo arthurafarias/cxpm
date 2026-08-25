@@ -24,27 +24,49 @@ cxpm_add_cli_test(cli_no_arguments_prints_usage_and_fails
     WILL_FAIL TRUE)
 
 cxpm_add_cli_test(cli_build_without_directory_fails_cleanly
-    COMMAND ${CXPM_EXECUTABLE} --build
+    COMMAND ${CXPM_EXECUTABLE} build
     LABELS "smoke;regression"
     WILL_FAIL TRUE)
 
 cxpm_add_cli_test(cli_build_nonexistent_directory_fails_cleanly
-    COMMAND ${CXPM_EXECUTABLE} --build /nonexistent-cxpm-test-directory
+    COMMAND ${CXPM_EXECUTABLE} build /nonexistent-cxpm-test-directory
     LABELS "smoke"
     WILL_FAIL TRUE)
 
 cxpm_add_cli_test(cli_install_without_directory_fails_cleanly
-    COMMAND ${CXPM_EXECUTABLE} --install
+    COMMAND ${CXPM_EXECUTABLE} install
     LABELS "smoke;regression"
     WILL_FAIL TRUE)
 
 cxpm_add_cli_test(cli_directory_without_package_cpp_fails_cleanly
-    COMMAND ${CXPM_EXECUTABLE} --build "${CMAKE_CURRENT_BINARY_DIR}"
+    COMMAND ${CXPM_EXECUTABLE} build "${CMAKE_CURRENT_BINARY_DIR}"
     LABELS "smoke"
     WILL_FAIL TRUE)
 
-# --- `cxpm --generate` (see docs/SRS-generate.md) ----------------------------------------
-# `cxpm --generate` creates its target directory itself, so these need no fixture/mkdir step --
+# --- Git-like subcommand dispatch (see docs/srs-cli-subcommands.md) ---------------------
+
+cxpm_add_cli_test(cli_unknown_command_fails_cleanly
+    COMMAND ${CXPM_EXECUTABLE} frobnicate
+    LABELS "smoke;regression"
+    WILL_FAIL TRUE)
+
+cxpm_add_cli_test(cli_unrecognized_option_fails_cleanly
+    COMMAND ${CXPM_EXECUTABLE} build --bogus
+    LABELS "smoke;regression"
+    WILL_FAIL TRUE)
+
+cxpm_add_cli_test(cli_help_subcommand_shows_command_usage
+    COMMAND ${CXPM_EXECUTABLE} help build
+    LABELS "smoke"
+    PASS_REGULAR_EXPRESSION "cxpm build - ")
+
+cxpm_add_cli_test(cli_command_help_flag_shows_command_usage
+    COMMAND ${CXPM_EXECUTABLE} build --help
+    LABELS "smoke"
+    PASS_REGULAR_EXPRESSION "cxpm build - ")
+
+# --- `cxpm generate` (see docs/SRS-generate.md, docs/srs-cli-subcommands.md) -------------
+# `cxpm generate` creates its target directory itself, so these need no fixture/mkdir step --
 # except to remove any leftover output from a *previous* ctest run in the same, uncleaned build
 # directory, since cli_generate_package_json_writes_file's PASS_REGULAR_EXPRESSION assumes the
 # target file does not already exist. FIXTURES_SETUP/FIXTURES_REQUIRED (rather than a plain
@@ -59,26 +81,26 @@ set_tests_properties("fixture:generate:clean" PROPERTIES
     LABELS "smoke;fixture")
 
 cxpm_add_cli_test(cli_generate_package_json_writes_file
-    COMMAND ${CXPM_EXECUTABLE} --generate package-json "${CXPM_GENERATE_TEST_DIR}"
+    COMMAND ${CXPM_EXECUTABLE} generate package-json "${CXPM_GENERATE_TEST_DIR}"
     FIXTURES "generate_clean"
     LABELS "smoke"
     PASS_REGULAR_EXPRESSION "wrote .*package\\.json")
 
 cxpm_add_cli_test(cli_generate_refuses_to_overwrite_without_force
-    COMMAND ${CXPM_EXECUTABLE} --generate package-json "${CXPM_GENERATE_TEST_DIR}"
+    COMMAND ${CXPM_EXECUTABLE} generate package-json "${CXPM_GENERATE_TEST_DIR}"
     LABELS "smoke;regression"
     WILL_FAIL TRUE)
 set_tests_properties(cli_generate_refuses_to_overwrite_without_force PROPERTIES
     DEPENDS cli_generate_package_json_writes_file)
 
 cxpm_add_cli_test(cli_generate_overwrites_with_force
-    COMMAND ${CXPM_EXECUTABLE} --generate package-json "${CXPM_GENERATE_TEST_DIR}" --force
+    COMMAND ${CXPM_EXECUTABLE} generate package-json "${CXPM_GENERATE_TEST_DIR}" --force
     LABELS "smoke")
 set_tests_properties(cli_generate_overwrites_with_force PROPERTIES
     DEPENDS cli_generate_package_json_writes_file)
 
 cxpm_add_cli_test(cli_generate_unknown_kind_fails_cleanly
-    COMMAND ${CXPM_EXECUTABLE} --generate not-a-real-kind "${CMAKE_CURRENT_BINARY_DIR}/generate/bogus"
+    COMMAND ${CXPM_EXECUTABLE} generate not-a-real-kind "${CMAKE_CURRENT_BINARY_DIR}/generate/bogus"
     LABELS "smoke"
     WILL_FAIL TRUE)
 
@@ -91,7 +113,7 @@ if(CXPM_BUILD_CLI_INTEGRATION_TESTS)
     cxpm_add_cli_fixture(example_executable SOURCE_DIRECTORY "${CMAKE_SOURCE_DIR}/examples/executable")
 
     cxpm_add_cli_test(cli_build_example_executable
-        COMMAND ${CXPM_EXECUTABLE} --build "${example_executable_DIRECTORY}"
+        COMMAND ${CXPM_EXECUTABLE} build "${example_executable_DIRECTORY}"
         FIXTURES "example_executable"
         LABELS "integration"
         TIMEOUT 180)
@@ -104,14 +126,14 @@ if(CXPM_BUILD_CLI_INTEGRATION_TESTS)
     cxpm_add_cli_fixture(example_executable_json SOURCE_DIRECTORY "${CMAKE_SOURCE_DIR}/examples/executable-json")
 
     cxpm_add_cli_test(cli_build_example_executable_json
-        COMMAND ${CXPM_EXECUTABLE} --build "${example_executable_json_DIRECTORY}"
+        COMMAND ${CXPM_EXECUTABLE} build "${example_executable_json_DIRECTORY}"
         FIXTURES "example_executable_json"
         LABELS "integration"
         TIMEOUT 180)
     set_tests_properties(cli_build_example_executable_json PROPERTIES
         ENVIRONMENT "cxpm_BUILD_EXTRA_MODULES_PATH=${CMAKE_SOURCE_DIR}/modules/toolchains")
 
-    # `--install` builds first, then installs -- exercises ProjectManager::install_target(),
+    # `install` builds first, then installs -- exercises ProjectManager::install_target(),
     # including the fix for a real bug found while writing ProjectManagerTest's hermetic
     # fixture-based unit tests (install used to nest its binary/.pc install logic inside the
     # per-include-directory loop, silently installing nothing for a target with none -- not the
@@ -121,7 +143,7 @@ if(CXPM_BUILD_CLI_INTEGRATION_TESTS)
     set(CXPM_INSTALL_PREFIX_DIR "${CMAKE_CURRENT_BINARY_DIR}/install-prefix")
 
     cxpm_add_cli_test(cli_install_example_executable
-        COMMAND ${CXPM_EXECUTABLE} --install "${example_executable_install_DIRECTORY}" --prefix "${CXPM_INSTALL_PREFIX_DIR}"
+        COMMAND ${CXPM_EXECUTABLE} install "${example_executable_install_DIRECTORY}" --prefix "${CXPM_INSTALL_PREFIX_DIR}"
         FIXTURES "example_executable_install"
         LABELS "integration"
         TIMEOUT 180)

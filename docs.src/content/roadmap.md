@@ -39,7 +39,9 @@ isolation).
    reference is correct now that `package.json` is a real manifest format.)
 5. **Delete or finish the dead orphan headers**: `ClangdManager.hpp`, `ShellCommandBuilder.hpp`,
    `Modules/Serialization/KeyValueMapDescriptor.hpp` (A14), `Utils/Unix/which.hpp` (A15),
-   `Core::{SharedPointer,UniquePointer,WeakPointer}` and `Utils/Print.hpp` (A16). None of these
+   `Core::{SharedPointer,UniquePointer,WeakPointer}` and `Utils/Print.hpp` (A16b, formerly A16 —
+   `ProgramOptions::OptionDescriptor`, A16's third item, is fixed; see
+   [srs-cli-subcommands.md](srs-cli-subcommands.md)). None of these
    are reachable from any compiling code path today; keeping them either working or gone is
    strictly better than keeping them broken-and-included-in-nobody's-mental-model-of-the-API.
 

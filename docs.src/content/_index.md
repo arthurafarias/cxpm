@@ -27,9 +27,9 @@ auto project = Project().add(example).create();
 ```
 
 ```bash
-cxpm --generate package-json .   # or: cxpm --generate package-cpp .
-cxpm --build .
-cxpm --install . --prefix /usr/local
+cxpm generate package-json .   # or: cxpm generate package-cpp .
+cxpm build .
+cxpm install . --prefix /usr/local
 ```
 
 <div class="cards">
@@ -58,6 +58,7 @@ stubbed or dead code, and what a contributor should fix first — see the
 - [Software Requirements Specification: CMake/CTest Tooling Facility](srs-ctest-tooling.md)
 - [Software Requirements Specification: JSON Manifests](srs-json-manifests.md)
 - [Software Requirements Specification: `cxpm --generate`](srs-generate.md)
+- [Software Requirements Specification: Git-Style Subcommand CLI](srs-cli-subcommands.md)
 - [Software Requirements Specification: Descriptor Sandbox](srs-sandbox.md)
 - [Software Requirements Specification: Parallel Build (proposed)](SRS-parallel-build.md)
 - [Roadmap &amp; suggested improvements](roadmap.md)

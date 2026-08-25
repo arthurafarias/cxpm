@@ -62,7 +62,7 @@ You can now build an example project:
 
 ```
 cd ../examples/executable
-cxpm --build .
+cxpm build .
 ```
 
 # Recent Enhancements
@@ -123,8 +123,8 @@ auto project = Project().add(example).create();
 
 Projects can now be installed directly:
 
-```c++
-cxpm --install . --prefix /usr/local
+```bash
+cxpm install . --prefix /usr/local
 ```
 
 cxpm follows a predictable, POSIX-aligned installation layout:
@@ -143,8 +143,8 @@ The uniform structure avoids special-case install paths and ensures consistent b
 `toolchain.json` — no compiler, no shared object, no `dlopen` involved on that path:
 
 ```bash
-cxpm --generate package-json .
-cxpm --build .
+cxpm generate package-json .
+cxpm build .
 ```
 
 See [docs/SRS-json-manifests.md](docs/SRS-json-manifests.md) and

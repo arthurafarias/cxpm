@@ -9,8 +9,7 @@ namespace CXPM::Modules::ProgramOptions {
 struct OptionDescriptor {
   String name;
   String name_short;
-  String value;
   String value_default;
   String description;
 };
-} // namespace Modules::Console::ProgramOptions
+} // namespace CXPM::Modules::ProgramOptions

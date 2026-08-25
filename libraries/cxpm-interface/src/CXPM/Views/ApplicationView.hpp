@@ -6,8 +6,9 @@
 #include "CXPM/TargetDescriptor.hpp"
 #include "CXPM/Modules/Console/AbstractConsoleApplication.hpp"
 #include "CXPM/Modules/Generators/ManifestGenerator.hpp"
-#include "CXPM/Modules/ProgramOptions/OptionDescriptorCollection.hpp"
-#include "CXPM/Modules/ProgramOptions/Parse.hpp"
+#include "CXPM/Modules/ProgramOptions/CommandLineParser.hpp"
+#include "CXPM/Modules/ProgramOptions/CommandRegistry.hpp"
+#include "CXPM/Modules/ProgramOptions/HelpFormatter.hpp"
 #include "CXPM/Utils/Unused.hpp"
 #include <filesystem>
 #include <fstream>
@@ -15,6 +16,7 @@
 #include <CXPM/ProjectManager.hpp>
 
 using namespace CXPM::Modules::Console;
+using namespace CXPM::Modules::ProgramOptions;
 
 namespace CXPM::Views {
 class ApplicationView final : public AbstractConsoleApplication {
@@ -22,72 +24,70 @@ public:
   ApplicationView(int argc, char *argv[])
       : AbstractConsoleApplication(argc, argv) {}
 
+  // A git-like CLI: `cxpm <command> [<args>]`. See docs/srs-cli-subcommands.md for the full
+  // contract this dispatch implements.
   virtual int run() override {
     auto lk = acquire_lock();
 
     setup();
 
     auto arguments = args();
+    // AbstractApplication seeds args() straight from argv, including argv[0] (the program
+    // path); CommandLineParser::parse expects that already stripped, exactly like argv + 1.
+    BasicCollection<String> tokens(arguments.begin() + 1, arguments.end());
 
-    CXPM::Modules::ProgramOptions::OptionsDescriptorCollection options_schema(
-        "cxpm", "A package manager for C++ using C++");
-
-    auto options = CXPM::Modules::ProgramOptions::Parse(arguments);
-
-    if (options.contains("help") || options.contains("h")) {
+    if (tokens.empty()) {
       print_usage();
+      return 1;
+    }
+
+    auto registry = command_registry();
+    CommandLineParser parser(registry);
+    auto parsed = parser.parse(tokens);
+
+    if (parsed.command == "help") {
+      if (!parsed.positionals.empty()) {
+        print_command_usage(registry, parsed.positionals.front());
+      } else {
+        print_usage(registry);
+      }
       return 0;
     }
 
-    if (options.contains("build") || options.contains("b")) {
+    if (parsed.has_option("help")) {
+      print_command_usage(registry, parsed.command);
+      return 0;
+    }
 
-      BasicCollection<String> values;
+    if (parsed.command == "build") {
 
-      if (options.contains("build")) {
-        values = options["build"];
-      }
-
-      if (options.contains("b")) {
-        values = options["b"];
-      }
-
-      if (values.empty()) {
+      if (parsed.positionals.empty()) {
         throw CXPM::Core::Exceptions::RuntimeException(
-            "Failed to build no build directory suplied");
+            "Failed to build: no directory supplied");
       }
 
-      assert_project_directory(values.front());
+      auto directory = parsed.positionals.front();
 
-      build(std::filesystem::absolute(values.front().c_str()));
+      assert_project_directory(directory);
+
+      build(std::filesystem::absolute(directory.c_str()));
 
       return 0;
     }
 
-    if (options.contains("install") || options.contains("i")) {
+    if (parsed.command == "install") {
 
-      BasicCollection<String> values;
-      String prefix = "/usr/local";
-
-      if (options.contains("install")) {
-        values = options["install"];
-      }
-
-      if (options.contains("i")) {
-        values = options["i"];
-      }
-
-      if (options.contains("prefix")) {
-        prefix = options["prefix"].front();
-      }
-
-      if (values.empty()) {
+      if (parsed.positionals.empty()) {
         throw CXPM::Core::Exceptions::RuntimeException(
-            "Failed to install no install directory suplied");
+            "Failed to install: no directory supplied");
       }
 
-      assert_project_directory(values.front());
+      auto directory = parsed.positionals.front();
+      auto prefix = parsed.option_value("prefix");
 
-      auto [status, project] = install_project(std::filesystem::absolute(values.front().c_str()), prefix);
+      assert_project_directory(directory);
+
+      auto [status, project] = install_project(std::filesystem::absolute(directory.c_str()), prefix);
 
       switch (status) {
       case Status::Failure:
@@ -99,27 +99,17 @@ public:
       return 0;
     }
 
-    if (options.contains("generate") || options.contains("g")) {
+    if (parsed.command == "generate") {
 
-      BasicCollection<String> values;
-
-      if (options.contains("generate")) {
-        values = options["generate"];
-      }
-
-      if (options.contains("g")) {
-        values = options["g"];
-      }
-
-      if (values.empty()) {
+      if (parsed.positionals.empty()) {
         throw CXPM::Core::Exceptions::RuntimeException(
             "Failed to generate: no kind supplied (expected one of "
             "package-cpp, package-json, toolchain-cpp, toolchain-json)");
       }
 
-      auto kind = values.front();
-      String directory = values.size() > 1 ? values[1] : String(".");
-      bool force = options.contains("force");
+      auto kind = parsed.positionals.front();
+      String directory = parsed.positionals.size() > 1 ? parsed.positionals[1] : String(".");
+      bool force = parsed.has_option("force");
 
       generate(kind, std::filesystem::absolute(directory.c_str()).string(),
                force);
@@ -127,27 +117,12 @@ public:
       return 0;
     }
 
-    print_usage();
+    print_usage(registry);
 
     return 1;
   }
 
-  void print_usage() {
-    std::osyncstream(std::cout) << R"(
-cxpm: A simple package manager written in C++ for C++
-Usage:
-    cxpm [option] [arguments]
-Options:
-
-    -b|--build <directory>: Build project on directory containing package.cpp/package.json
-    -i|--install <directory>: Install project on directory containing package.cpp/package.json
-    -u|--uninstall <directory>: Uninstall project on directory containing package.cpp/package.json
-    -g|--generate <kind> [directory]: Generate a starter manifest; kind is one of
-                                        package-cpp, package-json, toolchain-cpp, toolchain-json
-                                        (directory defaults to '.'; add --force to overwrite)
-
-    )";
-  }
+  void print_usage() { print_usage(command_registry()); }
 
 protected:
   int setup() override {
@@ -162,6 +137,49 @@ protected:
   }
 
 private:
+  // The declarative schema every subcommand is parsed and rendered against -- see
+  // docs/srs-cli-subcommands.md. Adding a subcommand only ever means adding one entry here.
+  static CommandRegistry command_registry() {
+    CommandRegistry registry;
+
+    registry.push_back({"build",
+                        "Build a project in a directory containing package.cpp/package.json",
+                        "<directory>", OptionsDescriptorCollection("build", "")});
+
+    OptionsDescriptorCollection install_options("install", "");
+    install_options.push_back({"prefix", "p", "/usr/local", "Install prefix"});
+    registry.push_back({"install", "Build a project, then install it into a prefix",
+                        "<directory>", install_options});
+
+    OptionsDescriptorCollection generate_options("generate", "");
+    generate_options.push_back(
+        {"force", "f", "", "Overwrite the target file if it already exists"});
+    registry.push_back({"generate",
+                        "Scaffold a starter package/toolchain manifest",
+                        "<kind> [directory]", generate_options});
+
+    registry.push_back({"help", "Show this message, or detailed help for one command",
+                        "[<command>]", OptionsDescriptorCollection("help", "")});
+
+    return registry;
+  }
+
+  void print_usage(const CommandRegistry &registry) {
+    std::osyncstream(std::cout)
+        << HelpFormatter::top_level("cxpm", "A package manager for C++ using C++", registry);
+  }
+
+  void print_command_usage(const CommandRegistry &registry, const String &name) {
+    auto *descriptor = registry.find(name);
+
+    if (descriptor == nullptr) {
+      throw CXPM::Core::Exceptions::RuntimeException(
+          "cxpm: '{}' is not a cxpm command. See 'cxpm help'.", name);
+    }
+
+    std::osyncstream(std::cout) << HelpFormatter::command("cxpm", *descriptor);
+  }
+
   Controllers::ProjectManager::BuildProjectOutputResult
   build(const String &directory) {
     return Controllers::ProjectManager::build_project(directory);

@@ -23,12 +23,12 @@ build instructions) and reachable on `PATH`.
 ## Following along without the player
 
 ```bash
-cxpm --generate package-json hello-cxpm
+cxpm generate package-json hello-cxpm
 cd hello-cxpm
 cat package.json
 ```
 
-`--generate package-json` (see [srs-generate.md](srs-generate.md)) writes a starter
+`generate package-json` (see [srs-generate.md](srs-generate.md)) writes a starter
 `package.json` whose target `name` comes from the directory argument (`hello-cxpm` here) and
 whose `sources` already points at `src/main.cpp` — that file itself isn't generated, so create it:
 
@@ -43,20 +43,20 @@ int main() {
 ```
 
 ```bash
-cxpm --build .
+cxpm build .
 ./hello-cxpm
 ```
 
-`--build` (see [tooling.md](tooling.md#building-a-project)) resolves a toolchain for the target's
+`build` (see [tooling.md](tooling.md#building-a-project)) resolves a toolchain for the target's
 `language`, JIT-compiles it, then invokes its compiler and linker.
 
 ```bash
-cxpm --install . --prefix ./install
+cxpm install . --prefix ./install
 find install -type f | sort
 ./install/bin/hello-cxpm
 ```
 
-`--install` (see [tooling.md](tooling.md#installing-a-project)) builds first, then copies the
+`install` (see [tooling.md](tooling.md#installing-a-project)) builds first, then copies the
 result into a POSIX-aligned prefix: the executable under `bin/`, and a generated
 `hello-cxpm.pc` under `lib/pkgconfig/`.
 
@@ -69,7 +69,7 @@ result into a POSIX-aligned prefix: the executable under `bin/`, and a generated
   recording finds a `g++` toolchain without requiring a system-wide `cxpm` install first. In a
   normal install (`cmake --install`, which also installs `modules/toolchains/{gcc,g++,nvcc}`),
   this variable isn't needed.
-- `cxpm --build`/`--install` JIT-compile **every** toolchain plugin visible on the search path
+- `cxpm build`/`install` JIT-compile **every** toolchain plugin visible on the search path
   before selecting one (see [srs-architecture.md](srs-architecture.md) for this and other
   itemized flaws) — the recording's search directory contains only `g++` so that startup cost
   doesn't dominate the cast.

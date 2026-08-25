@@ -12,41 +12,48 @@ separately under [Sandboxed descriptor extraction](#sandboxed-descriptor-extract
 [quickstart.md](quickstart.md) for a recorded, end-to-end terminal walkthrough of the commands
 below.
 
-```text
-usage: cxpm [option] [arguments]
+`cxpm` is a git-style subcommand CLI — `cxpm <command> [<args>]` — implemented on top of a small,
+reusable command-line framework in `cxpm-interface` itself
+(`CXPM::Modules::ProgramOptions::{CommandRegistry,CommandLineParser,HelpFormatter}`). See
+[srs-cli-subcommands.md](srs-cli-subcommands.md) for the full contract and the framework's design;
+this page is the day-to-day reference.
 
-options:
-    -b|--build <directory>:     build the project whose package.cpp/package.json lives in <directory>
-    -i|--install <directory>:   install the project whose package.cpp/package.json lives in <directory>
-        --prefix <path>:        install prefix (default: /usr/local)
-    -u|--uninstall <directory>: documented, not yet implemented — see srs-architecture.md item A13
-    -g|--generate <kind> [directory]: generate a starter manifest; kind is one of
+```text
+usage: cxpm <command> [<args>]
+
+commands:
+    build <directory>:                build the project whose package.cpp/package.json lives in <directory>
+    install <directory> [--prefix <path>]: install the project (default prefix: /usr/local)
+    generate <kind> [directory] [--force]: generate a starter manifest; kind is one of
                                         package-cpp, package-json, toolchain-cpp, toolchain-json
                                         (directory defaults to '.'; add --force to overwrite)
-    -h|--help:                  print this usage text
+    help [<command>]:                 show this message, or detailed help for one command
+
+-h/--help works on every command (`cxpm <command> --help`, or `cxpm help <command>`).
+`uninstall` is not yet implemented — see srs-architecture.md item A13.
 ```
 
 ## Building a project
 
 ```bash
-cxpm --build .
+cxpm build .
 ```
 
-`--build`/`-b` requires exactly one directory argument containing a `package.cpp` **or**
-`package.json` (`Views::ApplicationView::assert_project_directory` validates this, and that the
-directory exists, before doing anything else — see
-[srs-json-manifests.md](srs-json-manifests.md)). If both are present, `package.cpp` takes
-precedence. `cxpm` loads the manifest into a `Project`, resolves a toolchain for each target's
-`.language`, and shells out to that toolchain's compiler, linker and archiver.
+`build` requires exactly one directory argument containing a `package.cpp` **or** `package.json`
+(`Views::ApplicationView::assert_project_directory` validates this, and that the directory exists,
+before doing anything else — see [srs-json-manifests.md](srs-json-manifests.md)). If both are
+present, `package.cpp` takes precedence. `cxpm` loads the manifest into a `Project`, resolves a
+toolchain for each target's `.language`, and shells out to that toolchain's compiler, linker and
+archiver.
 
 ## Installing a project
 
 ```bash
-cxpm --install . --prefix /usr/local
+cxpm install . --prefix /usr/local
 ```
 
-`--install`/`-i` builds the project first, then copies already-built artifacts into a
-POSIX-aligned prefix layout:
+`install` builds the project first, then copies already-built artifacts into a POSIX-aligned
+prefix layout:
 
 - Shared libraries → `<prefix>/lib`
 - Static libraries → `<prefix>/lib`
@@ -59,19 +66,20 @@ POSIX-aligned prefix layout:
 ## Generating a starter manifest
 
 ```bash
-cxpm --generate package-json .        # or package-cpp, toolchain-cpp, toolchain-json
-cxpm --generate toolchain-json ./my-toolchain --force
+cxpm generate package-json .        # or package-cpp, toolchain-cpp, toolchain-json
+cxpm generate toolchain-json ./my-toolchain --force
 ```
 
-`--generate`/`-g` writes a starter `package.cpp`/`package.json`/`toolchain.cpp`/`toolchain.json`
-into `directory` (default `.`, created if missing), refusing to overwrite an existing file unless
-`--force` is also given. See [srs-generate.md](srs-generate.md).
+`generate` writes a starter `package.cpp`/`package.json`/`toolchain.cpp`/`toolchain.json` into
+`directory` (default `.`, created if missing), refusing to overwrite an existing file unless
+`--force` is also given. See [srs-generate.md](srs-generate.md) (its content requirements are
+unchanged by the move to a subcommand — only the invocation syntax moved).
 
 ## Describing a project: `package.cpp` or `package.json`
 
 The `.cpp` and `.json` forms describe the exact same `ProjectDescriptor`; pick whichever fits —
 see [srs-json-manifests.md](srs-json-manifests.md) for the full requirements, and
-`cxpm --generate package-cpp`/`cxpm --generate package-json` to produce a starting point for
+`cxpm generate package-cpp`/`cxpm generate package-json` to produce a starting point for
 either.
 
 ```cpp
@@ -162,7 +170,7 @@ that `.cpp` file contains. `cxpm` does this in a separate, resource-limited chil
 disabled (falling back to the pre-sandbox direct-load behavior) with:
 
 ```bash
-CXPM_SANDBOX_DISABLE=1 cxpm --build .
+CXPM_SANDBOX_DISABLE=1 cxpm build .
 ```
 
 `package.json`/`toolchain.json` never need this at all, since parsing them never executes code.
@@ -170,7 +178,7 @@ CXPM_SANDBOX_DISABLE=1 cxpm --build .
 ## Testing `cxpm` itself
 
 The tooling described on this page is *what `cxpm` does for its users*. A separate CMake/CTest
-facility exists for *testing* `cxpm` — registering `cxpm --build`/`--install`/`--generate`
+facility exists for *testing* `cxpm` — registering `cxpm build`/`install`/`generate`
 invocations (and direct `cxpm-descriptor-sandbox` calls) as CTest tests with fixtures, labels and
 exit-code assertions. See [srs-ctest-tooling.md](srs-ctest-tooling.md) and
 [testing.md](testing.md) for that.

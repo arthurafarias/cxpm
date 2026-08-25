@@ -11,6 +11,15 @@ title: "SRS: cxpm --generate"
 
 ---
 
+**Note:** §2.1 item 1 below describes `--generate`/`-g` as a flag alongside `-b/--build`/
+`-i/--install`. [srs-cli-subcommands.md](srs-cli-subcommands.md) later moved the CLI from flat
+flags to git-style subcommands (`cxpm generate <kind> [directory] [--force]`); the *content*
+requirements below (§2.2, and §2.1 items 2–8) are otherwise unchanged and still describe current
+behavior. This page is left as a dated record rather than rewritten, in the same spirit as
+[srs-architecture.md](srs-architecture.md) item A34.
+
+---
+
 ## 1. Purpose
 
 Before this feature, starting a new cxpm project meant copying an existing example by hand. This

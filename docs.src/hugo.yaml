@@ -45,6 +45,7 @@ params:
     - "/srs-ctest-tooling"
     - "/srs-json-manifests"
     - "/srs-generate"
+    - "/srs-cli-subcommands"
     - "/srs-sandbox"
     - "/srs-parallel-build"
 
@@ -102,16 +103,21 @@ menu:
       pageRef: "/srs-generate"
       parent: srs
       weight: 5
+    - identifier: srs-cli-subcommands
+      name: "Git-Style Subcommand CLI"
+      pageRef: "/srs-cli-subcommands"
+      parent: srs
+      weight: 6
     - identifier: srs-sandbox
       name: "Descriptor Sandbox"
       pageRef: "/srs-sandbox"
       parent: srs
-      weight: 6
+      weight: 7
     - identifier: srs-parallel-build
       name: "Parallel Build (proposed)"
       pageRef: "/srs-parallel-build"
       parent: srs
-      weight: 7
+      weight: 8
 
 caches:
   images:
