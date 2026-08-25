@@ -1,7 +1,5 @@
 *project-manifest.so
-package.loader.cpp
-package.loader.cpp.o
-package.cpp.o
+*.loader.cpp
 compile_commands.json
 *example-executable
 *.o

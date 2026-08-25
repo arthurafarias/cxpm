@@ -13,6 +13,8 @@ add_subdirectory(libraries/cxpm-interface)
 add_subdirectory(applications/cxpm)
 add_subdirectory(applications/cxpm-descriptor-sandbox)
 
+add_subdirectory(modules/toolchains/clang++)
+add_subdirectory(modules/toolchains/clang)
 add_subdirectory(modules/toolchains/g++)
 add_subdirectory(modules/toolchains/gcc)
 add_subdirectory(modules/toolchains/nvcc)
