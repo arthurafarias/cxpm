@@ -215,13 +215,26 @@ private:
     auto loader_path = std::filesystem::path(project_path.c_str())
                            .append("toolchain-" + name + ".loader.cpp");
 
+    auto library_path = std::filesystem::path(project_path.c_str())
+                            .append("libtoolchain-" + name + ".so");
+
+    // Rebuilding the plugin JIT-compiles a whole shared object, so skip it whenever the
+    // .so already reflects the current toolchain.cpp -- otherwise every autoscan() (i.e.
+    // every cxpm invocation) pays that cost again even though nothing changed.
+    if (std::filesystem::exists(library_path) &&
+        std::filesystem::last_write_time(library_path) >=
+            std::filesystem::last_write_time(source_path)) {
+      try {
+        return load_toolchain_plugin(library_path.string());
+      } catch (std::exception &) {
+        // fall through and rebuild if the existing .so can't be loaded (e.g. stale ABI)
+      }
+    }
+
     std::ofstream loader_stream(loader_path,
                                 std::ios_base::trunc | std::ios_base::out);
     loader_stream << ToolchainLoaderSource;
     loader_stream.flush();
-
-    auto library_path = std::filesystem::path(project_path.c_str())
-                            .append("libtoolchain-" + name + ".so");
 
     auto compiler = Utils::Unix::EnvironmentManager::which("c++");
 
