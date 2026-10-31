@@ -12,43 +12,43 @@ If you're interested in discussing or contributing to this idea, feel free to fo
 
 # Download Binnaries
 
- ## CX Libraries
+ ### CX Libraries
 
  - [Pacman](https://github.com/arthurafarias/cxpm/releases/download/v0.2.0/cx-0.1.0-1-x86_64.pkg.tar.zst)
  - [DEB](https://github.com/arthurafarias/cxpm/releases/download/v0.2.0/cx_0.1.0_amd64.deb)
  - [RPM](https://github.com/arthurafarias/cxpm/releases/download/v0.2.0/cx-0.1.0-1.x86_64.rpm)
 
- ## CX Interface
+ ### CX Interface
 
  - [Pacman](https://github.com/arthurafarias/cxpm/releases/download/v0.2.0/cxpm-interface-0.2.0-1-x86_64.pkg.tar.zst)
  - [DEB](https://github.com/arthurafarias/cxpm/releases/download/v0.2.0/cxpm-interface_0.2.0_amd64.deb)
  - [RPM](https://github.com/arthurafarias/cxpm/releases/download/v0.2.0/cxpm-interface-0.2.0-1.x86_64.rpm)
 
- ## CXPM Application
+ ### CXPM Application
 
  - [Pacman](https://github.com/arthurafarias/cxpm/releases/download/v0.2.0/cx-pm-0.2.0-1-x86_64.pkg.tar.zst)
  - [DEB](https://github.com/arthurafarias/cxpm/releases/download/v0.2.0/cxpm_0.2.0_amd64.deb)
  - [RPM](https://github.com/arthurafarias/cxpm/releases/download/v0.2.0/cxpm-0.2.0-1.x86_64.rpm)
 
- ## Toolchain Clang++
+ ### Toolchain Clang++
 
  - [Pacman](https://github.com/arthurafarias/cxpm/releases/download/v0.2.0/cx-pm-toolchain-clang++-0.2.0-1-x86_64.pkg.tar.zst)
  - [DEB](https://github.com/arthurafarias/cxpm/releases/download/v0.2.0/cxpm-toolchain-clang++-0.2.0-1.x86_64.rpm)
  - [RPM](https://github.com/arthurafarias/cxpm/releases/download/v0.2.0/cxpm-toolchain-clang++-0.2.0-1.x86_64.rpm)
 
- ## Toolchain Clang
+ ### Toolchain Clang
 
  - [Pacman](https://github.com/arthurafarias/cxpm/releases/download/v0.2.0/cx-pm-toolchain-clang-0.2.0-1-x86_64.pkg.tar.zst)
  - [DEB](https://github.com/arthurafarias/cxpm/releases/download/v0.2.0/cxpm-toolchain-clang_0.2.0_amd64.deb)
  - [RPM](https://github.com/arthurafarias/cxpm/releases/download/v0.2.0/cxpm-toolchain-clang-0.2.0-1.x86_64.rpm)
  
- ## Toolchain GCC
+ ### Toolchain GCC
 
  - [Pacman](https://github.com/arthurafarias/cxpm/releases/download/v0.2.0/cxpm-toolchain-gcc-0.2.0-1-x86_64.pkg.tar.zst)
  - [DEB](https://github.com/arthurafarias/cxpm/releases/download/v0.2.0/cxpm-toolchain-gcc_0.2.0_amd64.deb)
  - [RPM](https://github.com/arthurafarias/cxpm/releases/download/v0.2.0/cxpm-toolchain-gcc-0.2.0-1.x86_64.rpm)
 
-## Toolchain G++
+### Toolchain G++
 
  - [Pacman](https://github.com/arthurafarias/cxpm/releases/download/v0.2.0/cxpm-toolchain-g++-0.2.0-1-x86_64.pkg.tar.zst)
  - [DEB](https://github.com/arthurafarias/cxpm/releases/download/v0.2.0/cxpm-toolchain-g++_0.2.0_amd64.deb)
