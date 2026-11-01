@@ -1,68 +1,89 @@
 ![cxpm](misc/images/logo-banner-path.svg)
 
-cxpm is an experimental package manager for C++ that aims to simplify project configuration by using C++ itself as the declarative language. Instead of relying on separate configuration formats, cxpm allows projects and packages to describe themselves directly in standard C++ code.
+cxpm is an experimental package manager for C++ that uses C++ itself as the declarative
+language: a project describes itself in a `package.cpp`, the way a Swift package does in
+`Package.swift` or a Julia one in `Project.toml`. cxpm fetches, configures, builds, tests,
+packs and installs projects against a sysroot made of their declared dependencies, with no
+other build system involved; it builds, tests and packs itself the same way.
 
-The design is inspired by modern ecosystems such as **Julia**, **Swift**, and their language-native package declarations.
+- Handbook, with the manifest format, the lifecycle, tasks and hooks and the package index:
+  <https://01.dev.soft-forge.dev/cxpm/>
+- Command line reference, the text of `cxpm help` for every command:
+  <https://arthurafarias.github.io/cxpm/>
+- Public package index: <https://01.dev.soft-forge.dev/cxpm/index/>
 
-This project is at an early stage. It already builds, tests, packs and installs itself, with no other build system involved.
+This repository publishes the prebuilt packages. The source is not public: cxpm is built on
+the cx libraries, which are closed source.
 
-The website is at <https://01.dev.soft-forge.dev/cxpm/> and the package index at <https://01.dev.soft-forge.dev/cxpm/index/>.
+## Install
 
-If you're interested in discussing or contributing to this idea, feel free to fork the repository and open a proposal.
+Release **0.3.0** is built for x86_64, as a package for each package manager. Every
+distribution installs the same six packages:
 
-# Download Binnaries
+| Package | What it is |
+|---|---|
+| `cx` | The cx libraries cxpm is built with (headers and pkg-config files) |
+| `cxpm-interface` | The headers a `package.cpp` includes: `<cx/pm/project.hpp>`, `<cx/pm/target.hpp>` |
+| `cxpm-descriptor-sandbox` | The helper that compiles and loads a manifest in a confined process |
+| `cxpm-toolchain-gcc`, `-g++`, `-clang`, `-clang++`, `-nvcc` | The toolchain modules; install the ones for the compilers you have, `g++` at least |
+| `cxpm` | The command |
 
- ### CX Libraries
+Install all of them at once: the package manager orders them. You need a C++23 compiler
+(`g++` 14 or `clang++` 18 or newer), `git` and `pkg-config` on the machine; cxpm finds them
+on `PATH`.
 
- - [Pacman](https://github.com/arthurafarias/cxpm/releases/download/v0.2.0/cx-0.1.0-1-x86_64.pkg.tar.zst)
- - [DEB](https://github.com/arthurafarias/cxpm/releases/download/v0.2.0/cx_0.1.0_amd64.deb)
- - [RPM](https://github.com/arthurafarias/cxpm/releases/download/v0.2.0/cx-0.1.0-1.x86_64.rpm)
+### Arch Linux, Manjaro (pacman)
 
- ### CX Interface
+```sh
+curl -fsSLO https://github.com/arthurafarias/cxpm/releases/download/v0.3.0/cxpm-0.3.0-arch-x86_64.tar
+tar -xf cxpm-0.3.0-arch-x86_64.tar
+sudo pacman -U --needed cxpm-0.3.0-arch-x86_64/*.pkg.tar.zst
+```
 
- - [Pacman](https://github.com/arthurafarias/cxpm/releases/download/v0.2.0/cxpm-interface-0.2.0-1-x86_64.pkg.tar.zst)
- - [DEB](https://github.com/arthurafarias/cxpm/releases/download/v0.2.0/cxpm-interface_0.2.0_amd64.deb)
- - [RPM](https://github.com/arthurafarias/cxpm/releases/download/v0.2.0/cxpm-interface-0.2.0-1.x86_64.rpm)
+### Debian 12 and 13, Ubuntu 24.04 and later (deb)
 
- ### CXPM Application
+```sh
+curl -fsSLO https://github.com/arthurafarias/cxpm/releases/download/v0.3.0/cxpm-0.3.0-debian-amd64.tar
+tar -xf cxpm-0.3.0-debian-amd64.tar
+sudo apt install ./cxpm-0.3.0-debian-amd64/*.deb
+```
 
- - [Pacman](https://github.com/arthurafarias/cxpm/releases/download/v0.2.0/cx-pm-0.2.0-1-x86_64.pkg.tar.zst)
- - [DEB](https://github.com/arthurafarias/cxpm/releases/download/v0.2.0/cxpm_0.2.0_amd64.deb)
- - [RPM](https://github.com/arthurafarias/cxpm/releases/download/v0.2.0/cxpm-0.2.0-1.x86_64.rpm)
+### Fedora, RHEL 9 and 10, Amazon Linux 2023 (rpm)
 
- ### Toolchain Clang++
+```sh
+curl -fsSLO https://github.com/arthurafarias/cxpm/releases/download/v0.3.0/cxpm-0.3.0-rpm-x86_64.tar
+tar -xf cxpm-0.3.0-rpm-x86_64.tar
+sudo dnf install ./cxpm-0.3.0-rpm-x86_64/*.rpm
+```
 
- - [Pacman](https://github.com/arthurafarias/cxpm/releases/download/v0.2.0/cx-pm-toolchain-clang++-0.2.0-1-x86_64.pkg.tar.zst)
- - [DEB](https://github.com/arthurafarias/cxpm/releases/download/v0.2.0/cxpm-toolchain-clang++-0.2.0-1.x86_64.rpm)
- - [RPM](https://github.com/arthurafarias/cxpm/releases/download/v0.2.0/cxpm-toolchain-clang++-0.2.0-1.x86_64.rpm)
+Each bundle holds the packages of one format; the single packages are attached to the
+[release](https://github.com/arthurafarias/cxpm/releases/tag/v0.3.0) too, for installing
+one at a time (`sudo pacman -U cxpm-0.3.0-1-x86_64.pkg.tar.zst`, `sudo apt install
+./cxpm_0.3.0_amd64.deb`, `sudo dnf install ./cxpm-0.3.0-1.x86_64.rpm`).
 
- ### Toolchain Clang
+Then:
 
- - [Pacman](https://github.com/arthurafarias/cxpm/releases/download/v0.2.0/cx-pm-toolchain-clang-0.2.0-1-x86_64.pkg.tar.zst)
- - [DEB](https://github.com/arthurafarias/cxpm/releases/download/v0.2.0/cxpm-toolchain-clang_0.2.0_amd64.deb)
- - [RPM](https://github.com/arthurafarias/cxpm/releases/download/v0.2.0/cxpm-toolchain-clang-0.2.0-1.x86_64.rpm)
- 
- ### Toolchain GCC
+```sh
+cxpm help                 # the commands; cxpm help <command> describes one
+cxpm project create greeter --type static-library --tests --example
+cd greeter && cxpm build && cxpm test
+```
 
- - [Pacman](https://github.com/arthurafarias/cxpm/releases/download/v0.2.0/cxpm-toolchain-gcc-0.2.0-1-x86_64.pkg.tar.zst)
- - [DEB](https://github.com/arthurafarias/cxpm/releases/download/v0.2.0/cxpm-toolchain-gcc_0.2.0_amd64.deb)
- - [RPM](https://github.com/arthurafarias/cxpm/releases/download/v0.2.0/cxpm-toolchain-gcc-0.2.0-1.x86_64.rpm)
+### Remove
 
-### Toolchain G++
+```sh
+sudo pacman -Rs cxpm cxpm-toolchain-gcc cxpm-toolchain-g++ cxpm-toolchain-clang cxpm-toolchain-clang++ cxpm-toolchain-nvcc cxpm-descriptor-sandbox cxpm-interface cx
+sudo apt remove cxpm cxpm-toolchain-gcc cxpm-toolchain-g++ cxpm-toolchain-clang cxpm-toolchain-clang++ cxpm-toolchain-nvcc cxpm-descriptor-sandbox cxpm-interface cx
+sudo dnf remove cxpm cxpm-toolchain-gcc cxpm-toolchain-g++ cxpm-toolchain-clang cxpm-toolchain-clang++ cxpm-toolchain-nvcc cxpm-descriptor-sandbox cxpm-interface cx
+```
 
- - [Pacman](https://github.com/arthurafarias/cxpm/releases/download/v0.2.0/cxpm-toolchain-g++-0.2.0-1-x86_64.pkg.tar.zst)
- - [DEB](https://github.com/arthurafarias/cxpm/releases/download/v0.2.0/cxpm-toolchain-g++_0.2.0_amd64.deb)
- - [RPM](https://github.com/arthurafarias/cxpm/releases/download/v0.2.0/cxpm-toolchain-g++-0.2.0-1.x86_64.rpm)
-
-# What a project looks like
+## What a project looks like
 
 ```
 - include/greeter/greeter.hpp
 - src/greeter.cpp
 - package.cpp
 ```
-
-with a `package.cpp` such as
 
 ```cpp
 #include <cx/pm/project.hpp>
@@ -83,246 +104,50 @@ auto project = cx::pm::project()
                    .create();
 ```
 
-A project has one target. It sees only what it declares: `fmt` above is resolved to another
-project of the same workspace, to a repository cxpm fetches, to a package a package index
-publishes, or to a package of the sysroot, and its include paths and libraries come from there. A `package.json` with the same fields works
-where no C++ is wanted.
+A project has one target and sees only what it declares: `fmt` above is resolved to another
+project of the same workspace, to a repository cxpm fetches, to a package the package index
+publishes, or to a package of the sysroot. A `package.json` with the same fields works where no
+C++ is wanted.
 
-The philosophy is a small, modern, expressive system: no macro layers, no special DSL. Your C++
-project is described in C++, much like package.json, Package.swift or Pkg.jl.
-
-## A manifest written for 0.7
-
-0.7 spelled the API `CXPM::Target`, `CXPM::CompilerOptions::StandardCxx23` and
-`#include <CXPM/Target.hpp>`. 0.8 kept forwarding headers under `include/CXPM` for one
-release; 0.9 removes them. To move a manifest over:
-
-- include `<cx/pm/project.hpp>` and `<cx/pm/target.hpp>`, and use `namespace cx::pm`;
-- write the types and options in lower_snake_case: `target()`, `project()`,
-  `compiler_options::standard_cxx23`;
-- rename a global variable called `cx`. The headers declare `namespace cx`, so
-  `auto cx = target()...` at namespace scope no longer compiles
-  (`'auto cx' redeclared as different kind of entity`). `auto cx_libraries = ...` works.
-
-## Once cxpm is installed
-
-It is the build tool of this repository too:
-
-```bash
-cxpm build      # every project of the workspace
-cxpm test       # the unit suite and the command line tests
-cxpm install    # pack and install
-cxpm uninstall
-```
-
-## A manifest that sets install scripts
-
-Up to descriptor schema 5 a target named the scripts its package runs on installation and
-removal. Schema 6 makes them tasks of the project:
-
-| Before | Now |
-|---|---|
-| `target().post_install_script_set("packaging/postinst.in")` | `project().task_file_add("package_post_install", "packaging/postinst.in")` |
-| `pre_remove_script_set(...)` | `task_file_add("package_pre_remove", ...)` |
-| `post_remove_script_set(...)` | `task_file_add("package_post_remove", ...)` |
-| `"post_install_script": "packaging/postinst.in"` in `target` | `"tasks": {"package_post_install": {"file": "packaging/postinst.in"}}` beside `target` |
-
-The scripts are packed as before, with their `@NAME@`s replaced. A package.cpp that still calls
-one of the old setters fails to compile with a message naming the task, and a package.json that
-still sets one fails to load the same way.
-
-# Using it
-
-```bash
-cxpm project create greeter --type static-library --tests --example
-cd greeter
+```sh
 cxpm build              # fetch, configure and build what is stale
 cxpm test               # build and run the tests projects
-cxpm pack               # .cxpm/packages/greeter-0.1.0.cxpm.tar
+cxpm pack               # a plain archive, or a pacman, rpm or deb package
 cxpm install --prefix /usr/local
-cxpm uninstall --prefix /usr/local
+cxpm publish            # a version on the package index, with its packages
 ```
 
 | Command | What it does |
 |---|---|
-| `fetch` | Clones the dependencies that name a repository or that the package index publishes, and locks their commits |
-| `configure` | Chooses a toolchain and resolves every dependency, once |
-| `build` | Compiles what changed, in parallel |
-| `test` | Builds and runs the workspace's tests projects |
-| `pack` | Stages the target and makes a package: a plain archive, or a pacman, rpm or deb package |
-| `run` | Runs a task the project declares, `cxpm run lint -- --fix`; alone, lists them |
-| `install`, `uninstall` | Hands the package to the package manager; given a name, installs the prebuilt package the index publishes |
+| `fetch`, `configure`, `build`, `test`, `pack`, `install`, `uninstall` | The lifecycle of a project, against a sysroot of its dependencies |
+| `run` | Runs a task the project declares; `pre_<stage>` and `post_<stage>` tasks run as hooks |
 | `generate`, `project create` | Writes manifests and whole project skeletons |
 | `search`, `view`, `login`, `whoami`, `publish` | Looks packages up in a package index and publishes a version of one |
-| `deprecate`, `yank`, `tag`, `owner`, `access` | Changes a package published already: what to use instead, versions taken back, named versions, who publishes it |
-| `dependency add`, `remove`, `list`, `sync`, `update` | Edits the dependencies in the manifest and fetches them |
-| `outdated` | Lists the dependencies of the index that a newer version exists for, or whose locked version is yanked or deprecated |
+| `deprecate`, `yank`, `unpublish`, `tag`, `owner`, `access` | Changes a package published already |
+| `dependency add`, `remove`, `list`, `sync`, `update`, `outdated` | Edits the dependencies in the manifest and keeps them current |
 | `repl` | A session over these commands; `cxpm` alone opens it at a terminal |
-| `serve` | Runs a package index; cxpm-web-index, a separate application, is the same index with accounts and a page |
+| `serve` | Runs a package index of your own |
 
-Manifests are compiled and loaded in a separate, resource-limited process, and that process and
-the build itself run in a namespace with no network and no view of your home directory when
-bubblewrap is available.
+The full text of every command's help is on the
+[command line reference](https://arthurafarias.github.io/cxpm/), and the handbook at
+<https://01.dev.soft-forge.dev/cxpm/> explains the manifest, the lifecycle, tasks and hooks,
+toolchains and the package index.
 
-`build` and the commands that build compile one source per core at a time. `--jobs N` (`-j N`)
-sets another number, and `CXPM_BUILD_JOBS` does the same when the option is not given; one job
-builds exactly what the parallel build does, one source after another. The manifest process is
-started through `cxpm-descriptor-sandbox`, found through `CXPM_SANDBOX_HELPER`, then beside
-`cxpm` or on `PATH`, then in the build tree cxpm was compiled in, then under the install
-prefix; when none has it, the error names every place it looked.
+## What is new in 0.3.0
 
-`publish` tells the index which commit of the repository a version is, and sends with it the
-deb, rpm and pacman packages `cxpm pack --package-manager deb|rpm|pacman` left in
-`.cxpm/packages` for that version; `publish --pack` makes the three first. A version with
-packages can be published from a checkout that is not a pushed commit, or from no repository
-at all: the index then serves only the packages.
+- `cxpm unpublish <name> [<version>]` deletes a version, or a package, from the index. It says
+  what goes and asks for the name to be typed (`--yes` for scripts); the index refuses the last
+  version and anything another owner's package depends on, pointing at `cxpm yank`.
+- `cxpm fetch` fails, and says the way out, when the lock pins a version the index no longer
+  has; `cxpm outdated` lists such a dependency as gone.
+- `cxpm serve` answers `DELETE /<name>` and `DELETE /<name>/<version>` with the index's
+  contract.
+- Tasks and lifecycle hooks: `cxpm run`, `pre_<stage>`/`post_<stage>`, and the package hooks
+  `package_post_install`, `package_pre_remove`, `package_post_remove`.
 
-`cxpm serve` takes each package before its version: it refuses a file whose name is not one
-the three backends give that version, and a deb or rpm whose control file or header names
-another package, version or machine (a pacman package is checked only for its zstd magic
-number), and files of a version already published. Once the version names a file, it is served
-at `<index>/<name>/<version>/-/<file>` with its SHA-256 in the `x-sha256` field. A package may
-be up to 256 MiB. `fetch` builds from source, so it passes over a version that has no
-repository; install that one's packages with the system's package manager.
+## Contributing
 
-`publish --private` makes a package its owner's alone: read with any other login, or with
-none, the index has no such package, so it is not listed, its versions and packages are not
-served, and `fetch` does not find it. `cxpm` sends the stored token with every read, so the
-owner fetches it like any other. `publish --public` makes it public again; a publication with
-neither keeps what the package is.
+If you're interested in discussing this idea, open an issue here. The source is not open, so
+there is nothing to fork; proposals and bug reports are welcome.
 
-## Tasks and hooks
-
-A project declares tasks, a name and the shell text it runs, beside its target:
-
-```cpp
-auto project = cx::pm::project()
-                   .target_set(greeter)
-                   .task_add("lint", "clang-tidy src/*.cpp -- -Iinclude")
-                   .task_add("pre_build", "./tools/generate-version.sh > include/version.hpp")
-                   .task_file_add("package_post_install", "packaging/postinst.in")
-                   .create();
-```
-
-`cxpm run lint -- --fix` runs one with `/bin/sh -e -c` in the project directory, `--fix` as its
-`$1`, and exits with its status; `cxpm run` lists them. `pre_<stage>` and `post_<stage>` run
-around `fetch`, `configure`, `build`, `test`, `pack`, `install` and `publish`, for the project
-and its members but never for a dependency; `--no-hooks` or `CXPM_NO_HOOKS=1` skips them.
-`package_post_install`, `package_pre_remove` and `package_post_remove` are not run here: `pack`
-puts them into the deb, rpm or pacman package. The
-[command page](https://01.dev.soft-forge.dev/cxpm/tooling/#tasks-and-hooks) has the whole
-contract.
-
-## Keeping a package and its dependencies
-
-`cxpm view fmt` shows a package: its owner and maintainers, its tags, its versions newest
-first and the yanked ones apart; `cxpm view fmt@10.2.1` shows one version, with its commit,
-dependencies and packages, and `--json` prints what the index answered. `cxpm outdated` lists
-the project's dependencies of the index whose locked version is not the newest, with the newest
-the manifest accepts and the newest published, and says when the locked one is yanked or
-deprecated. `cxpm dependency update fmt` moves one dependency to the newest version the
-manifest accepts (`cxpm dependency update` moves every one) and pins it; when that fails, the
-lock stays as it was.
-
-Whoever publishes a package changes it afterwards, with the token of `cxpm login`:
-
-```bash
-cxpm deprecate fmt "use fmt2"            # or fmt@10.0.0, one version; --undo takes it back
-cxpm yank fmt@10.2.0                     # --undo puts it back
-cxpm tag add fmt@11.0.0-rc1 next         # tag remove fmt next, tag list fmt
-cxpm owner add ada fmt                   # ada publishes fmt too; owner remove ada fmt
-cxpm owner offer ada fmt                 # ada runs `cxpm owner take fmt`, or owner decline fmt
-cxpm access fmt private                  # or public
-```
-
-A yanked version is still read and downloaded, and a project whose lock pins it keeps it, with a
-warning, until `cxpm dependency update` moves it; nothing new resolves to it, a tag cannot point
-at it, and its number is never published again. `fetch` warns about a deprecated package or
-version, with the message saying what to use. Maintainers publish, deprecate, yank and tag; the
-owner alone adds or removes them, makes the package private, and offers it to another account,
-which becomes its owner when it takes it. `cxpm serve` and cxpm-web-index answer these
-changes at `/-/packages/<name>/...`, so either index keeps packages the same way.
-
-## Installing a published package
-
-A version published with `cxpm publish --pack` carries a deb, an rpm and a pacman package.
-`cxpm install hola` installs the newest version of hola from the one this system takes, without
-building anything:
-
-```bash
-cxpm install hola                         # the newest version
-cxpm install hola@1.0.0                   # or hola@">= 1.0"
-cxpm install hola --root /srv/sysroot --package-manager pacman
-cxpm uninstall hola
-```
-
-The package manager is `--package-manager`, else the one of the root's distribution, read from
-its os-release. The file is the one built for this machine (`uname -m`), and it is installed only
-once its SHA-256 is the one the index lists. A version with no such file is not installed:
-cxpm says which files it has, and that the way left is building it, as a dependency of a project
-or from its repository, with `cxpm install` there. `install` and `uninstall` take a name only
-where no directory of that name is; `./hola` is always the directory.
-
-## Scoped names
-
-A package of the index may be scoped, as `@acme/widget`. The account `acme` owns the scope: it
-publishes the first version of a name in it and adds whoever else publishes it (`cxpm owner add
-ada @acme/widget`). A project publishes under a scope by declaring it beside its name, and every
-command that takes a package name takes the scoped one:
-
-```json
-{"schema": 3, "target": {"name": "widget", "scope": "acme", "version": "1.2.0", "type": "static-library"}}
-```
-
-```bash
-cxpm dependency add @acme/widget          # writes "@acme/widget >= 1.2.0"
-cxpm fetch
-cxpm install @acme/widget@1.2.0
-```
-
-The scope is how the index tells packages apart. On a machine, the package is `widget`: its
-pkg-config module, the name the build and the lock know it by, `.cxpm/sources/widget`, its
-deb, rpm and pacman packages (`widget_1.2.0_amd64.deb`), and the package the system's package
-manager installs. So two packages that differ only by scope can't be in one build, or on one
-system, at once.
-
-## Signing in and plans
-
-The public index signs people in through Soft Forge Payments, which also sells its plans:
-
-| Plan | Price | What it publishes |
-|---|---|---|
-| Free | nothing | one public package, with as many versions as wanted |
-| Indexing | monthly | any number of packages, public or private |
-
-Reading, searching and fetching public packages need no account. `cxpm login` with no token
-starts a sign-in: it prints an address and a code, the person signs in on the platform there
-(taking the Free plan the first time) and confirms the code, and `cxpm` stores the token the
-index gives it. The index, not `cxpm`, talks to the platform: it starts the sign-in with
-`/v1/sso/start`, asks `/v1/sso/wait` while `cxpm login` waits on `/-/login/wait`, and keeps
-the platform's grant to itself. `cxpm` only ever holds a token of the index, and the index
-sees only the SHA-256 of the secret `cxpm login` makes, so nobody else can collect the token.
-
-The plan is checked when publishing. A second package on Free, or `--private` without
-Indexing, is refused with 402 and the address of the platform's page where the plan is taken.
-When a plan ends, nothing published is taken away: packages stay as they are, and only new
-packages over the Free plan's one are refused. `cxpm serve` has no plans: its operator makes
-the accounts (`--add-account`), and each logs in with `cxpm login --token`. `cxpm logout`
-revokes that token there, and the operator makes another with `--add-account` again.
-
-`cxpm help` lists the commands and `cxpm help <command>` describes one. A mistyped command
-line, such as an unknown command or option or a missing argument, fails with one line naming
-the command and pointing at its help.
-
-The documentation is under [docs.src/content](docs.src/content): start with
-[quickstart.md](docs.src/content/quickstart.md), and [tooling.md](docs.src/content/tooling.md)
-is the reference.
-
-# Roadmap
-
-cxpm is being redesigned to replace CMake rather than sit beside it: fetch, configure, build,
-pack and install against a sysroot made of a project's declared dependencies. The milestones
-and what is still open are described in [roadmap.md](docs.src/content/roadmap.md) and tracked issue by issue in
-`planning.pb`.
-
-Arthur Farias <afarias.arthur@gmail.com>
+Arthur Farias
