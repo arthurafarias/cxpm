@@ -34,11 +34,22 @@ on `PATH`.
 
 ### Arch Linux, Manjaro (pacman)
 
+Arch's `libxpm` installs the XPM checker of libXpm as `/usr/bin/cxpm`, the file cxpm's own
+package installs. The bundle carries a rebuilt `libxpm` (3.5.20-1.1, the
+[PKGBUILD](packaging/arch/libxpm/PKGBUILD) is in this repository) that installs that tool as
+`xpm` instead and is otherwise the Arch package; it replaces the installed `libxpm`, and the
+rest installs without conflict:
+
 ```sh
 curl -fsSLO https://github.com/arthurafarias/cxpm/releases/download/v0.3.0/cxpm-0.3.0-arch-x86_64.tar
 tar -xf cxpm-0.3.0-arch-x86_64.tar
 sudo pacman -U --needed cxpm-0.3.0-arch-x86_64/*.pkg.tar.zst
 ```
+
+A later `libxpm` from the Arch repositories brings `/usr/bin/cxpm` back, and pacman then
+refuses the upgrade with a file conflict: rebuild the PKGBUILD against the new version
+(`makepkg -s` in `packaging/arch/libxpm`, after setting `pkgver`), or add `libxpm` to
+`IgnorePkg` in `/etc/pacman.conf`.
 
 ### Debian 12 and 13, Ubuntu 24.04 and later (deb)
 
