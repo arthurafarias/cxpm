@@ -1,0 +1,95 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Quickstart · cxpm</title><meta name=description content="An experimental C++-native package manager and build tool for C++."><link rel=icon href=/cxpm/favicon.svg type=image/svg+xml><meta name=color-scheme content="light"><link rel=stylesheet href=/cxpm/css/main.min.05901613caef75f29a983c2f222d54ad63c06838858c4d5e7c31f453c4228e3e.css integrity="sha256-BZAWE8rvdfKamDwvIi1UrWPAaDiFjE1efDH0U8Qijj4="></head><body><a class=skip-link href=#main-content>Skip to content</a><header class=topbar><div class=topbar-inner><button class=menu-toggle id=menu-toggle aria-label="Toggle navigation" aria-controls=sidebar aria-expanded=false>
+<span></span><span></span><span></span>
+</button>
+<a class=brand href=/cxpm/ aria-label="cxpm documentation"><img src=/cxpm/logo.svg alt=cx::pm width=98 height=24>
+<span class=brand-sub>docs</span></a><div class=search role=search><input type=search id=search-input placeholder="Search the docs" aria-label="Search documentation" autocomplete=off>
+<kbd class=search-kbd>/</kbd><div id=search-results class=search-results hidden></div></div><nav class=topbar-nav aria-label=cxpm><a href=https://01.dev.soft-forge.dev/cxpm/>Home</a>
+<a href=https://01.dev.soft-forge.dev/cxpm/index/>Packages</a></nav><div class=topbar-actions><a class="btn btn-secondary" href=https://github.com/arthurafarias/cpkg target=_blank rel=noopener>GitHub</a>
+<a class="btn btn-primary" href=https://01.dev.soft-forge.dev/cxpm/#install>Install</a></div></div></header><div class=shell><nav class=sidebar id=sidebar aria-label=Sections><div class=sidebar-inner><ul class=menu><li class=menu-item><a href=/cxpm/>Overview</a></li><li class=menu-item><a href=/cxpm/download/>Download</a></li><li class="menu-item is-active"><a href=/cxpm/quickstart/ aria-current=page>Quickstart</a></li><li class=menu-item><a href=/cxpm/architecture/>Architecture</a></li><li class=menu-item><a href=/cxpm/tooling/>CLI Tooling</a></li><li class=menu-item><a href=/cxpm/cli/>CLI Reference</a></li><li class=menu-item><a href=/cxpm/testing/>Testing</a></li><li class=menu-item><a href=/cxpm/static-linking/>Static Linking</a></li><li class=menu-item><a href=/cxpm/roadmap/>Roadmap</a></li></ul></div></nav><div class=sidebar-backdrop id=sidebar-backdrop></div><main class=content id=main-content><div class=content-inner><nav class=breadcrumbs aria-label=Breadcrumb><a href=/cxpm/>cxpm</a>
+<span class=sep>/</span><span>Quickstart</span></nav><article class=prose><h1 id=quickstart>Quickstart</h1><p>This goes from nothing to an installed package of a library of your own: create it, build it,
+test it, pack it, install it.</p><p>The whole walkthrough, recorded against a freshly built cxpm by
+<code>misc/record-quickstart-cast.sh</code>:</p><div id=quickstart-cast></div><link rel=stylesheet type=text/css href=https://cdn.jsdelivr.net/npm/asciinema-player@3.6.3/dist/bundle/asciinema-player.css><script src=https://cdn.jsdelivr.net/npm/asciinema-player@3.6.3/dist/bundle/asciinema-player.min.js></script><script>AsciinemaPlayer.create("../casts/quickstart.cast",document.getElementById("quickstart-cast"),{theme:"monokai",fit:"width",idleTimeLimit:2})</script><h2 id=install-cxpm>Install cxpm</h2><p>cxpm needs a C++23 compiler (GCC 14 or newer), <code>pkg-config</code> and <code>git</code>.</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>git clone --recurse-submodules https://github.com/arthurafarias/cxpm
+</span></span><span class=line><span class=cl><span class=nb>cd</span> cxpm
+</span></span><span class=line><span class=cl>./cxpm-build.sh --install --prefix /usr/local
+</span></span></code></pre></div><p><code>cxpm-build.sh</code> compiles a first cxpm with the bare compiler; that one builds and packs cxpm from
+its own manifests and installs the packages. Add <code>--root DIR</code> to install under another root, or
+<code>--package-manager pacman</code> (or <code>rpm</code>, <code>deb</code>) to install it as a package of your distribution.</p><h3 id=building-with-cmake>Building with CMake</h3><p>The repository also carries a CMake build of the same projects, for working on cxpm itself with
+an IDE, a debugger or <code>ctest</code>. It needs CMake 3.23 or newer:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>cmake -S . -B build -DCMAKE_BUILD_TYPE<span class=o>=</span>Release
+</span></span><span class=line><span class=cl>cmake --build build -j
+</span></span><span class=line><span class=cl>ctest --test-dir build --output-on-failure
+</span></span><span class=line><span class=cl>build/bin/cxpm --help                       <span class=c1># runs from the build tree</span>
+</span></span><span class=line><span class=cl>cmake --install build --prefix /usr/local   <span class=c1># the same layout `cxpm install` makes</span>
+</span></span></code></pre></div><p><code>cmake --install</code> copies files and registers nothing with a package manager; a cxpm that should
+be removable as a package is installed with <code>cxpm-build.sh --install</code>.</p><p><a href=https://github.com/containers/bubblewrap rel=noopener target=_blank>bubblewrap</a>
+(<code>bwrap</code>) is optional and recommended: with
+it, manifests and build steps run <a href=/cxpm/tooling/#confinement>confined</a>
+.</p><h2 id=create-a-project>Create a project</h2><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>cxpm project create greeter --type static-library --tests --example
+</span></span><span class=line><span class=cl><span class=nb>cd</span> greeter
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>greeter/package.cpp                   the library
+</span></span><span class=line><span class=cl>greeter/include/greeter/greeter.hpp
+</span></span><span class=line><span class=cl>greeter/src/greeter.cpp
+</span></span><span class=line><span class=cl>greeter/tests/package.cpp             a project that tests it
+</span></span><span class=line><span class=cl>greeter/tests/src/main.cpp
+</span></span><span class=line><span class=cl>greeter/example/package.cpp           a project that uses it
+</span></span><span class=line><span class=cl>greeter/example/src/main.cpp
+</span></span></code></pre></div><p><code>package.cpp</code> is the manifest:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;cx/pm/project.hpp&gt;</span><span class=cp>
+</span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;cx/pm/target.hpp&gt;</span><span class=cp>
+</span></span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>using</span> <span class=k>namespace</span> <span class=n>cx</span><span class=o>::</span><span class=n>pm</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>auto</span> <span class=n>package</span> <span class=o>=</span> <span class=n>cx</span><span class=o>::</span><span class=n>pm</span><span class=o>::</span><span class=n>target</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>                  <span class=p>.</span><span class=n>name_set</span><span class=p>(</span><span class=s>&#34;greeter&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>                  <span class=p>.</span><span class=n>version_set</span><span class=p>(</span><span class=s>&#34;0.1.0&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>                  <span class=p>.</span><span class=n>type_set</span><span class=p>(</span><span class=s>&#34;static-library&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>                  <span class=p>.</span><span class=n>sources_append</span><span class=p>({</span><span class=s>&#34;src/*.cpp&#34;</span><span class=p>})</span>
+</span></span><span class=line><span class=cl>                  <span class=p>.</span><span class=n>include_directories_append</span><span class=p>({</span><span class=s>&#34;include&#34;</span><span class=p>})</span>
+</span></span><span class=line><span class=cl>                  <span class=p>.</span><span class=n>create</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>auto</span> <span class=n>project</span> <span class=o>=</span> <span class=n>cx</span><span class=o>::</span><span class=n>pm</span><span class=o>::</span><span class=n>project</span><span class=p>().</span><span class=n>target_set</span><span class=p>(</span><span class=n>package</span><span class=p>).</span><span class=n>members_append</span><span class=p>(</span><span class=s>&#34;example&#34;</span><span class=p>).</span><span class=n>tests_append</span><span class=p>(</span><span class=s>&#34;tests&#34;</span><span class=p>).</span><span class=n>create</span><span class=p>();</span>
+</span></span></code></pre></div><p>A project has one target. The tests and the example are projects too: each has its own
+<code>package.cpp</code> whose target depends on <code>greeter</code> by name.</p><p><code>--type</code> is <code>executable</code> (the default), <code>shared-library</code>, <code>static-library</code> or <code>header-library</code>.</p><h2 id=build-and-test>Build and test</h2><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>cxpm build
+</span></span><span class=line><span class=cl>cxpm <span class=nb>test</span>
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>Building greeter (static-library) with g++
+</span></span><span class=line><span class=cl>Installing greeter into .../greeter/.cxpm/sysroot
+</span></span><span class=line><span class=cl>Building greeter-example (executable) with g++
+</span></span><span class=line><span class=cl>Building greeter-tests (executable) with g++
+</span></span><span class=line><span class=cl>Running greeter-tests
+</span></span><span class=line><span class=cl>greeter-tests passed
+</span></span><span class=line><span class=cl>1 of 1 tests projects passed
+</span></span></code></pre></div><p>Everything cxpm writes goes under <code>.cxpm/</code>: objects and the built target in <code>.cxpm/build/&lt;name>/</code>,
+and the library installed where the example and the tests find it, in <code>.cxpm/sysroot/</code>. Nothing
+is written to your system. A second <code>cxpm build</code> compiles nothing; changing one source recompiles
+that object and links again.</p><p><code>cxpm test</code> exits with 0 only if every tests project builds and its executable exits with 0.</p><h2 id=add-a-dependency>Add a dependency</h2><p>A dependency is a name and, optionally, a version constraint:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=line><span class=cl><span class=p>.</span><span class=n>dependencies_append</span><span class=p>({</span><span class=s>&#34;zlib &gt;= 1.2&#34;</span><span class=p>})</span>
+</span></span></code></pre></div><p><code>cxpm dependency add "zlib >= 1.2"</code> writes that line for you, and fetches the dependency when the
+package index publishes it.</p><p>The name is a project of the same workspace, a dependency the manifest fetches, or a package
+installed in the sysroot, found through pkg-config. One that is fetched says
+where from:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;cx/pm/dependency.hpp&gt;</span><span class=cp>
+</span></span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=p>.</span><span class=n>dependencies_append</span><span class=p>(</span><span class=n>cx</span><span class=o>::</span><span class=n>pm</span><span class=o>::</span><span class=n>dependency</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>                         <span class=p>.</span><span class=n>name_set</span><span class=p>(</span><span class=s>&#34;greeter&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>                         <span class=p>.</span><span class=n>repository_set</span><span class=p>(</span><span class=s>&#34;https://example.org/greeter.git&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>                         <span class=p>.</span><span class=n>revision_set</span><span class=p>(</span><span class=s>&#34;v0.1.0&#34;</span><span class=p>))</span>
+</span></span></code></pre></div><p><code>cxpm fetch</code> clones it into <code>.cxpm/sources/</code> and writes the exact commit to <code>.cxpm/lock.json</code>;
+<code>cxpm build</code> then builds it from its own manifest and installs it into <code>.cxpm/sysroot</code>. Commit
+the lock file if you want everyone to build the same commit.</p><h2 id=pack-and-install>Pack and install</h2><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>cxpm pack
+</span></span><span class=line><span class=cl>cxpm install --prefix /usr/local
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>Packed .../greeter/.cxpm/packages/greeter-0.1.0.cxpm.tar
+</span></span><span class=line><span class=cl>Packed .../greeter/.cxpm/packages/greeter-example-0.1.0.cxpm.tar
+</span></span><span class=line><span class=cl>Installing greeter into /usr/local with archive
+</span></span><span class=line><span class=cl>Installing greeter-example into /usr/local with archive
+</span></span></code></pre></div><p>Every member of the workspace is packed and installed, so the example goes along as
+<code>bin/greeter-example</code>; drop <code>members_append("example")</code> from the manifest to ship the library
+alone.</p><p>Installed:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>/usr/local/lib/libgreeter.a
+</span></span><span class=line><span class=cl>/usr/local/include/greeter/greeter/greeter.hpp
+</span></span><span class=line><span class=cl>/usr/local/lib/pkgconfig/greeter.pc
+</span></span><span class=line><span class=cl>/usr/local/lib/cxpm/packages/greeter.json      what was installed, for uninstall
+</span></span></code></pre></div><p>Another project now depends on it with <code>.dependencies_append({"greeter"})</code>, and anything that
+speaks pkg-config finds it with <code>pkg-config --cflags --libs greeter</code>.</p><p>To get a package of your distribution instead of an archive:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>cxpm pack --package-manager pacman     <span class=c1># or rpm, deb</span>
+</span></span><span class=line><span class=cl>sudo cxpm install --package-manager pacman --prefix /usr
+</span></span></code></pre></div><p><code>cxpm uninstall</code> removes what <code>cxpm install</code> installed, through the same package manager.</p><h2 id=where-to-go-next>Where to go next</h2><ul><li><a href=/cxpm/tooling/>The <code>cxpm</code> command</a>
+describes every stage, the manifest API, toolchains, building
+for another sysroot and confinement.</li><li><code>cxpm help &lt;command></code> lists the options of a command.</li></ul></article><p class=edit-link><a href=https://github.com/arthurafarias/cpkg/edit/master/hugosite/content/quickstart.md target=_blank rel=noopener>Edit this page on GitHub</a></p></div></main><aside class=toc-pane aria-label="On this page"><div class=toc-inner><p class=toc-title>On this page</p><nav id=TableOfContents><ul><li><a href=#install-cxpm>Install cxpm</a><ul><li><a href=#building-with-cmake>Building with CMake</a></li></ul></li><li><a href=#create-a-project>Create a project</a></li><li><a href=#build-and-test>Build and test</a></li><li><a href=#add-a-dependency>Add a dependency</a></li><li><a href=#pack-and-install>Pack and install</a></li><li><a href=#where-to-go-next>Where to go next</a></li></ul></nav></div></aside></div><footer class=site-footer><div class=site-footer-inner><a class=brand href=/cxpm/ aria-label="cxpm documentation"><img src=/cxpm/logo.svg alt=cx::pm width=98 height=24></a><p>A package manager for C++, written in C++. Experimental.</p><nav aria-label=Footer><a href=https://01.dev.soft-forge.dev/cxpm/>Home</a>
+<a href=https://01.dev.soft-forge.dev/cxpm/index/>Package index</a>
+<a href=/cxpm/roadmap/>Roadmap</a>
+<a href=https://github.com/arthurafarias/cpkg target=_blank rel=noopener>GitHub</a>
+<a href=https://soft-forge.dev/>Soft Forge</a></nav></div></footer><script>window.CXPM_DOCS={searchIndexURL:"/cxpm/search-index.json"}</script><script src=/cxpm/js/main.min.c9b66cd6162a3683e15e407f31d3b1e54a44a59eed9887ca8515ed392582c3de.js integrity="sha256-ybZs1hYqNoPhXkB/MdOx5UpEpZ7tmIfKhRXtOSWCw94=" defer></script></body></html>

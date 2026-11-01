@@ -1,0 +1,615 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>CLI Reference · cxpm</title><meta name=description content="An experimental C++-native package manager and build tool for C++."><link rel=icon href=/cxpm/favicon.svg type=image/svg+xml><meta name=color-scheme content="light"><link rel=stylesheet href=/cxpm/css/main.min.05901613caef75f29a983c2f222d54ad63c06838858c4d5e7c31f453c4228e3e.css integrity="sha256-BZAWE8rvdfKamDwvIi1UrWPAaDiFjE1efDH0U8Qijj4="></head><body><a class=skip-link href=#main-content>Skip to content</a><header class=topbar><div class=topbar-inner><button class=menu-toggle id=menu-toggle aria-label="Toggle navigation" aria-controls=sidebar aria-expanded=false>
+<span></span><span></span><span></span>
+</button>
+<a class=brand href=/cxpm/ aria-label="cxpm documentation"><img src=/cxpm/logo.svg alt=cx::pm width=98 height=24>
+<span class=brand-sub>docs</span></a><div class=search role=search><input type=search id=search-input placeholder="Search the docs" aria-label="Search documentation" autocomplete=off>
+<kbd class=search-kbd>/</kbd><div id=search-results class=search-results hidden></div></div><nav class=topbar-nav aria-label=cxpm><a href=https://01.dev.soft-forge.dev/cxpm/>Home</a>
+<a href=https://01.dev.soft-forge.dev/cxpm/index/>Packages</a></nav><div class=topbar-actions><a class="btn btn-secondary" href=https://github.com/arthurafarias/cpkg target=_blank rel=noopener>GitHub</a>
+<a class="btn btn-primary" href=https://01.dev.soft-forge.dev/cxpm/#install>Install</a></div></div></header><div class=shell><nav class=sidebar id=sidebar aria-label=Sections><div class=sidebar-inner><ul class=menu><li class=menu-item><a href=/cxpm/>Overview</a></li><li class=menu-item><a href=/cxpm/download/>Download</a></li><li class=menu-item><a href=/cxpm/quickstart/>Quickstart</a></li><li class=menu-item><a href=/cxpm/architecture/>Architecture</a></li><li class=menu-item><a href=/cxpm/tooling/>CLI Tooling</a></li><li class="menu-item is-active"><a href=/cxpm/cli/ aria-current=page>CLI Reference</a></li><li class=menu-item><a href=/cxpm/testing/>Testing</a></li><li class=menu-item><a href=/cxpm/static-linking/>Static Linking</a></li><li class=menu-item><a href=/cxpm/roadmap/>Roadmap</a></li></ul></div></nav><div class=sidebar-backdrop id=sidebar-backdrop></div><main class=content id=main-content><div class=content-inner><nav class=breadcrumbs aria-label=Breadcrumb><a href=/cxpm/>cxpm</a>
+<span class=sep>/</span><span>CLI Reference</span></nav><article class=prose><h1 id=command-line-reference>Command line reference</h1><p>The text <code>cxpm help</code> and <code>cxpm help &lt;command></code> print, for every command of cxpm 0.3.0; the same text is at hand on any machine with cxpm installed. The <a href=/cxpm/download/>Download</a>
+page says how to install it, and <a href=/cxpm/tooling/>The <code>cxpm</code> command</a>
+explains the lifecycle, the manifests, tasks and hooks and the package index.</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>Usage: cxpm [OPTIONS] COMMAND [ARGS]...
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>A package manager for C++ using C++
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Commands:
+</span></span><span class=line><span class=cl>  fetch         Download the dependencies a project fetches, resolve the ones the package index
+</span></span><span class=line><span class=cl>                publishes, and pin them all in .cxpm/lock.json
+</span></span><span class=line><span class=cl>  configure     Resolve the toolchain and dependencies again; build and install the dependencies
+</span></span><span class=line><span class=cl>                built from source
+</span></span><span class=line><span class=cl>  build         Build a project in a directory containing package.cpp/package.json
+</span></span><span class=line><span class=cl>  test          Build a project, then build and run its tests projects
+</span></span><span class=line><span class=cl>  run           Run a task the project declares, with the arguments after `--`; without a name, list
+</span></span><span class=line><span class=cl>                the tasks
+</span></span><span class=line><span class=cl>  pack          Build a project and pack it for the toolchain&#39;s package manager
+</span></span><span class=line><span class=cl>  install       Pack a project, then install it with the toolchain&#39;s package manager; or install a
+</span></span><span class=line><span class=cl>                package of the index from its prebuilt package
+</span></span><span class=line><span class=cl>  uninstall     Remove what `cxpm install` installed
+</span></span><span class=line><span class=cl>  search        List the packages of the index, or the ones matching a text
+</span></span><span class=line><span class=cl>  login         Log in to an index and store the token `cxpm publish` presents to it
+</span></span><span class=line><span class=cl>  logout        Forget the token stored for an index
+</span></span><span class=line><span class=cl>  publish       Publish the project&#39;s version to the index, as a commit of its repository, with the
+</span></span><span class=line><span class=cl>                packages `cxpm pack` made of it
+</span></span><span class=line><span class=cl>  whoami        Show the account logged in to an index
+</span></span><span class=line><span class=cl>  view          Show a package of the index: its versions, tags, owner and maintainers; or one
+</span></span><span class=line><span class=cl>                version, with its commit, dependencies and files
+</span></span><span class=line><span class=cl>  outdated      List the dependencies of the index that a newer version exists for, or whose locked
+</span></span><span class=line><span class=cl>                version is yanked or deprecated
+</span></span><span class=line><span class=cl>  deprecate     Tell those who fetch a package, or one version of it, what to use instead
+</span></span><span class=line><span class=cl>  yank          Take a version back: nothing new resolves to it, and the projects that lock it keep
+</span></span><span class=line><span class=cl>                it
+</span></span><span class=line><span class=cl>  unpublish     Delete a version, or the whole package, from the index: the number is never
+</span></span><span class=line><span class=cl>                published again, and a project locked to it fails its next fetch. Asks for the name
+</span></span><span class=line><span class=cl>                to be typed; yank takes a version back without breaking anybody
+</span></span><span class=line><span class=cl>  access        Make a package private, seen and fetched only by its owner and maintainers, or
+</span></span><span class=line><span class=cl>                public
+</span></span><span class=line><span class=cl>  repl          Open a session over these commands, with history and Tab completion; `cxpm` alone at
+</span></span><span class=line><span class=cl>                a terminal does the same
+</span></span><span class=line><span class=cl>  serve         Serve a package index over HTTP
+</span></span><span class=line><span class=cl>  generate      Scaffold a starter package/toolchain manifest
+</span></span><span class=line><span class=cl>  help          Show this message, or detailed help for one command
+</span></span><span class=line><span class=cl>  tag           Name versions of a package: `cxpm tag add fmt@11.0.0-rc1 next`
+</span></span><span class=line><span class=cl>  owner         Who owns a package and who else publishes it
+</span></span><span class=line><span class=cl>  dependency    Add, remove and list the project&#39;s dependencies
+</span></span><span class=line><span class=cl>  project       Create projects
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Options:
+</span></span><span class=line><span class=cl>  -h, --help  Show this message and exit.
+</span></span></code></pre></div><h2 id=commands>Commands</h2><ul><li><a href=#cxpm-fetch>cxpm fetch</a></li><li><a href=#cxpm-configure>cxpm configure</a></li><li><a href=#cxpm-build>cxpm build</a></li><li><a href=#cxpm-test>cxpm test</a></li><li><a href=#cxpm-run>cxpm run</a></li><li><a href=#cxpm-pack>cxpm pack</a></li><li><a href=#cxpm-install>cxpm install</a></li><li><a href=#cxpm-uninstall>cxpm uninstall</a></li><li><a href=#cxpm-search>cxpm search</a></li><li><a href=#cxpm-login>cxpm login</a></li><li><a href=#cxpm-logout>cxpm logout</a></li><li><a href=#cxpm-publish>cxpm publish</a></li><li><a href=#cxpm-whoami>cxpm whoami</a></li><li><a href=#cxpm-view>cxpm view</a></li><li><a href=#cxpm-outdated>cxpm outdated</a></li><li><a href=#cxpm-deprecate>cxpm deprecate</a></li><li><a href=#cxpm-yank>cxpm yank</a></li><li><a href=#cxpm-unpublish>cxpm unpublish</a></li><li><a href=#cxpm-access>cxpm access</a></li><li><a href=#cxpm-repl>cxpm repl</a></li><li><a href=#cxpm-serve>cxpm serve</a></li><li><a href=#cxpm-generate>cxpm generate</a></li><li><a href=#cxpm-tag>cxpm tag</a><ul><li><a href=#cxpm-tag-add>cxpm tag add</a></li><li><a href=#cxpm-tag-remove>cxpm tag remove</a></li><li><a href=#cxpm-tag-list>cxpm tag list</a></li></ul></li><li><a href=#cxpm-owner>cxpm owner</a><ul><li><a href=#cxpm-owner-list>cxpm owner list</a></li><li><a href=#cxpm-owner-add>cxpm owner add</a></li><li><a href=#cxpm-owner-remove>cxpm owner remove</a></li><li><a href=#cxpm-owner-offer>cxpm owner offer</a></li><li><a href=#cxpm-owner-take>cxpm owner take</a></li><li><a href=#cxpm-owner-decline>cxpm owner decline</a></li></ul></li><li><a href=#cxpm-dependency>cxpm dependency</a><ul><li><a href=#cxpm-dependency-add>cxpm dependency add</a></li><li><a href=#cxpm-dependency-remove>cxpm dependency remove</a></li><li><a href=#cxpm-dependency-list>cxpm dependency list</a></li><li><a href=#cxpm-dependency-update>cxpm dependency update</a></li><li><a href=#cxpm-dependency-sync>cxpm dependency sync</a></li></ul></li><li><a href=#cxpm-project>cxpm project</a><ul><li><a href=#cxpm-project-create>cxpm project create</a></li></ul></li></ul><h2 id=cxpm-fetch>cxpm fetch</h2><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>cxpm fetch - Download the dependencies a project fetches, resolve the ones the package index publishes, and pin them all in .cxpm/lock.json
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Usage: cxpm fetch [OPTIONS] [directory]
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Download the dependencies a project fetches, resolve the ones the package index publishes, and pin
+</span></span><span class=line><span class=cl>them all in .cxpm/lock.json
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Arguments:
+</span></span><span class=line><span class=cl>  directory    The project directory (default: .) [default: .]
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Options:
+</span></span><span class=line><span class=cl>  -h, --help            Show this message and exit.
+</span></span><span class=line><span class=cl>  -t, --toolchain TEXT  Build with this toolchain instead of the one the target selects
+</span></span><span class=line><span class=cl>  --sysroot TEXT        Build against this sysroot instead of the toolchain&#39;s
+</span></span><span class=line><span class=cl>  --no-hooks            Do not run the pre_&lt;stage&gt; and post_&lt;stage&gt; tasks (also CXPM_NO_HOOKS=1)
+</span></span><span class=line><span class=cl>  --index TEXT          The package index to use instead of CXPM_INDEX or the public one; `off` for
+</span></span><span class=line><span class=cl>                        none
+</span></span></code></pre></div><h2 id=cxpm-configure>cxpm configure</h2><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>cxpm configure - Resolve the toolchain and dependencies again; build and install the dependencies built from source
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Usage: cxpm configure [OPTIONS] [directory]
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Resolve the toolchain and dependencies again; build and install the dependencies built from source
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Arguments:
+</span></span><span class=line><span class=cl>  directory    The project directory (default: .) [default: .]
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Options:
+</span></span><span class=line><span class=cl>  -h, --help            Show this message and exit.
+</span></span><span class=line><span class=cl>  -t, --toolchain TEXT  Build with this toolchain instead of the one the target selects
+</span></span><span class=line><span class=cl>  --sysroot TEXT        Build against this sysroot instead of the toolchain&#39;s
+</span></span><span class=line><span class=cl>  --no-hooks            Do not run the pre_&lt;stage&gt; and post_&lt;stage&gt; tasks (also CXPM_NO_HOOKS=1)
+</span></span><span class=line><span class=cl>  -j, --jobs INTEGER    How many sources compile at once (default: CXPM_BUILD_JOBS, or one per core)
+</span></span><span class=line><span class=cl>                        [default: 0]
+</span></span><span class=line><span class=cl>  -f, --force           Rebuild what is up to date
+</span></span><span class=line><span class=cl>  -r, --reconfigure     Resolve the manifest, toolchain and dependencies again
+</span></span></code></pre></div><h2 id=cxpm-build>cxpm build</h2><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>cxpm build - Build a project in a directory containing package.cpp/package.json
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Usage: cxpm build [OPTIONS] [directory]
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Build a project in a directory containing package.cpp/package.json
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Arguments:
+</span></span><span class=line><span class=cl>  directory    The project directory (default: .) [default: .]
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Options:
+</span></span><span class=line><span class=cl>  -h, --help            Show this message and exit.
+</span></span><span class=line><span class=cl>  -t, --toolchain TEXT  Build with this toolchain instead of the one the target selects
+</span></span><span class=line><span class=cl>  --sysroot TEXT        Build against this sysroot instead of the toolchain&#39;s
+</span></span><span class=line><span class=cl>  --no-hooks            Do not run the pre_&lt;stage&gt; and post_&lt;stage&gt; tasks (also CXPM_NO_HOOKS=1)
+</span></span><span class=line><span class=cl>  -j, --jobs INTEGER    How many sources compile at once (default: CXPM_BUILD_JOBS, or one per core)
+</span></span><span class=line><span class=cl>                        [default: 0]
+</span></span><span class=line><span class=cl>  -f, --force           Rebuild what is up to date
+</span></span><span class=line><span class=cl>  -r, --reconfigure     Resolve the manifest, toolchain and dependencies again
+</span></span></code></pre></div><h2 id=cxpm-test>cxpm test</h2><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>cxpm test - Build a project, then build and run its tests projects
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Usage: cxpm test [OPTIONS] [directory]
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Build a project, then build and run its tests projects
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Arguments:
+</span></span><span class=line><span class=cl>  directory    The project directory (default: .) [default: .]
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Options:
+</span></span><span class=line><span class=cl>  -h, --help            Show this message and exit.
+</span></span><span class=line><span class=cl>  -t, --toolchain TEXT  Build with this toolchain instead of the one the target selects
+</span></span><span class=line><span class=cl>  --sysroot TEXT        Build against this sysroot instead of the toolchain&#39;s
+</span></span><span class=line><span class=cl>  --no-hooks            Do not run the pre_&lt;stage&gt; and post_&lt;stage&gt; tasks (also CXPM_NO_HOOKS=1)
+</span></span><span class=line><span class=cl>  -j, --jobs INTEGER    How many sources compile at once (default: CXPM_BUILD_JOBS, or one per core)
+</span></span><span class=line><span class=cl>                        [default: 0]
+</span></span><span class=line><span class=cl>  -f, --force           Rebuild what is up to date
+</span></span><span class=line><span class=cl>  -r, --reconfigure     Resolve the manifest, toolchain and dependencies again
+</span></span></code></pre></div><h2 id=cxpm-run>cxpm run</h2><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>cxpm run - Run a task the project declares, with the arguments after `--`; without a name, list the tasks
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Usage: cxpm run [OPTIONS] [task] [arguments]...
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Run a task the project declares, with the arguments after `--`; without a name, list the tasks
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Arguments:
+</span></span><span class=line><span class=cl>  task    The task to run (default: list them). pre_&lt;stage&gt; and post_&lt;stage&gt; also run around fetch,
+</span></span><span class=line><span class=cl>          configure, build, test, pack, install and publish; package_post_install,
+</span></span><span class=line><span class=cl>          package_pre_remove and package_post_remove go into the package
+</span></span><span class=line><span class=cl>  arguments    Passed to the task as $1, $2...
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Options:
+</span></span><span class=line><span class=cl>  -h, --help            Show this message and exit.
+</span></span><span class=line><span class=cl>  -C, --directory TEXT  The project directory (default: .) [default: .]
+</span></span><span class=line><span class=cl>  -p, --prefix TEXT     The prefix a package_ hook&#39;s @NAME@s are expanded for (default: the
+</span></span><span class=line><span class=cl>                        target&#39;s, or /usr/local)
+</span></span></code></pre></div><h2 id=cxpm-pack>cxpm pack</h2><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>cxpm pack - Build a project and pack it for the toolchain&#39;s package manager
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Usage: cxpm pack [OPTIONS] [directory]
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Build a project and pack it for the toolchain&#39;s package manager
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Arguments:
+</span></span><span class=line><span class=cl>  directory    The project directory (default: .) [default: .]
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Options:
+</span></span><span class=line><span class=cl>  -h, --help              Show this message and exit.
+</span></span><span class=line><span class=cl>  -t, --toolchain TEXT    Build with this toolchain instead of the one the target selects
+</span></span><span class=line><span class=cl>  --sysroot TEXT          Build against this sysroot instead of the toolchain&#39;s
+</span></span><span class=line><span class=cl>  --no-hooks              Do not run the pre_&lt;stage&gt; and post_&lt;stage&gt; tasks (also CXPM_NO_HOOKS=1)
+</span></span><span class=line><span class=cl>  -j, --jobs INTEGER      How many sources compile at once (default: CXPM_BUILD_JOBS, or one per
+</span></span><span class=line><span class=cl>                          core) [default: 0]
+</span></span><span class=line><span class=cl>  -f, --force             Rebuild what is up to date
+</span></span><span class=line><span class=cl>  -r, --reconfigure       Resolve the manifest, toolchain and dependencies again
+</span></span><span class=line><span class=cl>  -p, --prefix TEXT       Install prefix (default: the target&#39;s, the toolchain&#39;s, or /usr/local)
+</span></span><span class=line><span class=cl>  --package-manager TEXT  Pack and install with this package manager instead of the toolchain&#39;s:
+</span></span><span class=line><span class=cl>                          archive, pacman, rpm or deb
+</span></span></code></pre></div><h2 id=cxpm-install>cxpm install</h2><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>cxpm install - Pack a project, then install it with the toolchain&#39;s package manager; or install a package of the index from its prebuilt package
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Usage: cxpm install [OPTIONS] [directory]
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Pack a project, then install it with the toolchain&#39;s package manager; or install a package of the
+</span></span><span class=line><span class=cl>index from its prebuilt package
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Arguments:
+</span></span><span class=line><span class=cl>  directory    The project directory (default: .), or a package of the index as name or
+</span></span><span class=line><span class=cl>               name@constraint [default: .]
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Options:
+</span></span><span class=line><span class=cl>  -h, --help              Show this message and exit.
+</span></span><span class=line><span class=cl>  -t, --toolchain TEXT    Build with this toolchain instead of the one the target selects
+</span></span><span class=line><span class=cl>  --sysroot TEXT          Build against this sysroot instead of the toolchain&#39;s
+</span></span><span class=line><span class=cl>  --no-hooks              Do not run the pre_&lt;stage&gt; and post_&lt;stage&gt; tasks (also CXPM_NO_HOOKS=1)
+</span></span><span class=line><span class=cl>  -j, --jobs INTEGER      How many sources compile at once (default: CXPM_BUILD_JOBS, or one per
+</span></span><span class=line><span class=cl>                          core) [default: 0]
+</span></span><span class=line><span class=cl>  -f, --force             Rebuild what is up to date
+</span></span><span class=line><span class=cl>  -r, --reconfigure       Resolve the manifest, toolchain and dependencies again
+</span></span><span class=line><span class=cl>  -p, --prefix TEXT       Install prefix (default: the target&#39;s, the toolchain&#39;s, or /usr/local)
+</span></span><span class=line><span class=cl>  --root TEXT             Install into this root instead of the toolchain&#39;s sysroot
+</span></span><span class=line><span class=cl>  --package-manager TEXT  Pack and install with this package manager instead of the toolchain&#39;s:
+</span></span><span class=line><span class=cl>                          archive, pacman, rpm or deb
+</span></span><span class=line><span class=cl>  --index TEXT            The package index to use instead of CXPM_INDEX or the public one; `off`
+</span></span><span class=line><span class=cl>                          for none
+</span></span></code></pre></div><h2 id=cxpm-uninstall>cxpm uninstall</h2><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>cxpm uninstall - Remove what `cxpm install` installed
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Usage: cxpm uninstall [OPTIONS] [directory]
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Remove what `cxpm install` installed
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Arguments:
+</span></span><span class=line><span class=cl>  directory    The project directory (default: .), or the name of a package installed from the index
+</span></span><span class=line><span class=cl>               [default: .]
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Options:
+</span></span><span class=line><span class=cl>  -h, --help              Show this message and exit.
+</span></span><span class=line><span class=cl>  -t, --toolchain TEXT    Build with this toolchain instead of the one the target selects
+</span></span><span class=line><span class=cl>  --sysroot TEXT          Build against this sysroot instead of the toolchain&#39;s
+</span></span><span class=line><span class=cl>  -p, --prefix TEXT       Install prefix (default: the target&#39;s, the toolchain&#39;s, or /usr/local)
+</span></span><span class=line><span class=cl>  --root TEXT             Install into this root instead of the toolchain&#39;s sysroot
+</span></span><span class=line><span class=cl>  --package-manager TEXT  Pack and install with this package manager instead of the toolchain&#39;s:
+</span></span><span class=line><span class=cl>                          archive, pacman, rpm or deb
+</span></span></code></pre></div><h2 id=cxpm-search>cxpm search</h2><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>cxpm search - List the packages of the index, or the ones matching a text
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Usage: cxpm search [OPTIONS] [text]
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>List the packages of the index, or the ones matching a text
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Arguments:
+</span></span><span class=line><span class=cl>  text    Part of a name or description
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Options:
+</span></span><span class=line><span class=cl>  -h, --help    Show this message and exit.
+</span></span><span class=line><span class=cl>  --index TEXT  The package index to use instead of CXPM_INDEX or the public one; `off` for none
+</span></span></code></pre></div><h2 id=cxpm-login>cxpm login</h2><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>cxpm login - Log in to an index and store the token `cxpm publish` presents to it
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Usage: cxpm login [OPTIONS]
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Log in to an index and store the token `cxpm publish` presents to it
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Options:
+</span></span><span class=line><span class=cl>  -h, --help    Show this message and exit.
+</span></span><span class=line><span class=cl>  --token TEXT  A token of the account, instead of confirming the sign-in on the payments platform
+</span></span><span class=line><span class=cl>                (default: CXPM_TOKEN)
+</span></span><span class=line><span class=cl>  --index TEXT  The package index to use instead of CXPM_INDEX or the public one; `off` for none
+</span></span></code></pre></div><h2 id=cxpm-logout>cxpm logout</h2><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>cxpm logout - Forget the token stored for an index
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Usage: cxpm logout [OPTIONS]
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Forget the token stored for an index
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Options:
+</span></span><span class=line><span class=cl>  -h, --help    Show this message and exit.
+</span></span><span class=line><span class=cl>  --index TEXT  The package index to use instead of CXPM_INDEX or the public one; `off` for none
+</span></span></code></pre></div><h2 id=cxpm-publish>cxpm publish</h2><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>cxpm publish - Publish the project&#39;s version to the index, as a commit of its repository, with the packages `cxpm pack` made of it
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Usage: cxpm publish [OPTIONS] [directory]
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Publish the project&#39;s version to the index, as a commit of its repository, with the packages `cxpm
+</span></span><span class=line><span class=cl>pack` made of it
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Arguments:
+</span></span><span class=line><span class=cl>  directory    The project directory (default: .) [default: .]
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Options:
+</span></span><span class=line><span class=cl>  -h, --help            Show this message and exit.
+</span></span><span class=line><span class=cl>  --index TEXT          The package index to use instead of CXPM_INDEX or the public one; `off` for
+</span></span><span class=line><span class=cl>                        none
+</span></span><span class=line><span class=cl>  --repository TEXT     The address others clone the project from (default: the origin remote)
+</span></span><span class=line><span class=cl>  --revision TEXT       The branch, tag or commit to publish (default: HEAD)
+</span></span><span class=line><span class=cl>  --package TEXT        The project to publish, by the name it builds, when the directory is a
+</span></span><span class=line><span class=cl>                        workspace
+</span></span><span class=line><span class=cl>  --pack                Pack the project for deb, rpm and pacman first, and send the three packages
+</span></span><span class=line><span class=cl>  --private             Make the package private: only the account logged in sees and fetches it
+</span></span><span class=line><span class=cl>  --public              Make a private package public again
+</span></span><span class=line><span class=cl>  -t, --toolchain TEXT  With --pack, build with this toolchain instead of the one the target selects
+</span></span><span class=line><span class=cl>  -j, --jobs INTEGER    With --pack, how many sources compile at once (default: CXPM_BUILD_JOBS, or
+</span></span><span class=line><span class=cl>                        one per core) [default: 0]
+</span></span><span class=line><span class=cl>  --no-hooks            Do not run the pre_&lt;stage&gt; and post_&lt;stage&gt; tasks (also CXPM_NO_HOOKS=1)
+</span></span></code></pre></div><h2 id=cxpm-whoami>cxpm whoami</h2><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>cxpm whoami - Show the account logged in to an index
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Usage: cxpm whoami [OPTIONS]
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Show the account logged in to an index
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Options:
+</span></span><span class=line><span class=cl>  -h, --help    Show this message and exit.
+</span></span><span class=line><span class=cl>  --index TEXT  The package index to use instead of CXPM_INDEX or the public one; `off` for none
+</span></span></code></pre></div><h2 id=cxpm-view>cxpm view</h2><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>cxpm view - Show a package of the index: its versions, tags, owner and maintainers; or one version, with its commit, dependencies and files
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Usage: cxpm view [OPTIONS] package
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Show a package of the index: its versions, tags, owner and maintainers; or one version, with its
+</span></span><span class=line><span class=cl>commit, dependencies and files
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Arguments:
+</span></span><span class=line><span class=cl>  package    name, or name@version [required]
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Options:
+</span></span><span class=line><span class=cl>  -h, --help    Show this message and exit.
+</span></span><span class=line><span class=cl>  --json        Print the index&#39;s record as it is
+</span></span><span class=line><span class=cl>  --index TEXT  The package index to use instead of CXPM_INDEX or the public one; `off` for none
+</span></span></code></pre></div><h2 id=cxpm-outdated>cxpm outdated</h2><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>cxpm outdated - List the dependencies of the index that a newer version exists for, or whose locked version is yanked or deprecated
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Usage: cxpm outdated [OPTIONS] [directory]
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>List the dependencies of the index that a newer version exists for, or whose locked version is
+</span></span><span class=line><span class=cl>yanked or deprecated
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Arguments:
+</span></span><span class=line><span class=cl>  directory    The project directory (default: .) [default: .]
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Options:
+</span></span><span class=line><span class=cl>  -h, --help    Show this message and exit.
+</span></span><span class=line><span class=cl>  --index TEXT  The package index to use instead of CXPM_INDEX or the public one; `off` for none
+</span></span></code></pre></div><h2 id=cxpm-deprecate>cxpm deprecate</h2><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>cxpm deprecate - Tell those who fetch a package, or one version of it, what to use instead
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Usage: cxpm deprecate [OPTIONS] package [message]
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Tell those who fetch a package, or one version of it, what to use instead
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Arguments:
+</span></span><span class=line><span class=cl>  package    name, or name@version [required]
+</span></span><span class=line><span class=cl>  message    What to use instead
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Options:
+</span></span><span class=line><span class=cl>  -h, --help    Show this message and exit.
+</span></span><span class=line><span class=cl>  --undo        Take the deprecation back
+</span></span><span class=line><span class=cl>  --index TEXT  The package index to use instead of CXPM_INDEX or the public one; `off` for none
+</span></span></code></pre></div><h2 id=cxpm-yank>cxpm yank</h2><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>cxpm yank - Take a version back: nothing new resolves to it, and the projects that lock it keep it
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Usage: cxpm yank [OPTIONS] package
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Take a version back: nothing new resolves to it, and the projects that lock it keep it
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Arguments:
+</span></span><span class=line><span class=cl>  package    name@version [required]
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Options:
+</span></span><span class=line><span class=cl>  -h, --help    Show this message and exit.
+</span></span><span class=line><span class=cl>  --undo        Put the version back
+</span></span><span class=line><span class=cl>  --index TEXT  The package index to use instead of CXPM_INDEX or the public one; `off` for none
+</span></span></code></pre></div><h2 id=cxpm-unpublish>cxpm unpublish</h2><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>cxpm unpublish - Delete a version, or the whole package, from the index: the number is never published again, and a project locked to it fails its next fetch. Asks for the name to be typed; yank takes a version back without breaking anybody
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Usage: cxpm unpublish [OPTIONS] package [version]
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Delete a version, or the whole package, from the index: the number is never published again, and a
+</span></span><span class=line><span class=cl>project locked to it fails its next fetch. Asks for the name to be typed; yank takes a version back
+</span></span><span class=line><span class=cl>without breaking anybody
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Arguments:
+</span></span><span class=line><span class=cl>  package    name, or name@version [required]
+</span></span><span class=line><span class=cl>  version    The version to delete; none deletes the package
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Options:
+</span></span><span class=line><span class=cl>  -h, --help    Show this message and exit.
+</span></span><span class=line><span class=cl>  --yes         Do not ask for the name to be typed
+</span></span><span class=line><span class=cl>  --index TEXT  The package index to use instead of CXPM_INDEX or the public one; `off` for none
+</span></span></code></pre></div><h2 id=cxpm-access>cxpm access</h2><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>cxpm access - Make a package private, seen and fetched only by its owner and maintainers, or public
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Usage: cxpm access [OPTIONS] package access
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Make a package private, seen and fetched only by its owner and maintainers, or public
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Arguments:
+</span></span><span class=line><span class=cl>  package    The package&#39;s name [required]
+</span></span><span class=line><span class=cl>  access    private or public [required]
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Options:
+</span></span><span class=line><span class=cl>  -h, --help    Show this message and exit.
+</span></span><span class=line><span class=cl>  --index TEXT  The package index to use instead of CXPM_INDEX or the public one; `off` for none
+</span></span></code></pre></div><h2 id=cxpm-repl>cxpm repl</h2><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>cxpm repl - Open a session over these commands, with history and Tab completion; `cxpm` alone at a terminal does the same
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Usage: cxpm repl [OPTIONS]
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Open a session over these commands, with history and Tab completion; `cxpm` alone at a terminal does
+</span></span><span class=line><span class=cl>the same
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Options:
+</span></span><span class=line><span class=cl>  -h, --help  Show this message and exit.
+</span></span></code></pre></div><h2 id=cxpm-serve>cxpm serve</h2><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>cxpm serve - Serve a package index over HTTP
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Usage: cxpm serve [OPTIONS]
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Serve a package index over HTTP
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Options:
+</span></span><span class=line><span class=cl>  -h, --help            Show this message and exit.
+</span></span><span class=line><span class=cl>  --listen TEXT         Where to listen: unix:///path/to/socket, http://host:port or host:port
+</span></span><span class=line><span class=cl>                        [default: http://127.0.0.1:7878]
+</span></span><span class=line><span class=cl>  --host TEXT           The public address a proxy serves the index at, as in
+</span></span><span class=line><span class=cl>                        https://example.org/cxpm; its path is accepted as a prefix of every request
+</span></span><span class=line><span class=cl>  --database-path TEXT  The directory the index keeps its packages and accounts in [default:
+</span></span><span class=line><span class=cl>                        /var/lib/cxpm/index]
+</span></span><span class=line><span class=cl>  --add-account TEXT    Create this account (or renew its token), print the token and exit
+</span></span></code></pre></div><h2 id=cxpm-generate>cxpm generate</h2><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>cxpm generate - Scaffold a starter package/toolchain manifest
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Usage: cxpm generate [OPTIONS] kind [directory]
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Scaffold a starter package/toolchain manifest
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Arguments:
+</span></span><span class=line><span class=cl>  kind    The manifest to write [choices: package-cpp, package-json, toolchain-cpp, toolchain-json]
+</span></span><span class=line><span class=cl>          [required]
+</span></span><span class=line><span class=cl>  directory    Where the manifest is written [default: .]
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Options:
+</span></span><span class=line><span class=cl>  -h, --help   Show this message and exit.
+</span></span><span class=line><span class=cl>  -f, --force  Overwrite the target file if it already exists
+</span></span></code></pre></div><h2 id=cxpm-tag>cxpm tag</h2><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>Usage: cxpm tag [OPTIONS] COMMAND [ARGS]...
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Name versions of a package: `cxpm tag add fmt@11.0.0-rc1 next`
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Commands:
+</span></span><span class=line><span class=cl>  add       Point a tag at a version, wherever it pointed
+</span></span><span class=line><span class=cl>  remove    Remove a tag
+</span></span><span class=line><span class=cl>  list      List the tags of a package, and its latest version
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Options:
+</span></span><span class=line><span class=cl>  -h, --help  Show this message and exit.
+</span></span></code></pre></div><h2 id=cxpm-tag-add>cxpm tag add</h2><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>Usage: cxpm tag add [OPTIONS] package tag
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Point a tag at a version, wherever it pointed
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Arguments:
+</span></span><span class=line><span class=cl>  package    name@version [required]
+</span></span><span class=line><span class=cl>  tag    The tag [required]
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Options:
+</span></span><span class=line><span class=cl>  -h, --help    Show this message and exit.
+</span></span><span class=line><span class=cl>  --index TEXT  The package index to use instead of CXPM_INDEX or the public one; `off` for none
+</span></span></code></pre></div><h2 id=cxpm-tag-remove>cxpm tag remove</h2><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>Usage: cxpm tag remove [OPTIONS] package tag
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Remove a tag
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Arguments:
+</span></span><span class=line><span class=cl>  package    The package&#39;s name [required]
+</span></span><span class=line><span class=cl>  tag    The tag [required]
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Options:
+</span></span><span class=line><span class=cl>  -h, --help    Show this message and exit.
+</span></span><span class=line><span class=cl>  --index TEXT  The package index to use instead of CXPM_INDEX or the public one; `off` for none
+</span></span></code></pre></div><h2 id=cxpm-tag-list>cxpm tag list</h2><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>Usage: cxpm tag list [OPTIONS] package
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>List the tags of a package, and its latest version
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Arguments:
+</span></span><span class=line><span class=cl>  package    The package&#39;s name [required]
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Options:
+</span></span><span class=line><span class=cl>  -h, --help    Show this message and exit.
+</span></span><span class=line><span class=cl>  --index TEXT  The package index to use instead of CXPM_INDEX or the public one; `off` for none
+</span></span></code></pre></div><h2 id=cxpm-owner>cxpm owner</h2><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>Usage: cxpm owner [OPTIONS] COMMAND [ARGS]...
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Who owns a package and who else publishes it
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Commands:
+</span></span><span class=line><span class=cl>  list       List the owner and the maintainers of a package
+</span></span><span class=line><span class=cl>  add        Let an account publish a package, as a maintainer
+</span></span><span class=line><span class=cl>  remove     Stop an account publishing a package
+</span></span><span class=line><span class=cl>  offer      Offer a package to another account, which takes it with `cxpm owner take`
+</span></span><span class=line><span class=cl>  take       Take a package offered to the account logged in
+</span></span><span class=line><span class=cl>  decline    Withdraw an offer of a package, or decline one
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Options:
+</span></span><span class=line><span class=cl>  -h, --help  Show this message and exit.
+</span></span></code></pre></div><h2 id=cxpm-owner-list>cxpm owner list</h2><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>Usage: cxpm owner list [OPTIONS] package
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>List the owner and the maintainers of a package
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Arguments:
+</span></span><span class=line><span class=cl>  package    The package&#39;s name [required]
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Options:
+</span></span><span class=line><span class=cl>  -h, --help    Show this message and exit.
+</span></span><span class=line><span class=cl>  --index TEXT  The package index to use instead of CXPM_INDEX or the public one; `off` for none
+</span></span></code></pre></div><h2 id=cxpm-owner-add>cxpm owner add</h2><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>Usage: cxpm owner add [OPTIONS] account package
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Let an account publish a package, as a maintainer
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Arguments:
+</span></span><span class=line><span class=cl>  account    The account [required]
+</span></span><span class=line><span class=cl>  package    The package&#39;s name [required]
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Options:
+</span></span><span class=line><span class=cl>  -h, --help    Show this message and exit.
+</span></span><span class=line><span class=cl>  --index TEXT  The package index to use instead of CXPM_INDEX or the public one; `off` for none
+</span></span></code></pre></div><h2 id=cxpm-owner-remove>cxpm owner remove</h2><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>Usage: cxpm owner remove [OPTIONS] account package
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Stop an account publishing a package
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Arguments:
+</span></span><span class=line><span class=cl>  account    The account [required]
+</span></span><span class=line><span class=cl>  package    The package&#39;s name [required]
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Options:
+</span></span><span class=line><span class=cl>  -h, --help    Show this message and exit.
+</span></span><span class=line><span class=cl>  --index TEXT  The package index to use instead of CXPM_INDEX or the public one; `off` for none
+</span></span></code></pre></div><h2 id=cxpm-owner-offer>cxpm owner offer</h2><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>Usage: cxpm owner offer [OPTIONS] account package
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Offer a package to another account, which takes it with `cxpm owner take`
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Arguments:
+</span></span><span class=line><span class=cl>  account    The account [required]
+</span></span><span class=line><span class=cl>  package    The package&#39;s name [required]
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Options:
+</span></span><span class=line><span class=cl>  -h, --help    Show this message and exit.
+</span></span><span class=line><span class=cl>  --index TEXT  The package index to use instead of CXPM_INDEX or the public one; `off` for none
+</span></span></code></pre></div><h2 id=cxpm-owner-take>cxpm owner take</h2><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>Usage: cxpm owner take [OPTIONS] package
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Take a package offered to the account logged in
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Arguments:
+</span></span><span class=line><span class=cl>  package    The package&#39;s name [required]
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Options:
+</span></span><span class=line><span class=cl>  -h, --help    Show this message and exit.
+</span></span><span class=line><span class=cl>  --index TEXT  The package index to use instead of CXPM_INDEX or the public one; `off` for none
+</span></span></code></pre></div><h2 id=cxpm-owner-decline>cxpm owner decline</h2><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>Usage: cxpm owner decline [OPTIONS] package
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Withdraw an offer of a package, or decline one
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Arguments:
+</span></span><span class=line><span class=cl>  package    The package&#39;s name [required]
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Options:
+</span></span><span class=line><span class=cl>  -h, --help    Show this message and exit.
+</span></span><span class=line><span class=cl>  --index TEXT  The package index to use instead of CXPM_INDEX or the public one; `off` for none
+</span></span></code></pre></div><h2 id=cxpm-dependency>cxpm dependency</h2><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>Usage: cxpm dependency [OPTIONS] COMMAND [ARGS]...
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Add, remove and list the project&#39;s dependencies
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Commands:
+</span></span><span class=line><span class=cl>  add       Add a dependency to the manifest and fetch it: a package of the index, by name, or a
+</span></span><span class=line><span class=cl>            repository, by its address
+</span></span><span class=line><span class=cl>  remove    Remove a dependency from the manifest
+</span></span><span class=line><span class=cl>  list      List the dependencies the manifest declares
+</span></span><span class=line><span class=cl>  update    Move a dependency, or every one, to the newest version the manifest accepts, and pin it
+</span></span><span class=line><span class=cl>            in .cxpm/lock.json
+</span></span><span class=line><span class=cl>  sync      Fetch what the manifest declares and pin it in .cxpm/lock.json: `cxpm fetch`
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Options:
+</span></span><span class=line><span class=cl>  -h, --help  Show this message and exit.
+</span></span></code></pre></div><h2 id=cxpm-dependency-add>cxpm dependency add</h2><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>Usage: cxpm dependency add [OPTIONS] package [directory]
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Add a dependency to the manifest and fetch it: a package of the index, by name, or a repository, by
+</span></span><span class=line><span class=cl>its address
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Arguments:
+</span></span><span class=line><span class=cl>  package    name, @scope/name, name@constraint (fmt@&gt;=10, fmt@10.2), or the address of a git
+</span></span><span class=line><span class=cl>             repository, with #revision after it [required]
+</span></span><span class=line><span class=cl>  directory    The project directory (default: .) [default: .]
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Options:
+</span></span><span class=line><span class=cl>  -h, --help       Show this message and exit.
+</span></span><span class=line><span class=cl>  --index TEXT     The package index to use instead of CXPM_INDEX or the public one; `off` for none
+</span></span><span class=line><span class=cl>  --name TEXT      What a repository&#39;s package is called, when not the last part of its address
+</span></span><span class=line><span class=cl>  --revision TEXT  The branch, tag or commit of a repository
+</span></span><span class=line><span class=cl>  --no-sync        Only write the manifest: don&#39;t fetch
+</span></span></code></pre></div><h2 id=cxpm-dependency-remove>cxpm dependency remove</h2><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>Usage: cxpm dependency remove [OPTIONS] name [directory]
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Remove a dependency from the manifest
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Arguments:
+</span></span><span class=line><span class=cl>  name    The dependency&#39;s name [required]
+</span></span><span class=line><span class=cl>  directory    The project directory (default: .) [default: .]
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Options:
+</span></span><span class=line><span class=cl>  -h, --help  Show this message and exit.
+</span></span></code></pre></div><h2 id=cxpm-dependency-list>cxpm dependency list</h2><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>Usage: cxpm dependency list [OPTIONS] [directory]
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>List the dependencies the manifest declares
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Arguments:
+</span></span><span class=line><span class=cl>  directory    The project directory (default: .) [default: .]
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Options:
+</span></span><span class=line><span class=cl>  -h, --help  Show this message and exit.
+</span></span></code></pre></div><h2 id=cxpm-dependency-update>cxpm dependency update</h2><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>Usage: cxpm dependency update [OPTIONS] [name] [directory]
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Move a dependency, or every one, to the newest version the manifest accepts, and pin it in
+</span></span><span class=line><span class=cl>.cxpm/lock.json
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Arguments:
+</span></span><span class=line><span class=cl>  name    The dependency (default: every one)
+</span></span><span class=line><span class=cl>  directory    The project directory (default: .) [default: .]
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Options:
+</span></span><span class=line><span class=cl>  -h, --help    Show this message and exit.
+</span></span><span class=line><span class=cl>  --index TEXT  The package index to use instead of CXPM_INDEX or the public one; `off` for none
+</span></span></code></pre></div><h2 id=cxpm-dependency-sync>cxpm dependency sync</h2><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>Usage: cxpm dependency sync [OPTIONS] [directory]
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Fetch what the manifest declares and pin it in .cxpm/lock.json: `cxpm fetch`
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Arguments:
+</span></span><span class=line><span class=cl>  directory    The project directory (default: .) [default: .]
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Options:
+</span></span><span class=line><span class=cl>  -h, --help    Show this message and exit.
+</span></span><span class=line><span class=cl>  --index TEXT  The package index to use instead of CXPM_INDEX or the public one; `off` for none
+</span></span></code></pre></div><h2 id=cxpm-project>cxpm project</h2><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>Usage: cxpm project [OPTIONS] COMMAND [ARGS]...
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Create projects
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Commands:
+</span></span><span class=line><span class=cl>  create    Create a project with a package.cpp and sources
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Options:
+</span></span><span class=line><span class=cl>  -h, --help  Show this message and exit.
+</span></span></code></pre></div><h2 id=cxpm-project-create>cxpm project create</h2><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>Usage: cxpm project create [OPTIONS] name
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Create a project with a package.cpp and sources
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Arguments:
+</span></span><span class=line><span class=cl>  name    The project&#39;s name; also the directory it is created in [required]
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Options:
+</span></span><span class=line><span class=cl>  -h, --help   Show this message and exit.
+</span></span><span class=line><span class=cl>  --type TEXT  executable, shared-library, static-library or header-library [default: executable]
+</span></span><span class=line><span class=cl>  --tests      Also create a tests project for a library, run by `cxpm test`
+</span></span><span class=line><span class=cl>  --example    Also create an example project that uses the library
+</span></span></code></pre></div></article><p class=edit-link><a href=https://github.com/arthurafarias/cpkg/edit/master/hugosite/content/cli.md target=_blank rel=noopener>Edit this page on GitHub</a></p></div></main><aside class=toc-pane aria-label="On this page"><div class=toc-inner><p class=toc-title>On this page</p><nav id=TableOfContents><ul><li><a href=#commands>Commands</a></li><li><a href=#cxpm-fetch>cxpm fetch</a></li><li><a href=#cxpm-configure>cxpm configure</a></li><li><a href=#cxpm-build>cxpm build</a></li><li><a href=#cxpm-test>cxpm test</a></li><li><a href=#cxpm-run>cxpm run</a></li><li><a href=#cxpm-pack>cxpm pack</a></li><li><a href=#cxpm-install>cxpm install</a></li><li><a href=#cxpm-uninstall>cxpm uninstall</a></li><li><a href=#cxpm-search>cxpm search</a></li><li><a href=#cxpm-login>cxpm login</a></li><li><a href=#cxpm-logout>cxpm logout</a></li><li><a href=#cxpm-publish>cxpm publish</a></li><li><a href=#cxpm-whoami>cxpm whoami</a></li><li><a href=#cxpm-view>cxpm view</a></li><li><a href=#cxpm-outdated>cxpm outdated</a></li><li><a href=#cxpm-deprecate>cxpm deprecate</a></li><li><a href=#cxpm-yank>cxpm yank</a></li><li><a href=#cxpm-unpublish>cxpm unpublish</a></li><li><a href=#cxpm-access>cxpm access</a></li><li><a href=#cxpm-repl>cxpm repl</a></li><li><a href=#cxpm-serve>cxpm serve</a></li><li><a href=#cxpm-generate>cxpm generate</a></li><li><a href=#cxpm-tag>cxpm tag</a></li><li><a href=#cxpm-tag-add>cxpm tag add</a></li><li><a href=#cxpm-tag-remove>cxpm tag remove</a></li><li><a href=#cxpm-tag-list>cxpm tag list</a></li><li><a href=#cxpm-owner>cxpm owner</a></li><li><a href=#cxpm-owner-list>cxpm owner list</a></li><li><a href=#cxpm-owner-add>cxpm owner add</a></li><li><a href=#cxpm-owner-remove>cxpm owner remove</a></li><li><a href=#cxpm-owner-offer>cxpm owner offer</a></li><li><a href=#cxpm-owner-take>cxpm owner take</a></li><li><a href=#cxpm-owner-decline>cxpm owner decline</a></li><li><a href=#cxpm-dependency>cxpm dependency</a></li><li><a href=#cxpm-dependency-add>cxpm dependency add</a></li><li><a href=#cxpm-dependency-remove>cxpm dependency remove</a></li><li><a href=#cxpm-dependency-list>cxpm dependency list</a></li><li><a href=#cxpm-dependency-update>cxpm dependency update</a></li><li><a href=#cxpm-dependency-sync>cxpm dependency sync</a></li><li><a href=#cxpm-project>cxpm project</a></li><li><a href=#cxpm-project-create>cxpm project create</a></li></ul></nav></div></aside></div><footer class=site-footer><div class=site-footer-inner><a class=brand href=/cxpm/ aria-label="cxpm documentation"><img src=/cxpm/logo.svg alt=cx::pm width=98 height=24></a><p>A package manager for C++, written in C++. Experimental.</p><nav aria-label=Footer><a href=https://01.dev.soft-forge.dev/cxpm/>Home</a>
+<a href=https://01.dev.soft-forge.dev/cxpm/index/>Package index</a>
+<a href=/cxpm/roadmap/>Roadmap</a>
+<a href=https://github.com/arthurafarias/cpkg target=_blank rel=noopener>GitHub</a>
+<a href=https://soft-forge.dev/>Soft Forge</a></nav></div></footer><script>window.CXPM_DOCS={searchIndexURL:"/cxpm/search-index.json"}</script><script src=/cxpm/js/main.min.c9b66cd6162a3683e15e407f31d3b1e54a44a59eed9887ca8515ed392582c3de.js integrity="sha256-ybZs1hYqNoPhXkB/MdOx5UpEpZ7tmIfKhRXtOSWCw94=" defer></script></body></html>

@@ -6,10 +6,10 @@ language: a project describes itself in a `package.cpp`, the way a Swift package
 packs and installs projects against a sysroot made of their declared dependencies, with no
 other build system involved; it builds, tests and packs itself the same way.
 
-- Handbook, with the manifest format, the lifecycle, tasks and hooks and the package index:
+- Handbook, with the manifest format, the lifecycle, tasks and hooks and the package index (also at <https://arthurafarias.github.io/cxpm/>):
   <https://01.dev.soft-forge.dev/cxpm/>
 - Command line reference, the text of `cxpm help` for every command:
-  <https://arthurafarias.github.io/cxpm/>
+  <https://arthurafarias.github.io/cxpm/cli/>
 - Public package index: <https://01.dev.soft-forge.dev/cxpm/index/>
 
 This repository publishes the prebuilt packages. The source is not public: cxpm is built on
@@ -140,7 +140,7 @@ cxpm publish            # a version on the package index, with its packages
 | `serve` | Runs a package index of your own |
 
 The full text of every command's help is on the
-[command line reference](https://arthurafarias.github.io/cxpm/), and the handbook at
+[command line reference](https://arthurafarias.github.io/cxpm/cli/), and the handbook at
 <https://01.dev.soft-forge.dev/cxpm/> explains the manifest, the lifecycle, tasks and hooks,
 toolchains and the package index.
 

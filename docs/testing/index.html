@@ -1,0 +1,78 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Testing · cxpm</title><meta name=description content="An experimental C++-native package manager and build tool for C++."><link rel=icon href=/cxpm/favicon.svg type=image/svg+xml><meta name=color-scheme content="light"><link rel=stylesheet href=/cxpm/css/main.min.05901613caef75f29a983c2f222d54ad63c06838858c4d5e7c31f453c4228e3e.css integrity="sha256-BZAWE8rvdfKamDwvIi1UrWPAaDiFjE1efDH0U8Qijj4="></head><body><a class=skip-link href=#main-content>Skip to content</a><header class=topbar><div class=topbar-inner><button class=menu-toggle id=menu-toggle aria-label="Toggle navigation" aria-controls=sidebar aria-expanded=false>
+<span></span><span></span><span></span>
+</button>
+<a class=brand href=/cxpm/ aria-label="cxpm documentation"><img src=/cxpm/logo.svg alt=cx::pm width=98 height=24>
+<span class=brand-sub>docs</span></a><div class=search role=search><input type=search id=search-input placeholder="Search the docs" aria-label="Search documentation" autocomplete=off>
+<kbd class=search-kbd>/</kbd><div id=search-results class=search-results hidden></div></div><nav class=topbar-nav aria-label=cxpm><a href=https://01.dev.soft-forge.dev/cxpm/>Home</a>
+<a href=https://01.dev.soft-forge.dev/cxpm/index/>Packages</a></nav><div class=topbar-actions><a class="btn btn-secondary" href=https://github.com/arthurafarias/cpkg target=_blank rel=noopener>GitHub</a>
+<a class="btn btn-primary" href=https://01.dev.soft-forge.dev/cxpm/#install>Install</a></div></div></header><div class=shell><nav class=sidebar id=sidebar aria-label=Sections><div class=sidebar-inner><ul class=menu><li class=menu-item><a href=/cxpm/>Overview</a></li><li class=menu-item><a href=/cxpm/download/>Download</a></li><li class=menu-item><a href=/cxpm/quickstart/>Quickstart</a></li><li class=menu-item><a href=/cxpm/architecture/>Architecture</a></li><li class=menu-item><a href=/cxpm/tooling/>CLI Tooling</a></li><li class=menu-item><a href=/cxpm/cli/>CLI Reference</a></li><li class="menu-item is-active"><a href=/cxpm/testing/ aria-current=page>Testing</a></li><li class=menu-item><a href=/cxpm/static-linking/>Static Linking</a></li><li class=menu-item><a href=/cxpm/roadmap/>Roadmap</a></li></ul></div></nav><div class=sidebar-backdrop id=sidebar-backdrop></div><main class=content id=main-content><div class=content-inner><nav class=breadcrumbs aria-label=Breadcrumb><a href=/cxpm/>cxpm</a>
+<span class=sep>/</span><span>Testing</span></nav><article class=prose><h1 id=testing>Testing</h1><p>cxpm is tested by two projects of its own workspace, built and run by <code>cxpm test</code>:</p><table><thead><tr><th>Project</th><th>What it is</th><th>Cases</th></tr></thead><tbody><tr><td><code>tests/unit</code></td><td>The library tested in process, with every external process replaced by a recording</td><td>172</td></tr><tr><td><code>tests/cli</code></td><td>The installed <code>cxpm</code> and <code>cxpm-descriptor-sandbox</code> run as a user would run them, with a real compiler</td><td>17</td></tr></tbody></table><h2 id=running-the-suite>Running the suite</h2><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>cxpm <span class=nb>test</span>                       <span class=c1># with an installed cxpm</span>
+</span></span><span class=line><span class=cl>./cxpm-build.sh --test          <span class=c1># on a machine that has none: bootstrap first</span>
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>172/172 tests passed
+</span></span><span class=line><span class=cl>cxpm-unit-tests passed
+</span></span><span class=line><span class=cl>17/17 tests passed
+</span></span><span class=line><span class=cl>cxpm-cli-tests passed
+</span></span><span class=line><span class=cl>2 of 2 tests projects passed
+</span></span></code></pre></div><p><code>cxpm test</code> builds the workspace, then each tests project, and runs its executable from the
+tests project&rsquo;s directory. Either executable runs one case alone with <code>--run 'group::case'</code>, for example
+<code>tests/unit/.cxpm/build/cxpm-unit-tests/cxpm-unit-tests --run 'Fetcher::...'</code>.</p><p>The CMake build runs the same two executables through CTest: <code>ctest --test-dir build</code>, or
+<code>ctest --test-dir build -L unit</code> for the unit suite alone. The command line suite tests an
+installed cxpm, so a CTest fixture first installs the build into <code>build/tests-sysroot</code>.</p><p>CI (<code>.github/workflows/ci.yaml</code>) runs <code>./cxpm-build.sh --test --install</code> in a container that has
+a compiler and no other build system.</p><h2 id=where-the-tests-live>Where the tests live</h2><div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>tests/unit/package.cpp           the cxpm-unit-tests project
+</span></span><span class=line><span class=cl>tests/unit/src/main.cpp          cx::core::testing::run_all
+</span></span><span class=line><span class=cl>tests/unit/src/all_tests.cpp     includes every *Test.hpp
+</span></span><span class=line><span class=cl>tests/unit/src/Support.hpp       temporary directories, recorded processes, scoped environment
+</span></span><span class=line><span class=cl>tests/unit/src/*Test.hpp         one header per component
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>tests/cli/package.cpp            the cxpm-cli-tests project
+</span></span><span class=line><span class=cl>tests/cli/src/main.cpp           every command line case
+</span></span><span class=line><span class=cl>tests/cli/fixtures/              projects the cases build
+</span></span></code></pre></div><h2 id=the-command-line-suite-runs-what-was-built>The command line suite runs what was built</h2><p><code>tests/cli</code> depends on <code>cxpm</code>, <code>cxpm-descriptor-sandbox</code> and a toolchain module, so <code>cxpm test</code>
+installs them into the workspace sysroot first. The suite then starts
+<code>$CXPM_TEST_SYSROOT/usr/bin/cxpm</code> (<code>cxpm test</code> sets that variable, and puts the sysroot&rsquo;s <code>bin</code>
+on <code>PATH</code>) and asserts on exit codes, output and the files left behind. It copies each fixture
+into a temporary directory, so nothing is ever built inside the repository.</p><p>It covers: usage and every error path; <code>generate</code>; building the example projects from
+<code>package.cpp</code> and <code>package.json</code>; <code>install</code> and <code>uninstall</code> under <code>--root</code>; a target whose name
+holds spaces and quotes; the sandbox helper on a real plugin; and confinement, with a manifest
+that reads a file outside its project and one that opens a socket. The confinement cases are
+skipped, and say so, where bubblewrap cannot create a namespace.</p><h2 id=self-registering-groups>Self-registering groups</h2><p>The unit suite runs on cx-core-testing. Each header declares one <code>cx::core::testing::test_group</code>
+per class it covers, in namespace <code>cx::pm::testing</code>:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=line><span class=cl><span class=c1>// tests/unit/src/manifest_api_test.hpp
+</span></span></span><span class=line><span class=cl><span class=k>namespace</span> <span class=n>cx</span><span class=o>::</span><span class=n>pm</span><span class=o>::</span><span class=n>testing</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kr>inline</span> <span class=k>static</span> <span class=n>cx</span><span class=o>::</span><span class=n>core</span><span class=o>::</span><span class=n>testing</span><span class=o>::</span><span class=n>test_group</span> <span class=n>status_test</span><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;status&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span><span class=s>&#34;success formats as status::success&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>         <span class=p>[](</span><span class=n>cx</span><span class=o>::</span><span class=n>core</span><span class=o>::</span><span class=n>testing</span><span class=o>::</span><span class=n>test_context</span> <span class=o>&amp;</span><span class=n>ctx</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>           <span class=n>ctx</span><span class=p>.</span><span class=n>check_equal</span><span class=p>(</span><span class=n>std</span><span class=o>::</span><span class=n>to_string</span><span class=p>(</span><span class=n>cx</span><span class=o>::</span><span class=n>pm</span><span class=o>::</span><span class=n>status</span><span class=o>::</span><span class=n>success</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>                           <span class=n>std</span><span class=o>::</span><span class=n>string</span><span class=p>(</span><span class=s>&#34;status::success&#34;</span><span class=p>));</span>
+</span></span><span class=line><span class=cl>         <span class=p>}},</span>
+</span></span><span class=line><span class=cl>    <span class=p>}};</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=p>}</span> <span class=c1>// namespace cx::pm::testing
+</span></span></span></code></pre></div><p>Constructing the group at static-initialization time registers it; <code>run_all</code> runs every
+registered case, prints one line per case and returns non-zero if any check failed or any case
+threw. <code>tests/unit/src/all_tests.cpp</code> includes every <code>*_test.hpp</code>, so every group coexists in one
+translation unit, which surfaces helper-name collisions and ODR problems when the suite compiles.
+A new <code>*_test.hpp</code> is added to that file.</p><p>Nothing test-related is installed: the tests projects are not members of the workspace&rsquo;s
+packages, only of its <code>tests</code>.</p><h2 id=how-the-hard-parts-are-tested-without-a-compiler>How the hard parts are tested without a compiler</h2><p>Every external process <code>cxpm</code> starts goes through <code>process_runner</code>, and a test
+can replace what it does (<code>process_runner::handler_set</code>). <code>support.hpp</code>&rsquo;s <code>recorded_processes</code>
+records each argument vector and answers with a canned result, so the orchestration that used to
+be reachable only through a real build is unit-tested:</p><ul><li><code>toolchain_driver</code>: the exact compile, link and archive argument vectors for each target type,
+including names and paths with spaces and quotes; parallel compilation; stopping at the first
+failure.</li><li><code>toolchain_manager</code>: discovery order, <code>toolchain.cpp</code> winning over <code>toolchain.json</code>, plugin
+names that cannot collide, selection by name and by language, unusable toolchains skipped.</li><li><code>project_manager</code>: manifest loading in both formats, every stage of the lifecycle and what
+makes each one stale, workspaces and dependency order, <code>cxpm test</code>, <code>compile_commands.json</code>.</li><li><code>fetcher</code>, <code>staging</code> and the package managers: the lock file, the staged layout of each target
+type, and the archive, pacman, rpm and deb packages byte by byte where the format allows.</li><li><code>process_runner</code>: what a confined process is allowed to see.</li><li><code>descriptor_plugin</code>/<code>Installation</code>: the plugin compile command, reuse of an up-to-date plugin,
+the failure message, and every environment override.</li><li><code>package_config_manager</code>: the <code>pkg-config</code> queries and <code>.pc</code> rendering.</li><li><code>application_view</code>: every command&rsquo;s exit code and output, run in process with captured streams.</li></ul><p>What needs real tools is covered by the command line suite: a real compiler building and
+loading a real plugin, the <code>cxpm-descriptor-sandbox</code> helper loading it, and bubblewrap confining
+both.</p><h2 id=sanitizers>Sanitizers</h2><p><code>tests/unit/package.cpp</code> builds the unit suite with <code>AddressSanitizer</code> and
+<code>UndefinedBehaviorSanitizer</code>. The full suite passes clean under both.</p><h2 id=known-gaps>Known gaps</h2><ul><li><code>examples/archive-object</code>, <code>examples/shared-object</code> and the gstreamer example are not built by
+the command line suite; those target types are covered by unit tests only.</li><li>The sandbox helper&rsquo;s resource limits (CPU, memory, wall clock) are not exercised by a test that
+actually exceeds them.</li><li>There is no coverage report: the CMake build no longer has a <code>coverage</code> target. Building
+with <code>compiler_options::coverage</code> and running <code>gcovr</code> by hand still works.</li><li>Installing native packages (<code>pacman -U</code>, <code>rpm -i</code>, <code>dpkg -i</code>) is not part of the suite: it needs
+root and a matching system. The packages themselves are checked by unit tests.</li></ul></article><p class=edit-link><a href=https://github.com/arthurafarias/cpkg/edit/master/hugosite/content/testing.md target=_blank rel=noopener>Edit this page on GitHub</a></p></div></main><aside class=toc-pane aria-label="On this page"><div class=toc-inner><p class=toc-title>On this page</p><nav id=TableOfContents><ul><li><a href=#running-the-suite>Running the suite</a></li><li><a href=#where-the-tests-live>Where the tests live</a></li><li><a href=#the-command-line-suite-runs-what-was-built>The command line suite runs what was built</a></li><li><a href=#self-registering-groups>Self-registering groups</a></li><li><a href=#how-the-hard-parts-are-tested-without-a-compiler>How the hard parts are tested without a compiler</a></li><li><a href=#sanitizers>Sanitizers</a></li><li><a href=#known-gaps>Known gaps</a></li></ul></nav></div></aside></div><footer class=site-footer><div class=site-footer-inner><a class=brand href=/cxpm/ aria-label="cxpm documentation"><img src=/cxpm/logo.svg alt=cx::pm width=98 height=24></a><p>A package manager for C++, written in C++. Experimental.</p><nav aria-label=Footer><a href=https://01.dev.soft-forge.dev/cxpm/>Home</a>
+<a href=https://01.dev.soft-forge.dev/cxpm/index/>Package index</a>
+<a href=/cxpm/roadmap/>Roadmap</a>
+<a href=https://github.com/arthurafarias/cpkg target=_blank rel=noopener>GitHub</a>
+<a href=https://soft-forge.dev/>Soft Forge</a></nav></div></footer><script>window.CXPM_DOCS={searchIndexURL:"/cxpm/search-index.json"}</script><script src=/cxpm/js/main.min.c9b66cd6162a3683e15e407f31d3b1e54a44a59eed9887ca8515ed392582c3de.js integrity="sha256-ybZs1hYqNoPhXkB/MdOx5UpEpZ7tmIfKhRXtOSWCw94=" defer></script></body></html>
